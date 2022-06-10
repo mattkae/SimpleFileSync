@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/matthewk/Projects/SimpleFileSync/server/build",
+  "command": "/usr/bin/c++  -I/home/matthewk/Projects/SimpleFileSync/server/include  -o CMakeFiles/sfs_server.dir/src/main.o -c /home/matthewk/Projects/SimpleFileSync/server/src/main.cpp",
+  "file": "/home/matthewk/Projects/SimpleFileSync/server/src/main.cpp"
+},
+{
+  "directory": "/home/matthewk/Projects/SimpleFileSync/server/build",
+  "command": "/usr/bin/c++  -I/home/matthewk/Projects/SimpleFileSync/server/include  -o CMakeFiles/sfs_server.dir/src/server.o -c /home/matthewk/Projects/SimpleFileSync/server/src/server.cpp",
+  "file": "/home/matthewk/Projects/SimpleFileSync/server/src/server.cpp"
+}
+]
