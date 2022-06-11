@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/sfs_server.dir/src/main.cpp.o CMakeFiles/sfs_server.dir/src/server.cpp.o CMakeFiles/sfs_server.dir/src/config.cpp.o -o sfs_server  /usr/lib/libboost_system.a 

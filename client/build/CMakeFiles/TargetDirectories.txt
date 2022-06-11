@@ -1,3 +1,0 @@
-/home/matthewk/Projects/SimpleFileSync/client/build/CMakeFiles/sfs_client.dir
-/home/matthewk/Projects/SimpleFileSync/client/build/CMakeFiles/edit_cache.dir
-/home/matthewk/Projects/SimpleFileSync/client/build/CMakeFiles/rebuild_cache.dir
