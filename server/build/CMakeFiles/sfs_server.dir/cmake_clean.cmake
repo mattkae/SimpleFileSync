@@ -1,10 +1,10 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/sfs_server.dir/src/config.o"
-  "CMakeFiles/sfs_server.dir/src/config.o.d"
-  "CMakeFiles/sfs_server.dir/src/main.o"
-  "CMakeFiles/sfs_server.dir/src/main.o.d"
-  "CMakeFiles/sfs_server.dir/src/server.o"
-  "CMakeFiles/sfs_server.dir/src/server.o.d"
+  "CMakeFiles/sfs_server.dir/src/config.cpp.o"
+  "CMakeFiles/sfs_server.dir/src/config.cpp.o.d"
+  "CMakeFiles/sfs_server.dir/src/main.cpp.o"
+  "CMakeFiles/sfs_server.dir/src/main.cpp.o.d"
+  "CMakeFiles/sfs_server.dir/src/server.cpp.o"
+  "CMakeFiles/sfs_server.dir/src/server.cpp.o.d"
   "sfs_server"
   "sfs_server.pdb"
 )

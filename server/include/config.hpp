@@ -9,6 +9,7 @@ namespace server {
 		bool load();
 		void beginWatch();
 		void endWatch();
+		std::string getDirectory();
 	private:
 		std::string mConfigPath;
 

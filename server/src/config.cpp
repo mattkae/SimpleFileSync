@@ -64,4 +64,6 @@ namespace server {
 
 		return true;
 	}
+
+	std::string Config::getDirectory() { return mWatchDirectory; }
 };

@@ -69,61 +69,62 @@ include CMakeFiles/sfs_server.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/sfs_server.dir/flags.make
 
-CMakeFiles/sfs_server.dir/src/main.o: CMakeFiles/sfs_server.dir/flags.make
-CMakeFiles/sfs_server.dir/src/main.o: ../src/main.cpp
-CMakeFiles/sfs_server.dir/src/main.o: CMakeFiles/sfs_server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/matthewk/Projects/SimpleFileSync/server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/sfs_server.dir/src/main.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sfs_server.dir/src/main.o -MF CMakeFiles/sfs_server.dir/src/main.o.d -o CMakeFiles/sfs_server.dir/src/main.o -c /home/matthewk/Projects/SimpleFileSync/server/src/main.cpp
+CMakeFiles/sfs_server.dir/src/main.cpp.o: CMakeFiles/sfs_server.dir/flags.make
+CMakeFiles/sfs_server.dir/src/main.cpp.o: ../src/main.cpp
+CMakeFiles/sfs_server.dir/src/main.cpp.o: CMakeFiles/sfs_server.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/matthewk/Projects/SimpleFileSync/server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/sfs_server.dir/src/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sfs_server.dir/src/main.cpp.o -MF CMakeFiles/sfs_server.dir/src/main.cpp.o.d -o CMakeFiles/sfs_server.dir/src/main.cpp.o -c /home/matthewk/Projects/SimpleFileSync/server/src/main.cpp
 
-CMakeFiles/sfs_server.dir/src/main.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/sfs_server.dir/src/main.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/matthewk/Projects/SimpleFileSync/server/src/main.cpp > CMakeFiles/sfs_server.dir/src/main.i
+CMakeFiles/sfs_server.dir/src/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/sfs_server.dir/src/main.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/matthewk/Projects/SimpleFileSync/server/src/main.cpp > CMakeFiles/sfs_server.dir/src/main.cpp.i
 
-CMakeFiles/sfs_server.dir/src/main.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/sfs_server.dir/src/main.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/matthewk/Projects/SimpleFileSync/server/src/main.cpp -o CMakeFiles/sfs_server.dir/src/main.s
+CMakeFiles/sfs_server.dir/src/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/sfs_server.dir/src/main.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/matthewk/Projects/SimpleFileSync/server/src/main.cpp -o CMakeFiles/sfs_server.dir/src/main.cpp.s
 
-CMakeFiles/sfs_server.dir/src/server.o: CMakeFiles/sfs_server.dir/flags.make
-CMakeFiles/sfs_server.dir/src/server.o: ../src/server.cpp
-CMakeFiles/sfs_server.dir/src/server.o: CMakeFiles/sfs_server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/matthewk/Projects/SimpleFileSync/server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/sfs_server.dir/src/server.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sfs_server.dir/src/server.o -MF CMakeFiles/sfs_server.dir/src/server.o.d -o CMakeFiles/sfs_server.dir/src/server.o -c /home/matthewk/Projects/SimpleFileSync/server/src/server.cpp
+CMakeFiles/sfs_server.dir/src/server.cpp.o: CMakeFiles/sfs_server.dir/flags.make
+CMakeFiles/sfs_server.dir/src/server.cpp.o: ../src/server.cpp
+CMakeFiles/sfs_server.dir/src/server.cpp.o: CMakeFiles/sfs_server.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/matthewk/Projects/SimpleFileSync/server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/sfs_server.dir/src/server.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sfs_server.dir/src/server.cpp.o -MF CMakeFiles/sfs_server.dir/src/server.cpp.o.d -o CMakeFiles/sfs_server.dir/src/server.cpp.o -c /home/matthewk/Projects/SimpleFileSync/server/src/server.cpp
 
-CMakeFiles/sfs_server.dir/src/server.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/sfs_server.dir/src/server.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/matthewk/Projects/SimpleFileSync/server/src/server.cpp > CMakeFiles/sfs_server.dir/src/server.i
+CMakeFiles/sfs_server.dir/src/server.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/sfs_server.dir/src/server.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/matthewk/Projects/SimpleFileSync/server/src/server.cpp > CMakeFiles/sfs_server.dir/src/server.cpp.i
 
-CMakeFiles/sfs_server.dir/src/server.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/sfs_server.dir/src/server.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/matthewk/Projects/SimpleFileSync/server/src/server.cpp -o CMakeFiles/sfs_server.dir/src/server.s
+CMakeFiles/sfs_server.dir/src/server.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/sfs_server.dir/src/server.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/matthewk/Projects/SimpleFileSync/server/src/server.cpp -o CMakeFiles/sfs_server.dir/src/server.cpp.s
 
-CMakeFiles/sfs_server.dir/src/config.o: CMakeFiles/sfs_server.dir/flags.make
-CMakeFiles/sfs_server.dir/src/config.o: ../src/config.cpp
-CMakeFiles/sfs_server.dir/src/config.o: CMakeFiles/sfs_server.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/matthewk/Projects/SimpleFileSync/server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/sfs_server.dir/src/config.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sfs_server.dir/src/config.o -MF CMakeFiles/sfs_server.dir/src/config.o.d -o CMakeFiles/sfs_server.dir/src/config.o -c /home/matthewk/Projects/SimpleFileSync/server/src/config.cpp
+CMakeFiles/sfs_server.dir/src/config.cpp.o: CMakeFiles/sfs_server.dir/flags.make
+CMakeFiles/sfs_server.dir/src/config.cpp.o: ../src/config.cpp
+CMakeFiles/sfs_server.dir/src/config.cpp.o: CMakeFiles/sfs_server.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/matthewk/Projects/SimpleFileSync/server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/sfs_server.dir/src/config.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/sfs_server.dir/src/config.cpp.o -MF CMakeFiles/sfs_server.dir/src/config.cpp.o.d -o CMakeFiles/sfs_server.dir/src/config.cpp.o -c /home/matthewk/Projects/SimpleFileSync/server/src/config.cpp
 
-CMakeFiles/sfs_server.dir/src/config.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/sfs_server.dir/src/config.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/matthewk/Projects/SimpleFileSync/server/src/config.cpp > CMakeFiles/sfs_server.dir/src/config.i
+CMakeFiles/sfs_server.dir/src/config.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/sfs_server.dir/src/config.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/matthewk/Projects/SimpleFileSync/server/src/config.cpp > CMakeFiles/sfs_server.dir/src/config.cpp.i
 
-CMakeFiles/sfs_server.dir/src/config.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/sfs_server.dir/src/config.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/matthewk/Projects/SimpleFileSync/server/src/config.cpp -o CMakeFiles/sfs_server.dir/src/config.s
+CMakeFiles/sfs_server.dir/src/config.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/sfs_server.dir/src/config.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/matthewk/Projects/SimpleFileSync/server/src/config.cpp -o CMakeFiles/sfs_server.dir/src/config.cpp.s
 
 # Object files for target sfs_server
 sfs_server_OBJECTS = \
-"CMakeFiles/sfs_server.dir/src/main.o" \
-"CMakeFiles/sfs_server.dir/src/server.o" \
-"CMakeFiles/sfs_server.dir/src/config.o"
+"CMakeFiles/sfs_server.dir/src/main.cpp.o" \
+"CMakeFiles/sfs_server.dir/src/server.cpp.o" \
+"CMakeFiles/sfs_server.dir/src/config.cpp.o"
 
 # External object files for target sfs_server
 sfs_server_EXTERNAL_OBJECTS =
 
-sfs_server: CMakeFiles/sfs_server.dir/src/main.o
-sfs_server: CMakeFiles/sfs_server.dir/src/server.o
-sfs_server: CMakeFiles/sfs_server.dir/src/config.o
+sfs_server: CMakeFiles/sfs_server.dir/src/main.cpp.o
+sfs_server: CMakeFiles/sfs_server.dir/src/server.cpp.o
+sfs_server: CMakeFiles/sfs_server.dir/src/config.cpp.o
 sfs_server: CMakeFiles/sfs_server.dir/build.make
+sfs_server: /usr/lib/libboost_system.a
 sfs_server: CMakeFiles/sfs_server.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/matthewk/Projects/SimpleFileSync/server/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable sfs_server"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/sfs_server.dir/link.txt --verbose=$(VERBOSE)

@@ -129,50 +129,77 @@ sfs_server/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/build
 .PHONY : sfs_server/fast
 
-# target to build an object file
-src/config.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/config.o
+src/config.o: src/config.cpp.o
 .PHONY : src/config.o
 
-# target to preprocess a source file
-src/config.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/config.i
+# target to build an object file
+src/config.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/config.cpp.o
+.PHONY : src/config.cpp.o
+
+src/config.i: src/config.cpp.i
 .PHONY : src/config.i
 
-# target to generate assembly for a file
-src/config.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/config.s
+# target to preprocess a source file
+src/config.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/config.cpp.i
+.PHONY : src/config.cpp.i
+
+src/config.s: src/config.cpp.s
 .PHONY : src/config.s
 
-# target to build an object file
-src/main.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/main.o
+# target to generate assembly for a file
+src/config.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/config.cpp.s
+.PHONY : src/config.cpp.s
+
+src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
-# target to preprocess a source file
-src/main.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/main.i
+# target to build an object file
+src/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/main.cpp.o
+.PHONY : src/main.cpp.o
+
+src/main.i: src/main.cpp.i
 .PHONY : src/main.i
 
-# target to generate assembly for a file
-src/main.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/main.s
+# target to preprocess a source file
+src/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
+
+src/main.s: src/main.cpp.s
 .PHONY : src/main.s
 
-# target to build an object file
-src/server.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/server.o
+# target to generate assembly for a file
+src/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
+
+src/server.o: src/server.cpp.o
 .PHONY : src/server.o
 
-# target to preprocess a source file
-src/server.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/server.i
+# target to build an object file
+src/server.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/server.cpp.o
+.PHONY : src/server.cpp.o
+
+src/server.i: src/server.cpp.i
 .PHONY : src/server.i
 
-# target to generate assembly for a file
-src/server.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/server.s
+# target to preprocess a source file
+src/server.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/server.cpp.i
+.PHONY : src/server.cpp.i
+
+src/server.s: src/server.cpp.s
 .PHONY : src/server.s
+
+# target to generate assembly for a file
+src/server.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/server.cpp.s
+.PHONY : src/server.cpp.s
 
 # Help Target
 help:
