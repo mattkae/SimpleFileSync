@@ -1,7 +1,7 @@
-CMakeFiles/sfs_server.dir/src/server.o: \
- /home/matthewk/Projects/SimpleFileSync/server/src/server.cpp \
+CMakeFiles/sfs_server.dir/src/config.o: \
+ /home/matthewk/Projects/SimpleFileSync/server/src/config.cpp \
  /usr/include/stdc-predef.h \
- /home/matthewk/Projects/SimpleFileSync/server/include/server.hpp \
+ /home/matthewk/Projects/SimpleFileSync/server/include/config.hpp \
  /usr/include/c++/12.1.0/string \
  /usr/include/c++/12.1.0/x86_64-pc-linux-gnu/bits/c++config.h \
  /usr/include/c++/12.1.0/x86_64-pc-linux-gnu/bits/os_defines.h \
@@ -111,4 +111,47 @@ CMakeFiles/sfs_server.dir/src/server.o: \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
  /usr/include/bits/types/error_t.h \
  /usr/include/c++/12.1.0/bits/charconv.h \
- /usr/include/c++/12.1.0/bits/basic_string.tcc
+ /usr/include/c++/12.1.0/bits/basic_string.tcc \
+ /usr/include/c++/12.1.0/iostream /usr/include/c++/12.1.0/ostream \
+ /usr/include/c++/12.1.0/ios /usr/include/c++/12.1.0/exception \
+ /usr/include/c++/12.1.0/bits/exception_ptr.h \
+ /usr/include/c++/12.1.0/bits/cxxabi_init_exception.h \
+ /usr/include/c++/12.1.0/typeinfo \
+ /usr/include/c++/12.1.0/bits/nested_exception.h \
+ /usr/include/c++/12.1.0/bits/ios_base.h \
+ /usr/include/c++/12.1.0/bits/locale_classes.h \
+ /usr/include/c++/12.1.0/bits/locale_classes.tcc \
+ /usr/include/c++/12.1.0/system_error \
+ /usr/include/c++/12.1.0/x86_64-pc-linux-gnu/bits/error_constants.h \
+ /usr/include/c++/12.1.0/stdexcept /usr/include/c++/12.1.0/streambuf \
+ /usr/include/c++/12.1.0/bits/streambuf.tcc \
+ /usr/include/c++/12.1.0/bits/basic_ios.h \
+ /usr/include/c++/12.1.0/bits/locale_facets.h \
+ /usr/include/c++/12.1.0/cwctype /usr/include/wctype.h \
+ /usr/include/bits/wctype-wchar.h \
+ /usr/include/c++/12.1.0/x86_64-pc-linux-gnu/bits/ctype_base.h \
+ /usr/include/c++/12.1.0/bits/streambuf_iterator.h \
+ /usr/include/c++/12.1.0/x86_64-pc-linux-gnu/bits/ctype_inline.h \
+ /usr/include/c++/12.1.0/bits/locale_facets.tcc \
+ /usr/include/c++/12.1.0/bits/basic_ios.tcc \
+ /usr/include/c++/12.1.0/bits/ostream.tcc /usr/include/c++/12.1.0/istream \
+ /usr/include/c++/12.1.0/bits/istream.tcc /usr/include/c++/12.1.0/fstream \
+ /usr/include/c++/12.1.0/bits/codecvt.h \
+ /usr/include/c++/12.1.0/x86_64-pc-linux-gnu/bits/basic_file.h \
+ /usr/include/c++/12.1.0/x86_64-pc-linux-gnu/bits/c++io.h \
+ /usr/include/c++/12.1.0/bits/fstream.tcc /usr/include/c++/12.1.0/vector \
+ /usr/include/c++/12.1.0/bits/stl_uninitialized.h \
+ /usr/include/c++/12.1.0/bits/stl_vector.h \
+ /usr/include/c++/12.1.0/bits/stl_bvector.h \
+ /usr/include/c++/12.1.0/bits/vector.tcc /usr/include/c++/12.1.0/sstream \
+ /usr/include/c++/12.1.0/bits/sstream.tcc \
+ /usr/include/c++/12.1.0/algorithm \
+ /usr/include/c++/12.1.0/bits/stl_algo.h \
+ /usr/include/c++/12.1.0/bits/algorithmfwd.h \
+ /usr/include/c++/12.1.0/bits/stl_heap.h \
+ /usr/include/c++/12.1.0/bits/stl_tempbuf.h \
+ /usr/include/c++/12.1.0/bits/uniform_int_dist.h \
+ /usr/include/c++/12.1.0/pstl/glue_algorithm_defs.h \
+ /usr/include/c++/12.1.0/pstl/execution_defs.h \
+ /usr/include/c++/12.1.0/iterator \
+ /usr/include/c++/12.1.0/bits/stream_iterator.h

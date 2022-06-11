@@ -130,6 +130,21 @@ sfs_server/fast:
 .PHONY : sfs_server/fast
 
 # target to build an object file
+src/config.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/config.o
+.PHONY : src/config.o
+
+# target to preprocess a source file
+src/config.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/config.i
+.PHONY : src/config.i
+
+# target to generate assembly for a file
+src/config.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/config.s
+.PHONY : src/config.s
+
+# target to build an object file
 src/main.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sfs_server.dir/build.make CMakeFiles/sfs_server.dir/src/main.o
 .PHONY : src/main.o
@@ -168,6 +183,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... sfs_server"
+	@echo "... src/config.o"
+	@echo "... src/config.i"
+	@echo "... src/config.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace serverLib {
+namespace server {
 	class Server {
 	public:
 		Server();

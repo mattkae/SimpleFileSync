@@ -1,7 +1,8 @@
-#include <cstdio>
+#include "config.hpp"
 
 int main() {
+	server::Config globalConfig("../data/config.conf");
 	
-	printf("Hello World\n");
+    
 	return 0;
 }

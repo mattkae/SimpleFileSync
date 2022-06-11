@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/matthewk/Projects/SimpleFileSync/server/src/config.cpp" "CMakeFiles/sfs_server.dir/src/config.o" "gcc" "CMakeFiles/sfs_server.dir/src/config.o.d"
   "/home/matthewk/Projects/SimpleFileSync/server/src/main.cpp" "CMakeFiles/sfs_server.dir/src/main.o" "gcc" "CMakeFiles/sfs_server.dir/src/main.o.d"
   "/home/matthewk/Projects/SimpleFileSync/server/src/server.cpp" "CMakeFiles/sfs_server.dir/src/server.o" "gcc" "CMakeFiles/sfs_server.dir/src/server.o.d"
   )

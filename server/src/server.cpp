@@ -1,5 +1,5 @@
 #include "server.hpp"
-namespace serverLib {
+namespace server {
 	Server::Server() {
 	   	
 	}
