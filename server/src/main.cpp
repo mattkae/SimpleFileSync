@@ -30,6 +30,9 @@ int main() {
 			boost::system::error_code ignored_error;
 			boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
 			std::cout << "Closing client." << std::endl;
+			
+			
+
 		}
 	} catch (std::exception& e) {
 		std::cerr << e.what() << std::endl;

@@ -3,8 +3,10 @@ project(sfs_client)
 include_directories(include)
 set(SOURCES
 	src/main.cpp
+	src/config.cpp
+	src/file_watcher.cpp
 )
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost COMPONENTS system)
 
