@@ -1,0 +1,11 @@
+/home/matthewk/Projects/SimpleFileSync/CMakeFiles/edit_cache.dir
+/home/matthewk/Projects/SimpleFileSync/CMakeFiles/rebuild_cache.dir
+/home/matthewk/Projects/SimpleFileSync/shared/CMakeFiles/sfs_shared.dir
+/home/matthewk/Projects/SimpleFileSync/shared/CMakeFiles/edit_cache.dir
+/home/matthewk/Projects/SimpleFileSync/shared/CMakeFiles/rebuild_cache.dir
+/home/matthewk/Projects/SimpleFileSync/client/CMakeFiles/sfs_client.dir
+/home/matthewk/Projects/SimpleFileSync/client/CMakeFiles/edit_cache.dir
+/home/matthewk/Projects/SimpleFileSync/client/CMakeFiles/rebuild_cache.dir
+/home/matthewk/Projects/SimpleFileSync/server/CMakeFiles/sfs_server.dir
+/home/matthewk/Projects/SimpleFileSync/server/CMakeFiles/edit_cache.dir
+/home/matthewk/Projects/SimpleFileSync/server/CMakeFiles/rebuild_cache.dir
