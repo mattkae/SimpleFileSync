@@ -7,10 +7,23 @@
 #include <unordered_map>
 
 namespace client {
-	typedef std::function<void()> FileWatchFunc;
+	enum class FileChangeType {
+		None = 0,
+		Created,
+		Modified,
+		Deleted
+	};
+
+	struct FileChangeEvent {
+		FileChangeType type;
+		std::string filePath;
+	};
+
+	typedef std::function<void(FileChangeEvent)> FileWatchFunc;
 
 	class FileWatcher {
 	public:
+		FileWatcher() { }
 		FileWatcher(FileWatchFunc callback, std::string directory);
 		~FileWatcher();
 		void begin();
@@ -18,7 +31,6 @@ namespace client {
 	private:
 		std::string mDirectory;
 		FileWatchFunc mCallback;
-		std::thread mThread;
 		bool mIsRunning = false;
 		std::chrono::duration<int, std::milli> delay;
 		std::unordered_map<std::string, std::filesystem::file_time_type> mPaths;

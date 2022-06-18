@@ -4,6 +4,7 @@
 namespace client {
 	class Config {
 	public:
+		Config() { }
 		Config(std::string configPath);
 		~Config();
 

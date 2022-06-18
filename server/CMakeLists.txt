@@ -6,7 +6,7 @@ set(SOURCES
 	src/server.cpp
 	src/config.cpp
 )
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost COMPONENTS system)
 

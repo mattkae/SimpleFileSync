@@ -10,8 +10,8 @@ namespace client {
 	FileWatcher::FileWatcher(FileWatchFunc callback, std::string directory) {
 		mDirectory = directory;
 		mCallback = callback;
-		mThread = std::thread(start, this);
 		delay = std::chrono::milliseconds(5000);
+		begin();
 	}
 
 	FileWatcher::~FileWatcher() {
@@ -31,7 +31,10 @@ namespace client {
 			auto it = mPaths.begin();
 			while (it != mPaths.end()) {
 				if (!std::filesystem::exists(it->first)) {
-					mCallback();
+					FileChangeEvent event;
+					event.type = FileChangeType::Deleted;
+					event.filePath = it->first;
+					mCallback(event);
 					it = mPaths.erase(it);
 				}
 				else {
@@ -45,11 +48,17 @@ namespace client {
 	 
 				if(!mPaths.contains(file.path())) {
 					mPaths[file.path().string()] = lastWriteTime;
-					mCallback();
+					FileChangeEvent event;
+					event.type = FileChangeType::Created;
+					event.filePath = file.path().string();
+					mCallback(event);
 				} else {
 					if(mPaths[file.path().string()] != lastWriteTime) {
 						mPaths[file.path().string()] = lastWriteTime;
-						mCallback();
+						FileChangeEvent event;
+						event.type = FileChangeType::Modified;
+						event.filePath = file.path().string();
+						mCallback(event);
 					}
 				}
 			}
@@ -58,6 +67,5 @@ namespace client {
 
 	void FileWatcher::end() {
 		mIsRunning = false;
-		mThread.join();
 	}
 };

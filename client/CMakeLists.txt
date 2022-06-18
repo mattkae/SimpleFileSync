@@ -2,9 +2,11 @@ cmake_minimum_required(VERSION 3.23)
 project(sfs_client)
 include_directories(include)
 set(SOURCES
-	src/main.cpp
-	src/config.cpp
-	src/file_watcher.cpp
+  src/main.cpp
+  src/app.cpp
+  src/config.cpp
+  src/file_watcher.cpp
+  src/message.cpp
 )
 set(CMAKE_CXX_STANDARD 20)
 set(Boost_USE_STATIC_LIBS ON)
