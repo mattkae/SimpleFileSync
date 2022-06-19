@@ -130,29 +130,53 @@ sfs_shared/fast:
 	cd /home/matthewk/Projects/SimpleFileSync && $(MAKE) $(MAKESILENT) -f shared/CMakeFiles/sfs_shared.dir/build.make shared/CMakeFiles/sfs_shared.dir/build
 .PHONY : sfs_shared/fast
 
-src/message.o: src/message.cpp.o
-.PHONY : src/message.o
+src/client_message.o: src/client_message.cpp.o
+.PHONY : src/client_message.o
 
 # target to build an object file
-src/message.cpp.o:
-	cd /home/matthewk/Projects/SimpleFileSync && $(MAKE) $(MAKESILENT) -f shared/CMakeFiles/sfs_shared.dir/build.make shared/CMakeFiles/sfs_shared.dir/src/message.cpp.o
-.PHONY : src/message.cpp.o
+src/client_message.cpp.o:
+	cd /home/matthewk/Projects/SimpleFileSync && $(MAKE) $(MAKESILENT) -f shared/CMakeFiles/sfs_shared.dir/build.make shared/CMakeFiles/sfs_shared.dir/src/client_message.cpp.o
+.PHONY : src/client_message.cpp.o
 
-src/message.i: src/message.cpp.i
-.PHONY : src/message.i
+src/client_message.i: src/client_message.cpp.i
+.PHONY : src/client_message.i
 
 # target to preprocess a source file
-src/message.cpp.i:
-	cd /home/matthewk/Projects/SimpleFileSync && $(MAKE) $(MAKESILENT) -f shared/CMakeFiles/sfs_shared.dir/build.make shared/CMakeFiles/sfs_shared.dir/src/message.cpp.i
-.PHONY : src/message.cpp.i
+src/client_message.cpp.i:
+	cd /home/matthewk/Projects/SimpleFileSync && $(MAKE) $(MAKESILENT) -f shared/CMakeFiles/sfs_shared.dir/build.make shared/CMakeFiles/sfs_shared.dir/src/client_message.cpp.i
+.PHONY : src/client_message.cpp.i
 
-src/message.s: src/message.cpp.s
-.PHONY : src/message.s
+src/client_message.s: src/client_message.cpp.s
+.PHONY : src/client_message.s
 
 # target to generate assembly for a file
-src/message.cpp.s:
-	cd /home/matthewk/Projects/SimpleFileSync && $(MAKE) $(MAKESILENT) -f shared/CMakeFiles/sfs_shared.dir/build.make shared/CMakeFiles/sfs_shared.dir/src/message.cpp.s
-.PHONY : src/message.cpp.s
+src/client_message.cpp.s:
+	cd /home/matthewk/Projects/SimpleFileSync && $(MAKE) $(MAKESILENT) -f shared/CMakeFiles/sfs_shared.dir/build.make shared/CMakeFiles/sfs_shared.dir/src/client_message.cpp.s
+.PHONY : src/client_message.cpp.s
+
+src/server_message.o: src/server_message.cpp.o
+.PHONY : src/server_message.o
+
+# target to build an object file
+src/server_message.cpp.o:
+	cd /home/matthewk/Projects/SimpleFileSync && $(MAKE) $(MAKESILENT) -f shared/CMakeFiles/sfs_shared.dir/build.make shared/CMakeFiles/sfs_shared.dir/src/server_message.cpp.o
+.PHONY : src/server_message.cpp.o
+
+src/server_message.i: src/server_message.cpp.i
+.PHONY : src/server_message.i
+
+# target to preprocess a source file
+src/server_message.cpp.i:
+	cd /home/matthewk/Projects/SimpleFileSync && $(MAKE) $(MAKESILENT) -f shared/CMakeFiles/sfs_shared.dir/build.make shared/CMakeFiles/sfs_shared.dir/src/server_message.cpp.i
+.PHONY : src/server_message.cpp.i
+
+src/server_message.s: src/server_message.cpp.s
+.PHONY : src/server_message.s
+
+# target to generate assembly for a file
+src/server_message.cpp.s:
+	cd /home/matthewk/Projects/SimpleFileSync && $(MAKE) $(MAKESILENT) -f shared/CMakeFiles/sfs_shared.dir/build.make shared/CMakeFiles/sfs_shared.dir/src/server_message.cpp.s
+.PHONY : src/server_message.cpp.s
 
 # Help Target
 help:
@@ -163,9 +187,12 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... sfs_shared"
-	@echo "... src/message.o"
-	@echo "... src/message.i"
-	@echo "... src/message.s"
+	@echo "... src/client_message.o"
+	@echo "... src/client_message.i"
+	@echo "... src/client_message.s"
+	@echo "... src/server_message.o"
+	@echo "... src/server_message.i"
+	@echo "... src/server_message.s"
 .PHONY : help
 
 

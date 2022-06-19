@@ -5,3 +5,4 @@ shared/build
 .cache
 build
 CMakeFiles
+shared CMakeFiles
