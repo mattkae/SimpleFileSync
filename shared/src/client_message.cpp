@@ -1,30 +1,26 @@
 
-#include "message.hpp"
+#include "client_message.hpp"
 #include "serializer.hpp"
-#include <type_traits>
+#include "util.hpp"
 #include <fstream>
 #include <vector>
 
 namespace shared {
 
-	ClientMessage::ClientMessage(ClientMessageType type, std::string filePath) {
-		mType = type;
-		mFilePath = filePath;
-	}
-
-
-	template <typename E>
-	constexpr auto toUnderlying(E e) noexcept {
-		return static_cast<std::underlying_type_t<E>>(e);
+	ClientMessage::ClientMessage(ClientMessageData data) {
+		mData = data;
 	}
 
 	void ClientMessage::serialize(BinarySerializer<ClientMessage> *serializer) {
-		serializer->serializeInt(toUnderlying(mType));
-		serializer->serializeString(mFilePath);
-		switch (mType) {
+		serializer->serializeInt(enumToUnderlying(mData.type));
+		switch (mData.type) {
 		case ClientMessageType::Created:
 		case ClientMessageType::Modified:
+			serializer->serializeString(mData.filePath);
 			writeFile(serializer);
+			break;
+		case ClientMessageType::Deleted:
+		serializer->serializeString(mData.filePath);
 			break;
 		default:
 			break;
@@ -33,7 +29,7 @@ namespace shared {
 
 	void ClientMessage::writeFile(BinarySerializer<ClientMessage> * serializer) {
 	    constexpr auto read_size = std::size_t(4096);
-		auto stream = std::ifstream(mFilePath.data());
+		auto stream = std::ifstream(mData.filePath.data());
 		stream.exceptions(std::ios_base::badbit);
     
 		auto out = std::string();

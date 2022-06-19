@@ -8,19 +8,25 @@ namespace shared {
 	
 	enum class ClientMessageType {
 		None = 0,
+		RequestStatus,
+		RequestEndComm,
 		Created,
 		Deleted,
-		Modified
+		Modified,
+	};
+
+	struct ClientMessageData {
+		ClientMessageType type;
+		std::string filePath = "";
 	};
 
 	class ClientMessage {
 	public:
-		ClientMessage(ClientMessageType type, std::string filePath);
+		ClientMessage(ClientMessageData data);
 		void serialize(BinarySerializer<ClientMessage>* serializer);
 		void deserialize(BinarySerializer<ClientMessage>* serializer);
 	private:
-		std::string mFilePath;
-		ClientMessageType mType;
+		ClientMessageData mData;
 		void writeFile(BinarySerializer<ClientMessage>* serializer);
 		
 	};

@@ -1,7 +1,7 @@
 #pragma once
 #include "config.hpp"
 #include "serializer.hpp"
-#include "message.hpp"
+#include "client_message.hpp"
 #include "file_watcher.hpp"
 #include <string>
 

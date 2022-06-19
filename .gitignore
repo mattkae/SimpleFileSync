@@ -2,3 +2,6 @@
 server/build
 client/build
 shared/build
+.cache
+build
+CMakeFiles

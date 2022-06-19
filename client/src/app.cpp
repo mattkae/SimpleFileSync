@@ -6,7 +6,6 @@
 #include <filesystem>
 #include "file_watcher.hpp"
 #include "serializer.hpp"
-#include "message.hpp"
 
 namespace client {
 	App::App() {
