@@ -1,26 +1,32 @@
 
 #include "client_message.hpp"
 #include "serializer.hpp"
+#include "deserializer.hpp"
 #include "util.hpp"
 #include <fstream>
 #include <vector>
 
 namespace shared {
+	ClientMessage::ClientMessage() { }
 
 	ClientMessage::ClientMessage(ClientMessageData data) {
 		mData = data;
 	}
 
+	ClientMessageData ClientMessage::getData() {
+		return mData;
+	}
+
 	void ClientMessage::serialize(BinarySerializer<ClientMessage> *serializer) {
-		serializer->serializeInt(enumToUnderlying(mData.type));
+		serializer->writeInt(enumToUnderlying(mData.type));
 		switch (mData.type) {
 		case ClientMessageType::Created:
 		case ClientMessageType::Modified:
-			serializer->serializeString(mData.filePath);
+			serializer->writeString(mData.filePath);
 			writeFile(serializer);
 			break;
 		case ClientMessageType::Deleted:
-		serializer->serializeString(mData.filePath);
+		serializer->writeString(mData.filePath);
 			break;
 		default:
 			break;
@@ -35,8 +41,16 @@ namespace shared {
 		auto out = std::string();
 		auto buf = std::string(read_size, '\0');
 		while (stream.read(& buf[0], read_size)) {
-			serializer->serializeString(buf);
+			serializer->writeString(buf);
 		}
-		serializer->serializeString(buf);
+		serializer->writeString(buf);
+	}
+
+	void ClientMessage::deserialize(BinaryDeserializer<ClientMessage> *serializer) {
+		mData.type = static_cast<ClientMessageType>(serializer->readInt());
+		switch (mData.type) {
+		default:
+			break;
+		}
 	}
 }

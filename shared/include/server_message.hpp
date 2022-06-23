@@ -5,6 +5,9 @@ namespace shared {
 
 	template <typename T>
 	class BinarySerializer;
+
+	template <typename T>
+	class BinaryDeserializer;
 	
 	enum class ServerMessageType {
 		None = 0,
@@ -17,14 +20,18 @@ namespace shared {
 
 	struct ServerMessageData {
 		ServerMessageType type;
+		int version = 1;
+		std::string hash = "abc";
 		std::string filePath = "";
 	};
 
 	class ServerMessage {
 	public:
+		ServerMessage() { }
 		ServerMessage(ServerMessageData data);
 		void serialize(BinarySerializer<ServerMessage>* serializer);
-		void deserialize(BinarySerializer<ServerMessage>* serializer);
+		void deserialize(BinaryDeserializer<ServerMessage>* serializer);
+		ServerMessageData getData();
 	private:
 	    ServerMessageData mData;
 	};

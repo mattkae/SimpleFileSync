@@ -125,6 +125,7 @@ server/sfs_server: server/CMakeFiles/sfs_server.dir/src/server.cpp.o
 server/sfs_server: server/CMakeFiles/sfs_server.dir/src/config.cpp.o
 server/sfs_server: server/CMakeFiles/sfs_server.dir/build.make
 server/sfs_server: /usr/lib/libboost_system.a
+server/sfs_server: server/../shared/build/libsfs_shared.a
 server/sfs_server: server/CMakeFiles/sfs_server.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/matthewk/Projects/SimpleFileSync/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable sfs_server"
 	cd /home/matthewk/Projects/SimpleFileSync/server && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/sfs_server.dir/link.txt --verbose=$(VERBOSE)

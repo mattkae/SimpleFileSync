@@ -25,7 +25,9 @@ namespace client {
 		    mPaths[file.path().string()] = std::filesystem::last_write_time(file);
 		}
 
+		std::vector<FileChangeEvent> eventList;
 		while (mIsRunning) {
+			eventList.clear();
 			std::this_thread::sleep_for(delay);
 
 			auto it = mPaths.begin();
@@ -34,7 +36,7 @@ namespace client {
 					FileChangeEvent event;
 					event.type = FileChangeType::Deleted;
 					event.filePath = it->first;
-					mCallback(event);
+					eventList.push_back(event);
 					it = mPaths.erase(it);
 				}
 				else {
@@ -51,17 +53,19 @@ namespace client {
 					FileChangeEvent event;
 					event.type = FileChangeType::Created;
 					event.filePath = file.path().string();
-					mCallback(event);
+					eventList.push_back(event);
 				} else {
 					if(mPaths[file.path().string()] != lastWriteTime) {
 						mPaths[file.path().string()] = lastWriteTime;
 						FileChangeEvent event;
 						event.type = FileChangeType::Modified;
 						event.filePath = file.path().string();
-						mCallback(event);
+						eventList.push_back(event);
 					}
 				}
 			}
+
+			mCallback(eventList);
 		}
 	}
 

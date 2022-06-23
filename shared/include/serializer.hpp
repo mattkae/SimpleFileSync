@@ -1,9 +1,10 @@
 #pragma once
 #include <cstring>
 #include <string>
+#include <iostream>
 
 namespace shared {
-	typedef unsigned char Byte;
+	typedef char Byte;
 
 	struct BinarySerializerOptions {
 		int bufferSize = 1024;
@@ -12,21 +13,42 @@ namespace shared {
 	template <typename T>
 	class BinarySerializer {
 	public:
-		BinarySerializer() { }
+		BinarySerializer() {
+			init(BinarySerializerOptions());
+		}
 		
 		BinarySerializer(BinarySerializerOptions bso) {
+			init(bso);
+		}
+
+		void init(BinarySerializerOptions bso) {
+			if (mData) {
+				free();
+			}
 			mData = new Byte[bso.bufferSize];
 			mCurrentCapacity = bso.bufferSize;
 			mCurrentSize = 0;
 		}
 
 		~BinarySerializer() {
-			delete[] mData;
+			free();
+		}
+
+		void free() {
+			if (mData) delete[] mData;
+			mData = NULL;
 			mCurrentCapacity = 0;
 			mCurrentSize = 0;
 		}
 
-		void serialize(const T&& value) {
+		void reset() {
+			mCurrentSize = 0;
+		}
+
+		int getSize() { return mCurrentSize; }
+		Byte* getData() { return mData; };
+
+		void serialize(T value) {
 			value.serialize(this);
 		}
 
@@ -36,23 +58,22 @@ namespace shared {
 			return base;
 		}
 
-		void serializeInt(int x) {
+		void writeInt(int x) {
 			tryGrow(sizeof(int));
 			memccpy(&mData[mCurrentSize], &x, 0, sizeof(int));
 			mCurrentSize += sizeof(int);
 		}
 		
-		void serializeString(std::string x) {
+		void writeString(std::string x) {
 			int strSize = sizeof(char) * x.length();
+			writeInt(strSize);
 			tryGrow(strSize);
-			memccpy(&mData[mCurrentSize], &strSize, 0, sizeof(int));
-			mCurrentSize += sizeof(int);
-			memccpy(&mData[mCurrentSize], x.c_str(), 0, sizeof(char) * x.length());
+			memccpy(&mData[mCurrentSize], x.c_str(), 0, strSize);
 			mCurrentSize += strSize;
 		}
 
 	private:
-		Byte* mData;
+		Byte* mData = NULL;
 		int mCurrentSize = 0;
 		int mCurrentCapacity = 0;
 		void tryGrow(int nextSize) {

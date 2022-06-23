@@ -5,6 +5,7 @@
 #include <thread>
 #include <filesystem>
 #include <unordered_map>
+#include <vector>
 
 namespace client {
 	enum class FileChangeType {
@@ -19,7 +20,7 @@ namespace client {
 		std::string filePath;
 	};
 
-	typedef std::function<void(FileChangeEvent)> FileWatchFunc;
+	typedef std::function<void(std::vector<FileChangeEvent>)> FileWatchFunc;
 
 	class FileWatcher {
 	public:

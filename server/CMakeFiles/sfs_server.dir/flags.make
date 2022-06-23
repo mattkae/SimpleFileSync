@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DBOOST_SYSTEM_NO_LIB
 
-CXX_INCLUDES = -I/home/matthewk/Projects/SimpleFileSync/server/include
+CXX_INCLUDES = -I/home/matthewk/Projects/SimpleFileSync/server/include -I/home/matthewk/Projects/SimpleFileSync/server/../shared/include
 
 CXX_FLAGS = -std=gnu++20
 
