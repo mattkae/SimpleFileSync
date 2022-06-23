@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/sfs_client.dir/src/main.cpp.o CMakeFiles/sfs_client.dir/src/app.cpp.o CMakeFiles/sfs_client.dir/src/config.cpp.o CMakeFiles/sfs_client.dir/src/file_watcher.cpp.o -o sfs_client  /usr/lib/libboost_system.a ../shared/build/libsfs_shared.a 
