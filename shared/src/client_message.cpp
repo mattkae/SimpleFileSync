@@ -18,15 +18,16 @@ namespace shared {
 	}
 
 	void ClientMessage::serialize(BinarySerializer<ClientMessage> *serializer) {
-		serializer->writeInt(enumToUnderlying(mData.type));
+		serializer->write(enumToUnderlying(mData.type));
 		switch (mData.type) {
-		case ClientMessageType::Created:
-		case ClientMessageType::Modified:
-			serializer->writeString(mData.filePath);
-			writeFile(serializer);
+		case ClientMessageType::RequestStartComm: {
+			serializer->write<size_t>(mData.numberOfMessages);
 			break;
-		case ClientMessageType::Deleted:
-		serializer->writeString(mData.filePath);
+		}
+		case ClientMessageType::ChangeEvent:
+			serializer->write(enumToUnderlying(mData.event.type));
+			serializer->write(mData.event.timeModifiedUtcMs);
+			serializer->writeString(mData.event.path);
 			break;
 		default:
 			break;
@@ -35,7 +36,7 @@ namespace shared {
 
 	void ClientMessage::writeFile(BinarySerializer<ClientMessage> * serializer) {
 	    constexpr auto read_size = std::size_t(4096);
-		auto stream = std::ifstream(mData.filePath.data());
+		auto stream = std::ifstream(mData.event.path.data());
 		stream.exceptions(std::ios_base::badbit);
     
 		auto out = std::string();
@@ -47,8 +48,18 @@ namespace shared {
 	}
 
 	void ClientMessage::deserialize(BinaryDeserializer<ClientMessage> *serializer) {
-		mData.type = static_cast<ClientMessageType>(serializer->readInt());
+		mData.type = static_cast<ClientMessageType>(serializer->read<int>());
 		switch (mData.type) {
+		case ClientMessageType::RequestStartComm: {
+			mData.numberOfMessages = serializer->read<size_t>();
+			break;
+		}
+		case ClientMessageType::ChangeEvent: {
+			mData.event.type = (EventType)serializer->read<int>();
+			mData.event.timeModifiedUtcMs = serializer->read<long>();
+			mData.event.path = serializer->readString();
+			break;
+		}
 		default:
 			break;
 		}

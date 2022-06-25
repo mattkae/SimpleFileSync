@@ -25,7 +25,7 @@ namespace client {
 		    mPaths[file.path().string()] = std::filesystem::last_write_time(file);
 		}
 
-		std::vector<FileChangeEvent> eventList;
+		std::vector<shared::Event> eventList;
 		while (mIsRunning) {
 			eventList.clear();
 			std::this_thread::sleep_for(delay);
@@ -33,9 +33,9 @@ namespace client {
 			auto it = mPaths.begin();
 			while (it != mPaths.end()) {
 				if (!std::filesystem::exists(it->first)) {
-					FileChangeEvent event;
-					event.type = FileChangeType::Deleted;
-					event.filePath = it->first;
+					shared::Event event;
+					event.type = shared::EventType::Deleted;
+					event.path = it->first;
 					eventList.push_back(event);
 					it = mPaths.erase(it);
 				}
@@ -50,16 +50,18 @@ namespace client {
 	 
 				if(!mPaths.contains(file.path())) {
 					mPaths[file.path().string()] = lastWriteTime;
-					FileChangeEvent event;
-					event.type = FileChangeType::Created;
-					event.filePath = file.path().string();
+					shared::Event event;
+					event.type = shared::EventType::Created;
+					event.path = file.path().string();
+					event.timeModifiedUtcMs = file.last_write_time().time_since_epoch().count();
 					eventList.push_back(event);
 				} else {
 					if(mPaths[file.path().string()] != lastWriteTime) {
 						mPaths[file.path().string()] = lastWriteTime;
-						FileChangeEvent event;
-						event.type = FileChangeType::Modified;
-						event.filePath = file.path().string();
+						shared::Event event;
+						event.type = shared::EventType::Modified;
+						event.path = file.path().string();
+						event.timeModifiedUtcMs = file.last_write_time().time_since_epoch().count();
 						eventList.push_back(event);
 					}
 				}

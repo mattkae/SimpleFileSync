@@ -4,6 +4,7 @@ project(sfs_shared)
 add_library(${PROJECT_NAME} STATIC 
   src/client_message.cpp
   src/server_message.cpp
+  src/hash_calculator.cpp
 )
 
 target_include_directories(${PROJECT_NAME}

@@ -5,6 +5,7 @@
 #include "client_message.hpp"
 #include "file_watcher.hpp"
 #include "server_message.hpp"
+#include "event.hpp"
 #include <string>
 
 namespace client {
@@ -22,7 +23,7 @@ namespace client {
 		void calculateNextHash();
 		
 	private:
-		void onDirectoryChange(std::vector<client::FileChangeEvent> eventList);
+		void onDirectoryChange(std::vector<shared::Event> eventList);
 		shared::Byte mResponseBuffer[DEFAULT_BUF_SIZE];
 		
 		client::Config mConfig;

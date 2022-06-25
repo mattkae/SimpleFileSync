@@ -10,6 +10,7 @@ namespace shared {
 	struct BinaryDeserializerOptions {
         Byte* data = NULL;
 		size_t dataSize = 0;
+		size_t cursorOffset = 0;
 	};
 	
 	template <typename T>
@@ -22,31 +23,31 @@ namespace shared {
 		void init(BinaryDeserializerOptions bso) {
 			mSize = bso.dataSize;
             mData = bso.data;
+			mCursor = bso.cursorOffset;
 		}
 
 		int getSize() { return mSize; }
 		Byte* getData() { return mData; };
 
-		T deserialize() {
-			T base;
-			base.deserialize(this);
-			return base;
+		size_t deserialize(T& out) {
+			out.deserialize(this);
+			return mCursor;
 		}
 
-		int readInt() {
-			if (!canRead(sizeof(int))) {
+		template<typename S>
+		S read() {
+			if (!canRead(sizeof(S))) {
 				std::cerr << "Failed to read integer" << std::endl;
 				return -1;
 			}
 
-			int i = mData[mCursor];
+			S s = mData[mCursor];
 			mCursor += sizeof(int);
-			std::cout << i << std::endl;
-			return i;
+			return s;
 		}
 
 		std::string readString() {
-			int l = readInt();
+			int l = read<int>();
 			std::string s;
 
 			if (!canRead(l)) {
@@ -54,7 +55,9 @@ namespace shared {
 				return s;
 			}
 			
-			s = std::string(mData + mCursor, mData + mCursor + l);
+			auto start = mCursor;
+			auto end = start + l;
+			s = std::string(mData + start, end - start);
 			std::cout << s << std::endl;
 			mCursor += l;
 			return s;

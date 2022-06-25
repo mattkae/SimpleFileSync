@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <ctype.h>
+#include "event.hpp"
 
 namespace shared {
 
@@ -11,16 +13,17 @@ namespace shared {
 	
 	enum class ClientMessageType {
 		None = 0,
-		RequestStatus,
+		RequestStartComm,
 		RequestEndComm,
-		Created,
-		Deleted,
-		Modified,
+		ChangeEvent
 	};
+	
 
 	struct ClientMessageData {
 		ClientMessageType type;
-		std::string filePath = "";
+		size_t numberOfMessages;
+	    size_t hash;
+		Event event;
 	};
 
 	class ClientMessage {

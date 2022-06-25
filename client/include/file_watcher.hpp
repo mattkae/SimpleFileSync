@@ -6,21 +6,10 @@
 #include <filesystem>
 #include <unordered_map>
 #include <vector>
+#include "event.hpp"
 
 namespace client {
-	enum class FileChangeType {
-		None = 0,
-		Created,
-		Modified,
-		Deleted
-	};
-
-	struct FileChangeEvent {
-		FileChangeType type;
-		std::string filePath;
-	};
-
-	typedef std::function<void(std::vector<FileChangeEvent>)> FileWatchFunc;
+	typedef std::function<void(std::vector<shared::Event>)> FileWatchFunc;
 
 	class FileWatcher {
 	public:
