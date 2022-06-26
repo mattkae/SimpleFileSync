@@ -1,14 +1,14 @@
 
 #pragma once
 #include <string>
-namespace client {
-	class Config {
-	public:
-		Config() { }
-		Config(std::string configPath);
-		~Config();
+#include "base_config.hpp"
 
-		bool load();
+namespace client {
+	class Config: public shared::BaseConfig {
+	public:
+		Config() :shared::BaseConfig() { }
+		Config(std::string mPath) : shared::BaseConfig(mPath) { }
+		virtual bool processToken(std::string key, std::string value) override;
 		std::string getDirectory();
 		std::string getIp();
 		int getPort();

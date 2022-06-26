@@ -3,17 +3,20 @@
 #include "config.hpp"
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
+#include <cstddef>
 #include <iostream>
 #include <filesystem>
 #include <string>
 #include "file_watcher.hpp"
+#include "save_area.hpp"
 #include "serializer.hpp"
 #include "server_message.hpp"
 #include "hash_calculator.hpp"
 
 namespace client {
 	App::App() {
-		mConfig = client::Config("../data/config.conf");
+		mConfig = client::Config(shared::getSaveAreaPath("client.conf"));
+		mConfig.load();
 		auto bso = shared::BinarySerializerOptions();
 		mClientSerializer = shared::BinarySerializer<shared::ClientMessage>(bso);
 		mFw = client::FileWatcher([this](std::vector<shared::Event> eventList) {
@@ -24,9 +27,13 @@ namespace client {
 	App::~App() {
 	}
 
+	size_t App::getCurrentHash() {
+		return mHash;
+	}
+
 	void App::onDirectoryChange(std::vector<shared::Event> eventList) {
 		std::cout << "Processing next client update..." << std::endl;
-		client::Config globalConfig("../data/config.conf");
+		client::Config globalConfig(shared::getSaveAreaPath("client.conf"));
 		boost::asio::io_service ios;
 		std::string host = globalConfig.getIp();
 		int port = globalConfig.getPort();

@@ -1,14 +1,12 @@
 #pragma once
+#include "base_config.hpp"
 #include <string>
 namespace server {
-	class Config {
+	class Config: public shared::BaseConfig {
 	public:
-		Config(std::string configPath);
-		~Config();
-
-		bool load();
-		void beginWatch();
-		void endWatch();
+		Config() :shared::BaseConfig() { }
+		Config(std::string mPath) : shared::BaseConfig(mPath) { }
+		bool processToken(std::string key, std::string value);
 		std::string getDirectory();
 	private:
 		std::string mConfigPath;

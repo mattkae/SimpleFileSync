@@ -8,12 +8,14 @@
 #include "client_message.hpp"
 #include "serializer.hpp"
 #include "deserializer.hpp"
+#include "save_area.hpp"
 
 int main() {
-	server::Config globalConfig("../data/config.conf");
+	server::Config globalConfig(shared::getSaveAreaPath("server.conf"));
+	globalConfig.load();
 	if (!std::filesystem::is_directory(globalConfig.getDirectory()) || !std::filesystem::exists(globalConfig.getDirectory())) {
-		std::filesystem::create_directory(globalConfig.getDirectory());
-		std::cout << "Creating directory defined in the configuration...";
+		std::cout << "Creating directory defined in the configuration: " << globalConfig.getDirectory() << std::endl;
+		std::filesystem::create_directories(globalConfig.getDirectory());
 	}
 
 	shared::BinarySerializer<shared::ServerMessage> serverSerializer;

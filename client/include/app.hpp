@@ -6,6 +6,7 @@
 #include "file_watcher.hpp"
 #include "server_message.hpp"
 #include "event.hpp"
+#include <cstddef>
 #include <string>
 
 namespace client {
@@ -19,8 +20,7 @@ namespace client {
 		int getCurrentVersion();
 		void bumpCurrentVersion();
 		
-		std::string getCurrentHash();
-		void calculateNextHash();
+		size_t getCurrentHash();
 		
 	private:
 		void onDirectoryChange(std::vector<shared::Event> eventList);
@@ -31,6 +31,6 @@ namespace client {
 		client::FileWatcher mFw;
 
 		int mVersion = -1;
-		std::string mHash = "";
+		size_t mHash = 0;
 	};
 };
