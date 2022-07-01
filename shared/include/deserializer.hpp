@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 #include <cstring>
 #include <ostream>
 #include <string>
@@ -26,7 +27,8 @@ namespace shared {
 			mCursor = bso.cursorOffset;
 		}
 
-		int getSize() { return mSize; }
+		size_t getSize() { return mSize; }
+		size_t getCursor() { return mCursor; }
 		Byte* getData() { return mData; };
 
 		size_t deserialize(T& out) {
@@ -37,17 +39,18 @@ namespace shared {
 		template<typename S>
 		S read() {
 			if (!canRead(sizeof(S))) {
-				std::cerr << "Failed to read integer" << std::endl;
+				std::cerr << "Failed to read type" << std::endl;
 				return -1;
 			}
 
-			S s = mData[mCursor];
-			mCursor += sizeof(int);
+			S s;
+			memcpy(&s, &mData[mCursor], sizeof(S));
+			mCursor += sizeof(S);
 			return s;
 		}
 
 		std::string readString() {
-			int l = read<int>();
+			size_t l = read<size_t>();
 			std::string s;
 
 			if (!canRead(l)) {
@@ -58,7 +61,6 @@ namespace shared {
 			auto start = mCursor;
 			auto end = start + l;
 			s = std::string(mData + start, end - start);
-			std::cout << s << std::endl;
 			mCursor += l;
 			return s;
 		}

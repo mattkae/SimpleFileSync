@@ -61,16 +61,15 @@ namespace shared {
 		template<typename S>
 		void write(S x) {
 			tryGrow(sizeof(S));
-			memccpy(&mData[mCurrentSize], &x, 0, sizeof(S));
+			memcpy(&mData[mCurrentSize], &x, sizeof(S));
 			mCurrentSize += sizeof(S);
 		}
 		
 		void writeString(std::string x) {
-			int strSize = sizeof(char) * x.length();
-			write(strSize);
-			tryGrow(strSize);
-			memccpy(&mData[mCurrentSize], x.c_str(), 0, strSize);
-			mCurrentSize += strSize;
+			write<size_t>(x.length());
+			tryGrow(x.length());
+			memccpy(&mData[mCurrentSize], x.c_str(), 0, x.length());
+			mCurrentSize += x.length();
 		}
 
 	private:

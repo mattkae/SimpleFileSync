@@ -4,6 +4,7 @@
 #include "deserializer.hpp"
 #include "util.hpp"
 #include <fstream>
+#include <iterator>
 #include <vector>
 
 namespace shared {
@@ -25,7 +26,8 @@ namespace shared {
 			break;
 		}
 		case ClientMessageType::ChangeEvent:
-			serializer->write(enumToUnderlying(mData.event.type));
+			serializer->write<int>(enumToUnderlying(mData.event.type));
+			serializer->write<size_t>(mData.hash);
 			serializer->write(mData.event.timeModifiedUtcMs);
 			serializer->writeString(mData.event.path);
 			break;
@@ -56,6 +58,8 @@ namespace shared {
 		}
 		case ClientMessageType::ChangeEvent: {
 			mData.event.type = (EventType)serializer->read<int>();
+			mData.hash = serializer->read<size_t>();
+			std::cout << (int)mData.event.type << " " << mData.hash << std::endl;
 			mData.event.timeModifiedUtcMs = serializer->read<long>();
 			mData.event.path = serializer->readString();
 			break;

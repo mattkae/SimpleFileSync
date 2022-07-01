@@ -65,7 +65,7 @@ namespace shared {
             value = results[1];
 
             if (!processToken(key, value)) {
-                std::cerr << "Unknown key option (" << mConfigPath << " #" << lineNumber << ")" << std::endl;
+                //std::cerr << "Unknown key option (" << mConfigPath << " #" << lineNumber << ")" << std::endl;
             }			 	
         }
 

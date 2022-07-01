@@ -11,7 +11,7 @@
 
 namespace server {
     App::App() {
-        mState = shared::State(shared::getSaveAreaPath("client_saved.data"));
+        mState = shared::State(shared::getSaveAreaPath("server_saved.data"));
 		mState.load();
 
         mConfig = server::Config(shared::getSaveAreaPath("server.conf"));
@@ -57,6 +57,7 @@ namespace server {
                     case shared::ClientMessageType::RequestStartComm: {
                         shared::ServerMessageData data;
                         data.type = shared::ServerMessageType::ResponseStartComm;
+                        data.hash =  mState.hash;
                         shared::ServerMessage response(data);
                         boost::system::error_code ignored_error;
                         mServerSerializer.reset();
