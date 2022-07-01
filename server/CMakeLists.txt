@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 set(SOURCES
 	src/main.cpp
-	src/server.cpp
+	src/app.cpp
 	src/config.cpp
 )
 set(Boost_USE_STATIC_LIBS ON)

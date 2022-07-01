@@ -9,6 +9,7 @@ add_library(${PROJECT_NAME} STATIC
   src/hash_calculator.cpp
   src/base_config.cpp
   src/save_area.cpp
+  src/state.cpp
 )
 
 target_include_directories(${PROJECT_NAME}

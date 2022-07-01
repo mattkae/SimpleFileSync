@@ -18,7 +18,7 @@ namespace shared {
 	}
 
 	void ClientMessage::serialize(BinarySerializer<ClientMessage> *serializer) {
-		serializer->write(enumToUnderlying(mData.type));
+		serializer->write<int>(enumToUnderlying(mData.type));
 		switch (mData.type) {
 		case ClientMessageType::RequestStartComm: {
 			serializer->write<size_t>(mData.numberOfMessages);

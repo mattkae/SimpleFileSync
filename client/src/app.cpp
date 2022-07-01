@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <iostream>
 #include <filesystem>
+#include <iterator>
 #include <string>
 #include "file_watcher.hpp"
 #include "save_area.hpp"
@@ -15,6 +16,9 @@
 
 namespace client {
 	App::App() {
+		mAppData = shared::State(shared::getSaveAreaPath("client_saved.data"));
+		mAppData.load();
+
 		mConfig = client::Config(shared::getSaveAreaPath("client.conf"));
 		mConfig.load();
 		auto bso = shared::BinarySerializerOptions();
@@ -27,16 +31,14 @@ namespace client {
 	App::~App() {
 	}
 
-	size_t App::getCurrentHash() {
-		return mHash;
-	}
-
 	void App::onDirectoryChange(std::vector<shared::Event> eventList) {
 		std::cout << "Processing next client update..." << std::endl;
 		client::Config globalConfig(shared::getSaveAreaPath("client.conf"));
+		globalConfig.load();
 		boost::asio::io_service ios;
 		std::string host = globalConfig.getIp();
 		int port = globalConfig.getPort();
+		std::cout << "Making connection to " << host << ":" << port << std::endl;
 		boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(host), port);
 		boost::asio::ip::tcp::socket socket(ios);
 		socket.connect(endpoint);
@@ -47,6 +49,7 @@ namespace client {
 		startCommData.type = shared::ClientMessageType::RequestStartComm;
 		startCommData.numberOfMessages = eventList.size();
 		shared::ClientMessage startComm(startCommData);
+		mClientSerializer.reset();
 		startComm.serialize(&mClientSerializer);
 		boost::system::error_code error;
 		socket.wait(socket.wait_write);
@@ -76,7 +79,7 @@ namespace client {
 			shared::ClientMessageData fileUpdateData;
 			fileUpdateData.type = shared::ClientMessageType::ChangeEvent;
 			fileUpdateData.event = event;
-			fileUpdateData.hash = shared::getHash(0, event);
+			fileUpdateData.hash = shared::getHash(mAppData.hash, event);
 			switch (event.type) {
 			case shared::EventType::Created: {
 				std::cout << "Created file: " << event.path << std::endl;
@@ -95,16 +98,21 @@ namespace client {
 				break;
 			}
 
-			std::cout << "Hash: " << fileUpdateData.hash << std::endl;
+			std::cout << "Writing new hash to disk: " << fileUpdateData.hash << "..." << std::endl;
+			mAppData.hash = fileUpdateData.hash;
+			mAppData.write();
+			std::cout << "Hash written to disk." << std::endl;
 
 			shared::ClientMessage fileUpdate(fileUpdateData);
-
 			socket.wait(socket.wait_write);
-			std::string message = "";
-			boost::array<char, 128> buf;
-			std::copy(message.begin(), message.end(), buf.begin());
-			boost::system::error_code error;
-			socket.write_some(boost::asio::buffer(buf, message.size()), error);
+			mClientSerializer.reset();
+			fileUpdate.serialize(&mClientSerializer);
+			socket.wait(socket.wait_write);
+			socket.write_some(
+				boost::asio::buffer(
+					mClientSerializer.getData(), 
+					mClientSerializer.getSize()
+				),  error);
 		}
 
 		// Tell the server that we won't be sending data anymore and close the connection
@@ -120,7 +128,7 @@ namespace client {
 				mClientSerializer.getSize()
 			),  error);
 
-		std::cout << "Closing connection." << std::endl;
+		std::cout << "Closing connection." << std::endl << std::endl;
 		socket.close();	
 		return;
 	}

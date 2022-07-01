@@ -6,6 +6,7 @@
 #include "file_watcher.hpp"
 #include "server_message.hpp"
 #include "event.hpp"
+#include "state.hpp"
 #include <cstddef>
 #include <string>
 
@@ -20,8 +21,6 @@ namespace client {
 		int getCurrentVersion();
 		void bumpCurrentVersion();
 		
-		size_t getCurrentHash();
-		
 	private:
 		void onDirectoryChange(std::vector<shared::Event> eventList);
 		shared::Byte mResponseBuffer[DEFAULT_BUF_SIZE];
@@ -30,7 +29,6 @@ namespace client {
 		shared::BinarySerializer<shared::ClientMessage> mClientSerializer;
 		client::FileWatcher mFw;
 
-		int mVersion = -1;
-		size_t mHash = 0;
+		shared::State mAppData;
 	};
 };

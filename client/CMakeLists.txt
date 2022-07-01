@@ -6,7 +6,6 @@ set(SOURCES
   src/app.cpp
   src/config.cpp
   src/file_watcher.cpp
-  src/app_data.cpp
 )
 set(CMAKE_CXX_STANDARD 20)
 set(Boost_USE_STATIC_LIBS ON)
