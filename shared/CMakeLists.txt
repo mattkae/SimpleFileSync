@@ -10,6 +10,7 @@ add_library(${PROJECT_NAME} STATIC
   src/base_config.cpp
   src/save_area.cpp
   src/state.cpp
+  src/event.cpp
 )
 
 target_include_directories(${PROJECT_NAME}

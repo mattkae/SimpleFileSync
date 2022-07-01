@@ -33,9 +33,10 @@ namespace client {
 			auto it = mPaths.begin();
 			while (it != mPaths.end()) {
 				if (!std::filesystem::exists(it->first)) {
+					const std::filesystem::path filePath = it->first;
 					shared::Event event;
 					event.type = shared::EventType::Deleted;
-					event.path = it->first;
+					event.path = filePath.filename();
 					eventList.push_back(event);
 					it = mPaths.erase(it);
 				}
@@ -47,20 +48,21 @@ namespace client {
 			// Check if a file was created or modified
 			for(auto &file : std::filesystem::recursive_directory_iterator(mDirectory)) {
 				auto lastWriteTime = std::filesystem::last_write_time(file);
+				auto pathname = file.path().filename();
 	 
 				if(!mPaths.contains(file.path())) {
-					mPaths[file.path().string()] = lastWriteTime;
+					mPaths[file.path()] = lastWriteTime;
 					shared::Event event;
 					event.type = shared::EventType::Created;
-					event.path = file.path().string();
+					event.path = pathname;
 					event.timeModifiedUtcMs = file.last_write_time().time_since_epoch().count();
 					eventList.push_back(event);
 				} else {
-					if(mPaths[file.path().string()] != lastWriteTime) {
-						mPaths[file.path().string()] = lastWriteTime;
+					if(mPaths[file.path()] != lastWriteTime) {
+						mPaths[file.path()] = lastWriteTime;
 						shared::Event event;
 						event.type = shared::EventType::Modified;
-						event.path = file.path().string();
+						event.path = pathname;
 						event.timeModifiedUtcMs = file.last_write_time().time_since_epoch().count();
 						eventList.push_back(event);
 					}

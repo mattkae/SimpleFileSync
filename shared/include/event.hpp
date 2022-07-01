@@ -14,4 +14,6 @@ namespace shared {
 		std::string path;
 		long timeModifiedUtcMs;
 	};
+
+	bool executeEvent(const Event& event, const std::string&& mDirectory);
 }
