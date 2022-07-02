@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iterator>
 #include <filesystem>
+#include <spdlog/spdlog.h>
 
 namespace shared {
     BaseConfig::BaseConfig() { }
@@ -25,23 +26,16 @@ namespace shared {
             }
         }
         catch(std::filesystem::filesystem_error const& ex) {
-            std::cout
-                << "what():  " << ex.what() << '\n'
-                << "path1(): " << ex.path1() << '\n'
-                << "path2(): " << ex.path2() << '\n'
-                << "code().value():    " << ex.code().value() << '\n'
-                << "code().message():  " << ex.code().message() << '\n'
-                << "code().category(): " << ex.code().category().name() << '\n';
+            spdlog::error("Failed to initialize config: {0}", ex.what());
         }
     }
 
 
     bool BaseConfig::load() {
-        std::cout << "Loading configuration from path: " << mConfigPath << std::endl;
         std::string line;
         std::ifstream reader(mConfigPath);
         if (!reader) {
-            // @TODO: log error
+            spdlog::error("Failed to load config");
             return false;
         }
 
@@ -50,8 +44,8 @@ namespace shared {
             std::getline(reader, line);
             lineNumber++;
             
-            std::string key;
-            std::string value;
+            std::string key = "";
+            std::string value = "";
             
             std::istringstream iss(line);
             std::vector<std::string> results(std::istream_iterator<std::string>{iss},
@@ -65,7 +59,7 @@ namespace shared {
             value = results[1];
 
             if (!processToken(key, value)) {
-                //std::cerr << "Unknown key option (" << mConfigPath << " #" << lineNumber << ")" << std::endl;
+                spdlog::warn("Unknown key option, config={0}, line={1} key={2}, value={3}", mConfigPath, lineNumber, key, value);
             }			 	
         }
 

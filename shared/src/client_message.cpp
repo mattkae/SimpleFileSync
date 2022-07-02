@@ -54,9 +54,6 @@ namespace shared {
 		}
 		out.append(buf, 0, stream.gcount());
 
-		std::cout << "WROTE CONTENT: " << out << std::endl;
-		std::cout << mData.event.fullpath << std::endl;
-
 		serializer->writeString(out);
 	}
 

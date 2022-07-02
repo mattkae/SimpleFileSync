@@ -9,6 +9,8 @@
 #include "save_area.hpp"
 #include "server_message.hpp"
 #include "hash_calculator.hpp"
+#include "spdlog/common.h"
+#include <spdlog/spdlog.h>
 
 namespace server {
     App::App() {
@@ -18,7 +20,7 @@ namespace server {
         mConfig = server::Config(shared::getSaveAreaPath("server.conf"));
         mConfig.load();
         if (!std::filesystem::is_directory(mConfig.getDirectory()) || !std::filesystem::exists(mConfig.getDirectory())) {
-            std::cout << "Creating directory defined in the configuration: " << mConfig.getDirectory() << std::endl;
+            spdlog::info("Creating directory defined in the configuration: {0}", mConfig.getDirectory());
             std::filesystem::create_directories(mConfig.getDirectory());
         }
     }
@@ -34,7 +36,7 @@ namespace server {
                 boost::asio::ip::tcp::socket socket(io_context);
                 acceptor.accept(socket);
 
-                std::cout << "Client connected." << std::endl;
+                spdlog::info("Client connected.");
                 //socket.set_option(boost::asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO>{ 200 });
 
                 const size_t MAX_BUFF_SIZE = 1024;
@@ -50,10 +52,11 @@ namespace server {
                         shared::ClientMessage incoming;
                         bytesDeserialized += clientSerializer.deserialize(incoming);
 
-                        std::cout << "bytes read: " << bytesRead << " / bytes deserialized: " << bytesDeserialized << std::endl;
+                        spdlog::info("bytes read={0} / bytes deserialized={1}", bytesRead, bytesDeserialized);
 
                         switch (incoming.getData().type) {
                         case shared::ClientMessageType::RequestStartComm: {
+                            spdlog::info("Client is requesting data.");
                             shared::ServerMessageData data;
                             data.type = shared::ServerMessageType::ResponseStartComm;
                             data.hash =  mState.hash;
@@ -62,30 +65,28 @@ namespace server {
                             mServerSerializer.reset();
                             mServerSerializer.serialize(response);
                             boost::asio::write(socket, boost::asio::buffer(mServerSerializer.getData(), mServerSerializer.getSize()), ignored_error);
-                            std::cout << "Client is requesting data." << std::endl;
                             break;
                         }
                         case shared::ClientMessageType::ChangeEvent:
-                            std::cout << "Processing change event." << std::endl;
-                            std::cout << "Hash: " << incoming.getData().hash << std::endl;
+                            spdlog::info("Processing change event, hash={0}", incoming.getData().hash);
                             processChangeEvent(incoming);
                             break;
                         case shared::ClientMessageType::RequestEndComm:
-                            std::cout << "Client requesting termination of communication." << std::endl;
+                            spdlog::info("Client requesting termination of communication.");
                             socket.close();
                             break;
                         default:
-                            std::cout << "Unknown request: " << (int)incoming.getData().type << std::endl;
+                            spdlog::warn("Unknown request: {0}", (int)incoming.getData().type);
                             break;
                         }
                     }
                 }
 
-                std::cout << "Closing client." << std::endl << std::endl;
+                spdlog::info("Closing client.");
                 socket.close();
             }
         } catch (std::exception& e) {
-            std::cerr << e.what() << std::endl;
+            spdlog::error("Exception while talking to client: {0}", e.what());
         }
     }
 
@@ -95,11 +96,11 @@ namespace server {
         
         auto expectedNextHash = shared::getHash(mState.hash, data.event);
         if (expectedNextHash != hash) {
-            std::cerr << "Error: Hashes do not add up! We need to resolve. Expected: " << expectedNextHash << ", Received: " << hash << std::endl;
+            spdlog::error("Hashes do not add up, expected={0}, received={1}", expectedNextHash, hash);;
             return false;
         }
 
-        std::cout << "New hash accepted: " << hash << std::endl;
+        spdlog::info("New hash accepeted, hash={0}", hash);
         mState.hash = hash;
         mState.write();
 

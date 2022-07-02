@@ -14,12 +14,10 @@ namespace shared {
     bool State::processToken(std::string key, std::string value) {
         if (key == "hash") {
             hash = std::stoi(value);
-            std::cout << "Reading hash: " << hash << std::endl;
             return true;
         }
         else if (key == "version") {
             version = std::stoi(value);
-            std::cout << "Reading version: " << version << std::endl;
             return true;
         }
 

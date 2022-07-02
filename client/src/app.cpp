@@ -13,6 +13,7 @@
 #include "serializer.hpp"
 #include "server_message.hpp"
 #include "hash_calculator.hpp"
+#include <spdlog/spdlog.h>
 
 namespace client {
 	App::App() {
@@ -24,7 +25,12 @@ namespace client {
 		auto bso = shared::BinarySerializerOptions();
 		mClientSerializer = shared::BinarySerializer<shared::ClientMessage>(bso);
 		mFw = client::FileWatcher([this](std::vector<shared::Event> eventList) {
-			this->onDirectoryChange(eventList);
+			try {
+				this->onDirectoryChange(eventList);
+			}
+			catch (boost::wrapexcept<boost::system::system_error> e) {
+				spdlog::error("Failed to connect to socket: {0}", e.what());
+			}
 		}, mConfig.getDirectory());
 	}
 
@@ -32,13 +38,13 @@ namespace client {
 	}
 
 	void App::onDirectoryChange(std::vector<shared::Event> eventList) {
-		std::cout << "Processing next client update..." << std::endl;
+		spdlog::info("Processing next client update...");
 		client::Config globalConfig(shared::getSaveAreaPath("client.conf"));
 		globalConfig.load();
 		boost::asio::io_service ios;
 		std::string host = globalConfig.getIp();
 		int port = globalConfig.getPort();
-		std::cout << "Making connection to " << host << ":" << port << std::endl;
+		spdlog::info("Making connection to {0}: {1}", host, port);
 		boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(host), port);
 		boost::asio::ip::tcp::socket socket(ios);
 		socket.connect(endpoint);
@@ -67,12 +73,12 @@ namespace client {
 		mServerSerializer.deserialize(response);
 
 		if (response.getData().type != shared::ServerMessageType::ResponseStartComm) {
-			std::cerr << "Invalid ResponseStartComm message" << std::endl;
+			spdlog::error("Invalid ResponseStartComm message");
 			socket.close();
 			return;
 		}
 
-		std::cout << "ResponseStartComm: Hash - " << response.getData().hash << ", Version - " << response.getData().version << std::endl;
+		spdlog::info("ResponseStartComm: hash={0}, version={1}", response.getData().hash, response.getData().version);
 		
 		// Start sending the events
 		for (auto event : eventList) {
@@ -82,26 +88,26 @@ namespace client {
 			fileUpdateData.hash = shared::getHash(mAppData.hash, event);
 			switch (event.type) {
 			case shared::EventType::Created: {
-				std::cout << "Created file: " << event.path << std::endl;
+				spdlog::info("Created file: {0}", event.path);
 				break;
 			}
 			case shared::EventType::Modified: {
-				std::cout << "Modified file: " << event.path << std::endl;
+				spdlog::info("Modified file: {0}", event.path);
 				break;
 			}
 			case shared::EventType::Deleted: {
-				std::cout << "Deleted file: " << event.path << std::endl;
+				spdlog::info("Deleted file: {0}", event.path);
 				break;
 			}
 			default:
-				std::cerr << "Unknown event type, ignoring: " << (int)event.type << std::endl;
+				spdlog::error("Unknown event type, ignoring: {0}", (int)event.type);
 				break;
 			}
 
-			std::cout << "Writing new hash to disk: " << fileUpdateData.hash << "..." << std::endl;
+			spdlog::info("Writing new hash to disk: {0} ...", fileUpdateData.hash);
 			mAppData.hash = fileUpdateData.hash;
 			mAppData.write();
-			std::cout << "Hash written to disk." << std::endl;
+			spdlog::info("Has written to disk.");
 
 			shared::ClientMessage fileUpdate(fileUpdateData);
 			socket.wait(socket.wait_write);
@@ -128,7 +134,7 @@ namespace client {
 				mClientSerializer.getSize()
 			),  error);
 
-		std::cout << "Closing connection." << std::endl << std::endl;
+		spdlog::info("Closing connection.");
 		socket.close();	
 		return;
 	}

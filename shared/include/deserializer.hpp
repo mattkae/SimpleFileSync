@@ -4,6 +4,7 @@
 #include <ostream>
 #include <string>
 #include <iostream>
+#include <spdlog/spdlog.h>
 
 namespace shared {
 	typedef char Byte;
@@ -39,7 +40,7 @@ namespace shared {
 		template<typename S>
 		S read() {
 			if (!canRead(sizeof(S))) {
-				std::cerr << "Failed to read type" << std::endl;
+				spdlog::error("Failed to read type, type=", typeid(S).name());
 				return -1;
 			}
 
@@ -54,7 +55,7 @@ namespace shared {
 			std::string s;
 
 			if (!canRead(l)) {
-				std::cerr << "Failed to read string" << std::endl;
+				spdlog::error("Failed to read type, type=string");
 				return s;
 			}
 			
