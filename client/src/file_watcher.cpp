@@ -36,6 +36,7 @@ namespace client {
 					const std::filesystem::path filePath = it->first;
 					shared::Event event;
 					event.type = shared::EventType::Deleted;
+					event.fullpath = filePath;
 					event.path = filePath.filename();
 					eventList.push_back(event);
 					it = mPaths.erase(it);
@@ -54,6 +55,7 @@ namespace client {
 					mPaths[file.path()] = lastWriteTime;
 					shared::Event event;
 					event.type = shared::EventType::Created;
+					event.fullpath = file.path();
 					event.path = pathname;
 					event.timeModifiedUtcMs = file.last_write_time().time_since_epoch().count();
 					eventList.push_back(event);
@@ -62,6 +64,7 @@ namespace client {
 						mPaths[file.path()] = lastWriteTime;
 						shared::Event event;
 						event.type = shared::EventType::Modified;
+						event.fullpath = file.path();
 						event.path = pathname;
 						event.timeModifiedUtcMs = file.last_write_time().time_since_epoch().count();
 						eventList.push_back(event);

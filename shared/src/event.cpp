@@ -17,6 +17,7 @@ namespace shared {
                     return false;
                 }
 
+                fs << event.content;
                 fs.close();
                 return true;
             }

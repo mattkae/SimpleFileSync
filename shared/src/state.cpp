@@ -5,7 +5,7 @@ namespace shared {
     State::State(): BaseConfig() { }
 
     State::State(std::string mPath): BaseConfig(mPath) {
-        // TODO: This is temporary. We are purposefully starting from a blank State slate everytime
+        // @TODO: This is temporary. We are purposefully starting from a blank State slate everytime
         std::ofstream ofs;
         ofs.open(mPath, std::ofstream::out | std::ofstream::trunc);
         ofs.close();

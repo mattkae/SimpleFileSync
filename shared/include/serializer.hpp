@@ -65,7 +65,7 @@ namespace shared {
 			mCurrentSize += sizeof(S);
 		}
 		
-		void writeString(std::string x) {
+		void writeString(const std::string& x) {
 			write<size_t>(x.length());
 			tryGrow(x.length());
 			memccpy(&mData[mCurrentSize], x.c_str(), 0, x.length());

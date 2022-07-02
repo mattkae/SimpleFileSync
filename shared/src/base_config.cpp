@@ -41,7 +41,7 @@ namespace shared {
         std::string line;
         std::ifstream reader(mConfigPath);
         if (!reader) {
-            // TODO: log error
+            // @TODO: log error
             return false;
         }
 

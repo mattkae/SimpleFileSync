@@ -1,5 +1,6 @@
 
 #include "client_message.hpp"
+#include "event.hpp"
 #include "serializer.hpp"
 #include "deserializer.hpp"
 #include "util.hpp"
@@ -30,6 +31,10 @@ namespace shared {
 			serializer->write<size_t>(mData.hash);
 			serializer->write(mData.event.timeModifiedUtcMs);
 			serializer->writeString(mData.event.path);
+
+			if (mData.event.type == shared::EventType::Created || mData.event.type == shared::EventType::Modified) {
+				writeFile(serializer);
+			}
 			break;
 		default:
 			break;
@@ -37,16 +42,22 @@ namespace shared {
 	}
 
 	void ClientMessage::writeFile(BinarySerializer<ClientMessage> * serializer) {
+		// @TODO Investigate efficiency as files get larger
 	    constexpr auto read_size = std::size_t(4096);
-		auto stream = std::ifstream(mData.event.path.data());
+		auto stream = std::ifstream(mData.event.fullpath);
 		stream.exceptions(std::ios_base::badbit);
     
 		auto out = std::string();
 		auto buf = std::string(read_size, '\0');
 		while (stream.read(& buf[0], read_size)) {
-			serializer->writeString(buf);
+			out.append(buf, 0, stream.gcount());
 		}
-		serializer->writeString(buf);
+		out.append(buf, 0, stream.gcount());
+
+		std::cout << "WROTE CONTENT: " << out << std::endl;
+		std::cout << mData.event.fullpath << std::endl;
+
+		serializer->writeString(out);
 	}
 
 	void ClientMessage::deserialize(BinaryDeserializer<ClientMessage> *serializer) {
@@ -59,9 +70,13 @@ namespace shared {
 		case ClientMessageType::ChangeEvent: {
 			mData.event.type = (EventType)serializer->read<int>();
 			mData.hash = serializer->read<size_t>();
-			std::cout << (int)mData.event.type << " " << mData.hash << std::endl;
 			mData.event.timeModifiedUtcMs = serializer->read<long>();
 			mData.event.path = serializer->readString();
+
+			if (mData.event.type == shared::EventType::Created || mData.event.type == shared::EventType::Modified) {
+				mData.event.content = serializer->readString();
+			}
+
 			break;
 		}
 		default:
