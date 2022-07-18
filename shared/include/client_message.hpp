@@ -21,7 +21,6 @@ namespace shared {
 
 	struct ClientMessageData {
 		ClientMessageType type;
-		size_t numberOfMessages;
 	    size_t hash;
 		Event event;
 	};

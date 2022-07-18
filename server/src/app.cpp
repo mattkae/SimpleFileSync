@@ -1,4 +1,5 @@
 #include "app.hpp"
+#include <exception>
 #include <filesystem>
 #include <iostream>
 #include <boost/array.hpp>
@@ -11,6 +12,7 @@
 #include "hash_calculator.hpp"
 #include "spdlog/common.h"
 #include <spdlog/spdlog.h>
+#include <unistd.h>
 
 namespace server {
     App::App() {
@@ -56,10 +58,23 @@ namespace server {
 
                         switch (incoming.getData().type) {
                         case shared::ClientMessageType::RequestStartComm: {
-                            spdlog::info("Client is requesting data.");
+                            spdlog::info("Client has begun communication.");
+                            auto clientHash = incoming.getData().hash;
+                            // Hash can either be:
+                            //      1) Current hash so do nothing
+                            //      2) Past hash so catch the client up
+                            //      3) Future hash so ask the client to catch us up
+
                             shared::ServerMessageData data;
-                            data.type = shared::ServerMessageType::ResponseStartComm;
-                            data.hash =  mState.hash;
+                            if (clientHash == mState.getHash()) {
+                                spdlog::info("Clients are in sync.");
+                                data.type = shared::ServerMessageType::ResponseStartComm;
+                            }
+                            else {
+                                spdlog::warn("Unimplemented");
+                            }
+
+
                             shared::ServerMessage response(data);
                             boost::system::error_code ignored_error;
                             mServerSerializer.reset();
@@ -82,8 +97,7 @@ namespace server {
                     }
                 }
 
-                spdlog::info("Closing client.");
-                socket.close();
+                spdlog::info("Client closed.");
             }
         } catch (std::exception& e) {
             spdlog::error("Exception while talking to client: {0}", e.what());
@@ -94,14 +108,14 @@ namespace server {
         auto data = incoming.getData();
         auto hash = data.hash;
         
-        auto expectedNextHash = shared::getHash(mState.hash, data.event);
+        auto expectedNextHash = shared::getHash(mState.getHash(), data.event);
         if (expectedNextHash != hash) {
             spdlog::error("Hashes do not add up, expected={0}, received={1}", expectedNextHash, hash);;
             return false;
         }
 
         spdlog::info("New hash accepeted, hash={0}", hash);
-        mState.hash = hash;
+        mState.addHash(hash);
         mState.write();
 
         shared::executeEvent(data.event, mConfig.getDirectory());

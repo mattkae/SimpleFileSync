@@ -15,11 +15,7 @@ namespace shared {
     void ServerMessage::serialize(BinarySerializer<ServerMessage> *serializer) {
         serializer->write(enumToUnderlying(mData.type));
         switch (mData.type) {
-            case ServerMessageType::ResponseStartComm: {
-                serializer->write(mData.version);
-                serializer->write(mData.hash);
-                break;
-            }
+            case ServerMessageType::ResponseStartComm:
             default:
                 break;
         }
@@ -28,11 +24,7 @@ namespace shared {
     void ServerMessage::deserialize(BinaryDeserializer<ServerMessage> *serializer) {
         mData.type = static_cast<ServerMessageType>(serializer->read<int>());
         switch (mData.type) {
-            case ServerMessageType::ResponseStartComm: {
-                mData.version = serializer->read<int>();
-                mData.hash = serializer->read<size_t>();
-                break;
-            }
+            case ServerMessageType::ResponseStartComm:
             default:
                 break;
         }

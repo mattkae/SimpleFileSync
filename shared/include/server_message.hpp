@@ -1,7 +1,9 @@
 #pragma once
+#include "event.hpp"
 #include <cstddef>
 #include <string>
 #include <ctype.h>
+#include <vector>
 
 namespace shared {
 
@@ -13,6 +15,8 @@ namespace shared {
 	
 	enum class ServerMessageType {
 		None = 0,
+		ResponseTellClientToUpdate,
+		ResponseAskClientForUpdate,
 		ResponseStartComm,
 		ReponseEndComm,
 		Created,
@@ -22,9 +26,8 @@ namespace shared {
 
 	struct ServerMessageData {
 		ServerMessageType type;
-		int version = 1;
-		size_t hash = 0;
 		std::string filePath = "";
+		std::vector<shared::Event> eventsToUpdate;
 	};
 
 	class ServerMessage {

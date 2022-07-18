@@ -53,7 +53,7 @@ namespace client {
 		// start communication in response
 		shared::ClientMessageData startCommData;
 		startCommData.type = shared::ClientMessageType::RequestStartComm;
-		startCommData.numberOfMessages = eventList.size();
+		startCommData.hash = mAppData.getHash();
 		shared::ClientMessage startComm(startCommData);
 		mClientSerializer.reset();
 		startComm.serialize(&mClientSerializer);
@@ -72,20 +72,21 @@ namespace client {
 		shared::ServerMessage response;
 		mServerSerializer.deserialize(response);
 
-		if (response.getData().type != shared::ServerMessageType::ResponseStartComm) {
-			spdlog::error("Invalid ResponseStartComm message");
-			socket.close();
-			return;
+		switch (response.getData().type) {
+			case shared::ServerMessageType::ResponseStartComm:
+				break;
+			default:
+				spdlog::error("Invalid initial response from server: type={0}", (int)response.getData().type);
+				socket.close();
+				return;
 		}
 
-		spdlog::info("ResponseStartComm: hash={0}, version={1}", response.getData().hash, response.getData().version);
-		
 		// Start sending the events
 		for (auto event : eventList) {
 			shared::ClientMessageData fileUpdateData;
 			fileUpdateData.type = shared::ClientMessageType::ChangeEvent;
 			fileUpdateData.event = event;
-			fileUpdateData.hash = shared::getHash(mAppData.hash, event);
+			fileUpdateData.hash = shared::getHash(mAppData.getHash(), event);
 			switch (event.type) {
 			case shared::EventType::Created: {
 				spdlog::info("Created file: {0}", event.path);
@@ -105,7 +106,7 @@ namespace client {
 			}
 
 			spdlog::info("Writing new hash to disk: {0} ...", fileUpdateData.hash);
-			mAppData.hash = fileUpdateData.hash;
+			mAppData.addHash(fileUpdateData.hash);
 			mAppData.write();
 			spdlog::info("Has written to disk.");
 

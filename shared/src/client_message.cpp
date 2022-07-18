@@ -23,7 +23,7 @@ namespace shared {
 		serializer->write<int>(enumToUnderlying(mData.type));
 		switch (mData.type) {
 		case ClientMessageType::RequestStartComm: {
-			serializer->write<size_t>(mData.numberOfMessages);
+			serializer->write<size_t>(mData.hash);
 			break;
 		}
 		case ClientMessageType::ChangeEvent:
@@ -61,7 +61,7 @@ namespace shared {
 		mData.type = static_cast<ClientMessageType>(serializer->read<int>());
 		switch (mData.type) {
 		case ClientMessageType::RequestStartComm: {
-			mData.numberOfMessages = serializer->read<size_t>();
+			mData.hash = serializer->read<size_t>();
 			break;
 		}
 		case ClientMessageType::ChangeEvent: {
