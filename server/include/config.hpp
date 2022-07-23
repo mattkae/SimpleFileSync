@@ -8,10 +8,12 @@ namespace server {
 		Config(std::string mPath) : shared::BaseConfig(mPath) { }
 		bool processToken(std::string key, std::string value);
 		std::string getDirectory();
+		int getPort();
 	private:
 		std::string mConfigPath;
 
 		std::string mWatchDirectory;
 		int mMaxRevisions;
+		int mPort;
 	};
 };

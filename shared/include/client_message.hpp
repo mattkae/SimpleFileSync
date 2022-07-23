@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <ctype.h>
+#include <vector>
 #include "event.hpp"
 
 namespace shared {
@@ -15,14 +16,15 @@ namespace shared {
 		None = 0,
 		RequestStartComm,
 		RequestEndComm,
-		ChangeEvent
+		ChangeEvent,
+		RequestResolution
 	};
-	
 
 	struct ClientMessageData {
 		ClientMessageType type;
 	    size_t hash;
 		Event event;
+		std::vector<size_t> hashList;
 	};
 
 	class ClientMessage {

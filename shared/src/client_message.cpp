@@ -27,8 +27,8 @@ namespace shared {
 			break;
 		}
 		case ClientMessageType::ChangeEvent:
-			serializer->write<int>(enumToUnderlying(mData.event.type));
 			serializer->write<size_t>(mData.hash);
+			serializer->write<int>(enumToUnderlying(mData.event.type));
 			serializer->write(mData.event.timeModifiedUtcMs);
 			serializer->writeString(mData.event.path);
 
@@ -65,8 +65,8 @@ namespace shared {
 			break;
 		}
 		case ClientMessageType::ChangeEvent: {
-			mData.event.type = (EventType)serializer->read<int>();
 			mData.hash = serializer->read<size_t>();
+			mData.event.type = (EventType)serializer->read<int>();
 			mData.event.timeModifiedUtcMs = serializer->read<long>();
 			mData.event.path = serializer->readString();
 

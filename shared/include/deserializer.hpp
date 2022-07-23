@@ -5,10 +5,9 @@
 #include <string>
 #include <iostream>
 #include <spdlog/spdlog.h>
+#include "type.hpp"
 
 namespace shared {
-	typedef char Byte;
-
 	struct BinaryDeserializerOptions {
         Byte* data = NULL;
 		size_t dataSize = 0;
@@ -61,7 +60,7 @@ namespace shared {
 			
 			auto start = mCursor;
 			auto end = start + l;
-			s = std::string(mData + start, end - start);
+			s = std::string((char*)mData + start, end - start);
 			mCursor += l;
 			return s;
 		}

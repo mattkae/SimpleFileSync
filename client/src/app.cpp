@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <iterator>
 #include <string>
+#include "event.hpp"
 #include "file_watcher.hpp"
 #include "save_area.hpp"
 #include "serializer.hpp"
@@ -109,6 +110,8 @@ namespace client {
 			mAppData.addHash(fileUpdateData.hash);
 			mAppData.write();
 			spdlog::info("Has written to disk.");
+
+			shared::recordEvent(event, fileUpdateData.hash);
 
 			shared::ClientMessage fileUpdate(fileUpdateData);
 			socket.wait(socket.wait_write);

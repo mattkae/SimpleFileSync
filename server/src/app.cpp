@@ -33,7 +33,7 @@ namespace server {
         mIsRunning = true;
         try {
             boost::asio::io_context io_context;
-		    boost::asio::ip::tcp::acceptor acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 13));
+		    boost::asio::ip::tcp::acceptor acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), mConfig.getPort()));
             while (mIsRunning) {
                 boost::asio::ip::tcp::socket socket(io_context);
                 acceptor.accept(socket);
@@ -71,7 +71,9 @@ namespace server {
                                 data.type = shared::ServerMessageType::ResponseStartComm;
                             }
                             else {
-                                spdlog::warn("Unimplemented");
+                                spdlog::info("Client is NOT in sync, beginning resolution.");
+                                // data.type = shared::ServerMessageType::ResponseAskClientToResolve;
+                                // data.hashList = mState.getHashList();
                             }
 
 

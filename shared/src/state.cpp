@@ -12,12 +12,14 @@ namespace shared {
 
     State::State(std::string mPath): BaseConfig(mPath) {
         // @TODO: This is temporary. We are purposefully starting from a blank State slate everytime
-        std::ofstream ofs;
-        ofs.open(mPath, std::ofstream::out | std::ofstream::trunc);
-        ofs.close();
+        // std::ofstream ofs;
+        // ofs.open(mPath, std::ofstream::out | std::ofstream::trunc);
+        // ofs.close();
     }
 
     size_t State::getHash() { return mHashList.size() ? mHashList.back() : 0; }
+
+    const std::vector<size_t> State::getHashList() { return mHashList; }
 
     void State::addHash(size_t hash, std::vector<char> data) {
         mHashList.push_back(hash);

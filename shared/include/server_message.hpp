@@ -15,7 +15,7 @@ namespace shared {
 	
 	enum class ServerMessageType {
 		None = 0,
-		ResponseTellClientToUpdate,
+		ResponseAskClientToResolve,
 		ResponseAskClientForUpdate,
 		ResponseStartComm,
 		ReponseEndComm,
@@ -28,6 +28,7 @@ namespace shared {
 		ServerMessageType type;
 		std::string filePath = "";
 		std::vector<shared::Event> eventsToUpdate;
+		std::vector<size_t> hashList;
 	};
 
 	class ServerMessage {

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.23)
 project(sfs_shared)
 
+find_package(ZLIB)
+
 set(CMAKE_CXX_STANDARD 20)
 
 add_library(${PROJECT_NAME} STATIC 
@@ -21,4 +23,5 @@ target_include_directories(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
   ${CMAKE_CURRENT_SOURCE_DIR}/../spdlog/build/libspdlog.a
+  ZLIB::ZLIB
 )

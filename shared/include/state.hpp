@@ -18,6 +18,7 @@ namespace shared {
         void writeTokens(std::ofstream& writer) override;
         size_t getHash();
         void addHash(size_t hash, std::vector<char> data = {});
+        const std::vector<size_t> getHashList();
     
     private:
         std::vector<size_t> mHashList;

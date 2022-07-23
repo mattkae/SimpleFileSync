@@ -2,10 +2,9 @@
 #include <cstring>
 #include <string>
 #include <iostream>
+#include "type.hpp"
 
 namespace shared {
-	typedef char Byte;
-
 	struct BinarySerializerOptions {
 		int bufferSize = 1024;
 	};
