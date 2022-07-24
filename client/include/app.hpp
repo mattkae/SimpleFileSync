@@ -5,6 +5,7 @@
 #include "client_message.hpp"
 #include "file_watcher.hpp"
 #include "server_message.hpp"
+#include "event_ledger.hpp"
 #include "event.hpp"
 #include "state.hpp"
 #include <cstddef>
@@ -30,5 +31,6 @@ namespace client {
 		client::FileWatcher mFw;
 
 		shared::State mAppData;
+		shared::EventLedger mLedger;
 	};
 };

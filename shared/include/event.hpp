@@ -12,6 +12,7 @@ namespace shared {
 	};
 
 	struct Event {
+		size_t hash;
 		EventType type;
 		std::string fullpath; // @Warning: Not serialized
 		std::string path;
@@ -23,6 +24,4 @@ namespace shared {
 	};
 
 	bool executeEvent(const Event& event, const std::string&& mDirectory);
-	bool recordEvent(const Event& event, size_t hash);
-	Event retrieveEvent(size_t hash);
 }

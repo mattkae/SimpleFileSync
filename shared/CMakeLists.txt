@@ -13,6 +13,7 @@ add_library(${PROJECT_NAME} STATIC
   src/save_area.cpp
   src/state.cpp
   src/event.cpp
+  src/event_ledger.cpp
 )
 
 target_include_directories(${PROJECT_NAME}

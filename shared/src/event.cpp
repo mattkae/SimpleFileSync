@@ -7,15 +7,6 @@
 #include <iostream>
 #include <fstream>
 #include <spdlog/spdlog.h>
-#include <zlib.h>
-
-#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
-#  include <fcntl.h>
-#  include <io.h>
-#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
-#else
-#  define SET_BINARY_MODE(file)
-#endif
 
 namespace shared {
 
@@ -37,6 +28,7 @@ namespace shared {
 	}
 
     void Event::serialize(BinarySerializer<Event>* serializer) {
+        serializer->write<size_t>(hash);
         serializer->write<int>(enumToUnderlying(type));
         serializer->write(timeModifiedUtcMs);
         serializer->writeString(path);
@@ -78,44 +70,5 @@ namespace shared {
                 spdlog::error("Unsupported change type, type={0}", (int)event.type);
                 return false;
         }
-    }
-
-    bool recordEvent(const Event& event, size_t hash) {
-        BinarySerializer<Event> serializer;
-        serializer.serialize(event);
-
-        unsigned long nDataSize = serializer.getSize();
-
-        printf("Initial size: %d\n", nDataSize);
-        
-        //auto savedFileName = getSaveAreaPath(mDirectory.c_str());
-        // If the directory does not exist, create it
-        // Create a new file in the directory with the hash name
-        // Write the event to the file and zip the file
-        unsigned long nCompressedDataSize = nDataSize;
-        unsigned char * pCompressedData = new unsigned char[nCompressedDataSize];
-        
-        int nResult = compress2(pCompressedData, &nCompressedDataSize, serializer.getData(), nDataSize, 9);
-
-        if (nResult == Z_OK)
-        {
-            printf("Compressed size: %d\n", nCompressedDataSize);
-
-            unsigned char * pUncompressedData = new unsigned char[nDataSize];
-            nResult = uncompress(pUncompressedData, &nDataSize, pCompressedData, nCompressedDataSize);
-            if (nResult == Z_OK)
-            {
-                printf("Uncompressed size: %d\n", nDataSize);
-                if (memcmp(pUncompressedData, serializer.getData(), nDataSize) == 0)
-                    printf("Great Success\n");
-            }
-            delete [] pUncompressedData;
-        }
-
-        delete [] pCompressedData;
-    }
-
-    Event retrieveEvent(size_t hash) {
-        
     }
 }

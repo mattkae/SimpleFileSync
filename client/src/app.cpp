@@ -9,6 +9,7 @@
 #include <iterator>
 #include <string>
 #include "event.hpp"
+#include "event_ledger.hpp"
 #include "file_watcher.hpp"
 #include "save_area.hpp"
 #include "serializer.hpp"
@@ -17,11 +18,12 @@
 #include <spdlog/spdlog.h>
 
 namespace client {
-	App::App() {
-		mAppData = shared::State(shared::getSaveAreaPath("client_saved.data"));
+	App::App(): 
+		mLedger(shared::getSaveAreaPath(".events")),
+		mAppData(shared::getSaveAreaPath("client_saved.data")),
+		mConfig(shared::getSaveAreaPath("client.conf"))
+	{
 		mAppData.load();
-
-		mConfig = client::Config(shared::getSaveAreaPath("client.conf"));
 		mConfig.load();
 		auto bso = shared::BinarySerializerOptions();
 		mClientSerializer = shared::BinarySerializer<shared::ClientMessage>(bso);
@@ -88,6 +90,7 @@ namespace client {
 			fileUpdateData.type = shared::ClientMessageType::ChangeEvent;
 			fileUpdateData.event = event;
 			fileUpdateData.hash = shared::getHash(mAppData.getHash(), event);
+			event.hash = fileUpdateData.hash;
 			switch (event.type) {
 			case shared::EventType::Created: {
 				spdlog::info("Created file: {0}", event.path);
@@ -110,8 +113,7 @@ namespace client {
 			mAppData.addHash(fileUpdateData.hash);
 			mAppData.write();
 			spdlog::info("Has written to disk.");
-
-			shared::recordEvent(event, fileUpdateData.hash);
+			mLedger.record(event);
 
 			shared::ClientMessage fileUpdate(fileUpdateData);
 			socket.wait(socket.wait_write);
