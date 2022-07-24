@@ -2,6 +2,7 @@
 #include <string>
 #include "serializer.hpp"
 #include "deserializer.hpp"
+#include "stringable.hpp"
 
 namespace shared {
 	enum class EventType {
@@ -11,7 +12,7 @@ namespace shared {
 		Modified
 	};
 
-	struct Event {
+	struct Event : public IStringable {
 		size_t hash;
 		EventType type;
 		std::string fullpath; // @Warning: Not serialized
@@ -21,6 +22,7 @@ namespace shared {
 
 		void serialize(BinarySerializer<Event>* serializer);
 		void deserialize(BinaryDeserializer<Event>* serializer);
+		std::string toString() const override;
 	};
 
 	bool executeEvent(const Event& event, const std::string&& mDirectory);

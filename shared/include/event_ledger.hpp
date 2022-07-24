@@ -12,5 +12,6 @@ namespace shared {
 
     private:
         std::string mDirectory;
+        std::string mGetEventPath(size_t hash);
 };
 }

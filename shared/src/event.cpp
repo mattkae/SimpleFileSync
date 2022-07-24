@@ -6,6 +6,7 @@
 #include <string_view>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <spdlog/spdlog.h>
 
 namespace shared {
@@ -39,7 +40,25 @@ namespace shared {
     }
 
     void Event::deserialize(BinaryDeserializer<Event>* serializer){
-        // @TODO: Write the Event deserializer here
+        hash = serializer->read<size_t>();
+        type = (shared::EventType)serializer->read<int>();
+        timeModifiedUtcMs = serializer->read<long>();
+        path = serializer->readString();
+
+        if (type == shared::EventType::Created || type == shared::EventType::Modified) {
+            content = serializer->readString();
+        }
+    }
+    
+    std::string Event::toString() const {
+        std::stringstream ss;
+        ss << "Event {\n";
+        ss << "\t hash=" << hash << "\n";
+        ss << "\t type=" << (int)type << "\n";
+        ss << "\t timeModifiedUtcMs=" << timeModifiedUtcMs << "\n";
+        ss << "\t path=" << path << "\n";
+        ss << "}";
+        return ss.str();
     }
 
     bool executeEvent(const Event& event, const std::string&& mDirectory) {

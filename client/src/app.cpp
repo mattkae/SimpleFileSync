@@ -115,6 +115,9 @@ namespace client {
 			spdlog::info("Has written to disk.");
 			mLedger.record(event);
 
+			auto tester = mLedger.retrieve(event.hash);
+			spdlog::info(tester.toString());
+
 			shared::ClientMessage fileUpdate(fileUpdateData);
 			socket.wait(socket.wait_write);
 			mClientSerializer.reset();

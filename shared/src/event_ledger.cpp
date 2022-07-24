@@ -1,4 +1,5 @@
 #include "event_ledger.hpp"
+#include "deserializer.hpp"
 #include <spdlog/spdlog.h>
 #include <string>
 #include <zlib.h>
@@ -25,6 +26,12 @@ namespace shared {
         }
     }
 
+    std::string EventLedger::mGetEventPath(size_t hash) {
+        std::stringstream ss;
+        ss << mDirectory << "/" << hash << ".zip";
+        return ss.str();
+    }
+
     void EventLedger::record(const Event& event) {
         BinarySerializer<Event> serializer;
         serializer.serialize(event);
@@ -45,16 +52,15 @@ namespace shared {
         spdlog::info("Uncompressed size event {0}", nDataSize);
         if (nResult == Z_OK) {
             spdlog::info("Compressed event size: {0}", nCompressedDataSize);
-            std::stringstream ss;
-            ss << mDirectory << "/" << event.hash << ".zip";
-            std::ofstream wf(ss.str(), std::ios::out | std::ios::binary);
+            auto path = mGetEventPath(event.hash);
+            std::ofstream wf(path, std::ios::out | std::ios::binary);
             if(!wf) {
-                spdlog::error("Unable to write event to path: {0}", ss.str());
+                spdlog::error("Unable to write event to path: {0}", path);
             }
             else {
                 wf << pCompressedData;
                 wf.close();
-                spdlog::info("Wrote event to path: {0}", ss.str());
+                spdlog::info("Wrote event to path: {0}", path);
             }
         }
 
@@ -62,6 +68,31 @@ namespace shared {
     }
 
     Event EventLedger::retrieve(size_t hash) {
-        return Event();
+        auto path = mGetEventPath(hash);
+        std::ifstream reader(path, std::ios::binary);
+
+        if (!reader) {
+            spdlog::error("Unable to read event: {0}", hash);
+            return Event();
+        }
+
+        reader.seekg(0, std::ios::end);
+        std::streampos compressedSize = reader.tellg();
+        reader.seekg(0, std::ios::beg);
+
+        std::vector<Byte> compressedData(compressedSize);
+        reader.read((char*) &compressedData[0], compressedSize);
+
+        size_t uncompressedSize;
+        std::vector<Byte> uncompressedData(compressedSize);
+        auto nResult = uncompress(&uncompressedData[0], &uncompressedSize, &compressedData[0], compressedSize);
+		if (nResult == Z_OK) {
+			printf("Uncompressed size: %d\n", uncompressedSize);
+		}
+
+        BinaryDeserializer<Event> deserializer({ &uncompressedData[0], uncompressedSize, 0 });
+        Event e;
+        deserializer.deserialize(e);
+        return e;
     }
 }

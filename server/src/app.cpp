@@ -116,7 +116,7 @@ namespace server {
             return false;
         }
 
-        spdlog::info("New hash accepeted, hash={0}", hash);
+        spdlog::info("New hash accepted, hash={0}", hash);
         mState.addHash(hash);
         mState.write();
 
