@@ -15,8 +15,10 @@
 #include <unistd.h>
 
 namespace server {
-    App::App() {
-        mState = shared::State(shared::getSaveAreaPath("server_saved.data"));
+    App::App():
+        mState(shared::getSaveAreaPath("server_saved.data")),
+        mLedger(shared::getSaveAreaPath(".server_events"))
+    {
 		mState.load();
 
         mConfig = server::Config(shared::getSaveAreaPath("server.conf"));
@@ -74,6 +76,7 @@ namespace server {
                                 spdlog::info("Client is NOT in sync, beginning resolution.");
                                 // data.type = shared::ServerMessageType::ResponseAskClientToResolve;
                                 // data.hashList = mState.getHashList();
+                                data.type = shared::ServerMessageType::ResponseStartComm;
                             }
 
 
@@ -121,6 +124,8 @@ namespace server {
         mState.write();
 
         shared::executeEvent(data.event, mConfig.getDirectory());
+        data.event.hash = hash; // @TODO: Send hash in the message instead
+        mLedger.record(data.event);
 
         return true;
     }

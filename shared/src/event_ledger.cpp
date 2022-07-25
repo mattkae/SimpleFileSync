@@ -86,13 +86,15 @@ namespace shared {
         size_t uncompressedSize;
         std::vector<Byte> uncompressedData(compressedSize);
         auto nResult = uncompress(&uncompressedData[0], &uncompressedSize, &compressedData[0], compressedSize);
-		if (nResult == Z_OK) {
-			printf("Uncompressed size: %d\n", uncompressedSize);
-		}
-
-        BinaryDeserializer<Event> deserializer({ &uncompressedData[0], uncompressedSize, 0 });
         Event e;
-        deserializer.deserialize(e);
+		if (nResult == Z_OK) {
+            BinaryDeserializer<Event> deserializer({ &uncompressedData[0], uncompressedSize, 0 });
+            deserializer.deserialize(e);
+		}
+        else {
+            spdlog::error("Failed to decompress event: {0}", hash);
+        }
+
         return e;
     }
 }

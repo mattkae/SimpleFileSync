@@ -4,6 +4,7 @@
 #include "server_message.hpp"
 #include "client_message.hpp"
 #include "state.hpp"
+#include "event_ledger.hpp"
 
 namespace server {
     class App {
@@ -19,5 +20,6 @@ namespace server {
         Config mConfig;
         shared::BinarySerializer<shared::ServerMessage> mServerSerializer;
         shared::State mState;
+        shared::EventLedger mLedger;
     };
 }

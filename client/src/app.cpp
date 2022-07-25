@@ -19,7 +19,7 @@
 
 namespace client {
 	App::App(): 
-		mLedger(shared::getSaveAreaPath(".events")),
+		mLedger(shared::getSaveAreaPath(".client_events")),
 		mAppData(shared::getSaveAreaPath("client_saved.data")),
 		mConfig(shared::getSaveAreaPath("client.conf"))
 	{
@@ -114,9 +114,6 @@ namespace client {
 			mAppData.write();
 			spdlog::info("Has written to disk.");
 			mLedger.record(event);
-
-			auto tester = mLedger.retrieve(event.hash);
-			spdlog::info(tester.toString());
 
 			shared::ClientMessage fileUpdate(fileUpdateData);
 			socket.wait(socket.wait_write);

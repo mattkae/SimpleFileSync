@@ -13,7 +13,7 @@ namespace shared {
 	};
 
 	struct Event : public IStringable {
-		size_t hash;
+		size_t hash;		  // @Warning: Not serialized
 		EventType type;
 		std::string fullpath; // @Warning: Not serialized
 		std::string path;
