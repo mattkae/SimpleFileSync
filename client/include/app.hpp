@@ -14,9 +14,13 @@
 namespace client {
 	const int DEFAULT_BUF_SIZE = 256;
 
+	struct AppOptions {
+		bool blankSlate = false;
+	};
+
 	class App{
 	public:
-		App();
+		App(const AppOptions& opts);
 		~App();
 
 		int getCurrentVersion();
@@ -24,6 +28,7 @@ namespace client {
 		
 	private:
 		void onDirectoryChange(std::vector<shared::Event> eventList);
+		void addNewEvent(shared::Event& event);
 		shared::Byte mResponseBuffer[DEFAULT_BUF_SIZE];
 		
 		client::Config mConfig;

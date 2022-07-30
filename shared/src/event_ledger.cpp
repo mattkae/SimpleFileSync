@@ -17,12 +17,17 @@
 #endif
 
 namespace shared {
-    EventLedger::EventLedger(std::string directory) {
+    EventLedger::EventLedger(std::string directory, bool cleanSlate) {
         mDirectory = directory;
 
         if (!std::filesystem::is_directory(mDirectory) || !std::filesystem::exists(mDirectory)) {
             spdlog::info("Creating directory for the ledger: {0}", mDirectory);
             std::filesystem::create_directories(mDirectory);
+        }
+
+        if (cleanSlate) {
+            for (const auto& entry : std::filesystem::directory_iterator(mDirectory)) 
+                std::filesystem::remove_all(entry.path());
         }
     }
 
@@ -90,6 +95,7 @@ namespace shared {
 		if (nResult == Z_OK) {
             BinaryDeserializer deserializer({ &uncompressedData[0], uncompressedSize, 0 });
             e = deserializer.readObject<Event>();
+            e.hash = hash;
 		}
         else {
             spdlog::error("Failed to decompress event: {0}", hash);

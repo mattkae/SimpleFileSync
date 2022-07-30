@@ -17,7 +17,7 @@
 
 namespace server {
     App::App():
-        mState(shared::getSaveAreaPath("server_saved.data")),
+        mState(shared::getSaveAreaPath(".server_saved.data")),
         mLedger(shared::getSaveAreaPath(".server_events"))
     {
 		mState.load();
@@ -78,12 +78,15 @@ namespace server {
                                 if (it != hashList.end()) {
                                     auto lastHashIndex = it - hashList.begin();
                                     auto hashesToSend = std::vector<size_t>(hashList.begin() + lastHashIndex, hashList.end());
+                                    std::vector<shared::Event> eventsToSend;
 									for (size_t hash : hashesToSend) {
 										auto event = mLedger.retrieve(hash);
+                                        eventsToSend.push_back(event);
 									}
+
+                                    data.eventsForClient = eventsToSend;
                                 }
                             }
-
 
                             shared::ServerMessage response(data);
                             boost::system::error_code ignored_error;

@@ -13,7 +13,7 @@ namespace shared {
     class State : public BaseConfig {
     public:
         State();
-        State(std::string);
+        State(std::string, bool eraseData = false);
         bool processToken(std::string key, std::string value) override;
         void writeTokens(std::ofstream& writer) override;
         size_t getHash();

@@ -18,9 +18,9 @@
 #include <spdlog/spdlog.h>
 
 namespace client {
-	App::App(): 
-		mLedger(shared::getSaveAreaPath(".client_events")),
-		mAppData(shared::getSaveAreaPath("client_saved.data")),
+	App::App(const AppOptions& opts): 
+		mLedger(shared::getSaveAreaPath(".client_events"), opts.blankSlate),
+		mAppData(shared::getSaveAreaPath(".client_saved.data"), opts.blankSlate),
 		mConfig(shared::getSaveAreaPath("client.conf"))
 	{
 		mAppData.load();
@@ -76,6 +76,12 @@ namespace client {
 
 		switch (response.getData().type) {
 			case shared::ServerMessageType::ResponseStartComm:
+				if (response.getData().eventsForClient.size()) {
+					spdlog::info("Client is behind by {0} events. Time to catch up.", response.getData().eventsForClient.size());
+					for (auto event : response.getData().eventsForClient) {
+						addNewEvent(event);
+					}
+				}
 				break;
 			default:
 				spdlog::error("Invalid initial response from server: type={0}", (int)response.getData().type);
@@ -108,11 +114,7 @@ namespace client {
 				break;
 			}
 
-			spdlog::info("Writing new hash to disk: {0} ...", fileUpdateData.hash);
-			mAppData.addHash(fileUpdateData.hash);
-			mAppData.write();
-			spdlog::info("Has written to disk.");
-			mLedger.record(event);
+			addNewEvent(event);
 
 			shared::ClientMessage fileUpdate(fileUpdateData);
 			socket.wait(socket.wait_write);
@@ -144,4 +146,11 @@ namespace client {
 		return;
 	}
 
+	void App::addNewEvent(shared::Event& event) {
+		spdlog::info("Writing new hash to disk: {0} ...", event.hash);
+		mAppData.addHash(event.hash);
+		mAppData.write();
+		spdlog::info("Has written to disk.");
+		mLedger.record(event);
+	}
 };

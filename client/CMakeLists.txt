@@ -9,7 +9,7 @@ set(SOURCES
 )
 set(CMAKE_CXX_STANDARD 20)
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost COMPONENTS system)
+find_package(Boost COMPONENTS system program_options REQUIRED)
 find_package(ZLIB)
 
 include_directories(${Boost_INCLUDE_DIR} 

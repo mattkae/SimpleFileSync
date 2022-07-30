@@ -5,7 +5,7 @@
 namespace shared {
     class EventLedger {
     public:
-        EventLedger(std::string directory);
+        EventLedger(std::string directory, bool cleanSlate = false);
 
         void record(Event& event);
         Event retrieve(size_t hash);
