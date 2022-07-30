@@ -13,33 +13,23 @@ namespace shared {
 		return mData;
 	}
 	
-    void ServerMessage::serialize(BinarySerializer<ServerMessage> *serializer) {
-        serializer->write(enumToUnderlying(mData.type));
+    void ServerMessage::serialize(BinarySerializer& serializer) {
+        serializer.write(enumToUnderlying(mData.type));
         switch (mData.type) {
-            case ServerMessageType::ResponseAskClientToResolve: {
-                serializer->write(mData.hashList.size());
-                for (auto hash : mData.hashList) {
-                    serializer->write(hash);
-                }
-                break;
-            }
             case ServerMessageType::ResponseStartComm:
+                serializer.writeObjectVector(mData.eventsForClient);
+                break;
             default:
                 break;
         }
     }
 
-    void ServerMessage::deserialize(BinaryDeserializer<ServerMessage> *serializer) {
-        mData.type = static_cast<ServerMessageType>(serializer->read<int>());
+    void ServerMessage::deserialize(BinaryDeserializer& deserializer) {
+        mData.type = static_cast<ServerMessageType>(deserializer.read<int>());
         switch (mData.type) {
-            case ServerMessageType::ResponseAskClientToResolve: {
-                size_t numElements = serializer->read<size_t>();
-                for (size_t i = 0; i < numElements; i++) {
-                    mData.hashList.push_back(serializer->read<size_t>());
-                }
-                break;
-            }
             case ServerMessageType::ResponseStartComm:
+                mData.eventsForClient = deserializer.readClassVector<Event>();
+                break;
             default:
                 break;
         }

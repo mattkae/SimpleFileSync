@@ -7,7 +7,7 @@ namespace shared {
     public:
         EventLedger(std::string directory);
 
-        void record(const Event& event);
+        void record(Event& event);
         Event retrieve(size_t hash);
 
     private:

@@ -27,7 +27,7 @@ namespace client {
 		shared::Byte mResponseBuffer[DEFAULT_BUF_SIZE];
 		
 		client::Config mConfig;
-		shared::BinarySerializer<shared::ClientMessage> mClientSerializer;
+		shared::BinarySerializer mClientSerializer;
 		client::FileWatcher mFw;
 
 		shared::State mAppData;

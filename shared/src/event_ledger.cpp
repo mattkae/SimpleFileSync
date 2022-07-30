@@ -32,9 +32,9 @@ namespace shared {
         return ss.str();
     }
 
-    void EventLedger::record(const Event& event) {
-        BinarySerializer<Event> serializer;
-        serializer.serialize(event);
+    void EventLedger::record(Event& event) {
+        BinarySerializer serializer;
+        serializer.writeObject(event);
 
         unsigned long nDataSize = serializer.getSize();
 
@@ -88,8 +88,8 @@ namespace shared {
         auto nResult = uncompress(&uncompressedData[0], &uncompressedSize, &compressedData[0], compressedSize);
         Event e;
 		if (nResult == Z_OK) {
-            BinaryDeserializer<Event> deserializer({ &uncompressedData[0], uncompressedSize, 0 });
-            deserializer.deserialize(e);
+            BinaryDeserializer deserializer({ &uncompressedData[0], uncompressedSize, 0 });
+            e = deserializer.readObject<Event>();
 		}
         else {
             spdlog::error("Failed to decompress event: {0}", hash);

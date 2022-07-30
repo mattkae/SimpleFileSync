@@ -2,14 +2,14 @@
 #include <cstring>
 #include <string>
 #include <iostream>
+#include <vector>
 #include "type.hpp"
 
 namespace shared {
 	struct BinarySerializerOptions {
 		int bufferSize = 1024;
 	};
-	
-	template <typename T>
+    
 	class BinarySerializer {
 	public:
 		BinarySerializer() {
@@ -47,16 +47,6 @@ namespace shared {
 		int getSize() { return mCurrentSize; }
 		Byte* getData() { return mData; };
 
-		void serialize(T value) {
-			value.serialize(this);
-		}
-
-		T deserialize() {
-			T base;
-			base.deserialize(this);
-			return base;
-		}
-
 		template<typename S>
 		void write(S x) {
 			tryGrow(sizeof(S));
@@ -64,11 +54,32 @@ namespace shared {
 			mCurrentSize += sizeof(S);
 		}
 		
-		void writeString(const std::string& x) {
+		void writeString(std::string& x) {
 			write<size_t>(x.length());
 			tryGrow(x.length());
 			memccpy(&mData[mCurrentSize], x.c_str(), 0, x.length());
 			mCurrentSize += x.length();
+		}
+
+		template<typename S>
+		void writeVector(std::vector<S> list) {
+			write<size_t>(list.size());
+			for (auto value : list) {
+				write(value);
+			}
+		}
+
+		template <typename S>
+		void writeObjectVector(std::vector<S> list) {
+			write<size_t>(list.size());
+			for (S& value : list) {
+				writeObject(value);
+			}
+		}
+
+		template <typename S>
+		void writeObject(S& obj) {
+			obj.serialize(*this);
 		}
 
 	private:

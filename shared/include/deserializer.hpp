@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <spdlog/spdlog.h>
+#include <vector>
 #include "type.hpp"
 
 namespace shared {
@@ -14,7 +15,6 @@ namespace shared {
 		size_t cursorOffset = 0;
 	};
 	
-	template <typename T>
 	class BinaryDeserializer {
 	public:
 		BinaryDeserializer(BinaryDeserializerOptions bso) {
@@ -30,11 +30,6 @@ namespace shared {
 		size_t getSize() { return mSize; }
 		size_t getCursor() { return mCursor; }
 		Byte* getData() { return mData; };
-
-		size_t deserialize(T& out) {
-			out.deserialize(this);
-			return mCursor;
-		}
 
 		template<typename S>
 		S read() {
@@ -63,6 +58,35 @@ namespace shared {
 			s = std::string((char*)mData + start, end - start);
 			mCursor += l;
 			return s;
+		}
+
+		template<typename S>
+		std::vector<S> readVector() {
+			size_t l = read<size_t>();
+			std::vector<S> retval(l);
+			for (size_t i = 0; i < l; i++) {
+				retval.push_back(read<S>());
+			}
+
+			return retval;
+		}
+
+		template<typename S>
+		std::vector<S> readClassVector() {
+			size_t l = read<size_t>();
+			std::vector<S> retval(l);
+			for (size_t i = 0; i < l; i++) {
+				retval.push_back(readObject<S>());
+			}
+
+			return retval;
+		}
+
+		template<typename S>
+		S readObject() {
+			S defaultS;
+			defaultS.deserialize(*this);
+			return defaultS;
 		}
 
 	private:

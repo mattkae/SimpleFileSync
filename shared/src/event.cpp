@@ -12,7 +12,7 @@
 namespace shared {
 
     // @TODO: Duplicated from client_message.hpp
-    void writeFile(BinarySerializer<Event> * serializer, Event& event) {
+    void writeFile(BinarySerializer& serializer, Event& event) {
 		// @TODO Investigate efficiency as files get larger
 	    constexpr auto read_size = std::size_t(4096);
 		auto stream = std::ifstream(event.fullpath);
@@ -25,28 +25,28 @@ namespace shared {
 		}
 		out.append(buf, 0, stream.gcount());
 
-		serializer->writeString(out);
+		serializer.writeString(out);
 	}
 
-    void Event::serialize(BinarySerializer<Event>* serializer) {
-        serializer->write<size_t>(hash);
-        serializer->write<int>(enumToUnderlying(type));
-        serializer->write(timeModifiedUtcMs);
-        serializer->writeString(path);
+    void Event::serialize(BinarySerializer& serializer) {
+        serializer.write<size_t>(hash);
+        serializer.write<int>(enumToUnderlying(type));
+        serializer.write(timeModifiedUtcMs);
+        serializer.writeString(path);
 
         if (type == shared::EventType::Created || type == shared::EventType::Modified) {
             writeFile(serializer, *this);
         }
     }
 
-    void Event::deserialize(BinaryDeserializer<Event>* serializer){
-        hash = serializer->read<size_t>();
-        type = (shared::EventType)serializer->read<int>();
-        timeModifiedUtcMs = serializer->read<long>();
-        path = serializer->readString();
+    void Event::deserialize(BinaryDeserializer& serializer){
+        hash = serializer.read<size_t>();
+        type = (shared::EventType)serializer.read<int>();
+        timeModifiedUtcMs = serializer.read<long>();
+        path = serializer.readString();
 
         if (type == shared::EventType::Created || type == shared::EventType::Modified) {
-            content = serializer->readString();
+            content = serializer.readString();
         }
     }
     

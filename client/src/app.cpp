@@ -26,7 +26,7 @@ namespace client {
 		mAppData.load();
 		mConfig.load();
 		auto bso = shared::BinarySerializerOptions();
-		mClientSerializer = shared::BinarySerializer<shared::ClientMessage>(bso);
+		mClientSerializer = shared::BinarySerializer(bso);
 		mFw = client::FileWatcher([this](std::vector<shared::Event> eventList) {
 			try {
 				this->onDirectoryChange(eventList);
@@ -59,7 +59,7 @@ namespace client {
 		startCommData.hash = mAppData.getHash();
 		shared::ClientMessage startComm(startCommData);
 		mClientSerializer.reset();
-		startComm.serialize(&mClientSerializer);
+		mClientSerializer.writeObject(startComm);
 		boost::system::error_code error;
 		socket.wait(socket.wait_write);
 		socket.write_some(
@@ -71,9 +71,8 @@ namespace client {
 		// Receiving a start communicaton message from the server
 		socket.wait(socket.wait_read);
 		size_t len = socket.read_some(boost::asio::buffer(mResponseBuffer, 1024), error);
-		shared::BinaryDeserializer<shared::ServerMessage> mServerSerializer({ mResponseBuffer, len, 0 });
-		shared::ServerMessage response;
-		mServerSerializer.deserialize(response);
+		shared::BinaryDeserializer mServerSerializer({ mResponseBuffer, len, 0 });
+		shared::ServerMessage response = mServerSerializer.readObject<shared::ServerMessage>();
 
 		switch (response.getData().type) {
 			case shared::ServerMessageType::ResponseStartComm:
@@ -118,7 +117,7 @@ namespace client {
 			shared::ClientMessage fileUpdate(fileUpdateData);
 			socket.wait(socket.wait_write);
 			mClientSerializer.reset();
-			fileUpdate.serialize(&mClientSerializer);
+			mClientSerializer.writeObject(fileUpdate);
 			socket.wait(socket.wait_write);
 			socket.write_some(
 				boost::asio::buffer(
@@ -132,7 +131,7 @@ namespace client {
 		shared::ClientMessageData endCommData;
 		endCommData.type = shared::ClientMessageType::RequestEndComm;
 		shared::ClientMessage endComm(endCommData);
-		endComm.serialize(&mClientSerializer);
+		mClientSerializer.writeObject(endComm);
 		socket.wait(socket.wait_write);
 		socket.write_some(
 			boost::asio::buffer(

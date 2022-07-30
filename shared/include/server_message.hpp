@@ -1,22 +1,17 @@
 #pragma once
 #include "event.hpp"
+#include "serializable.hpp"
 #include <cstddef>
 #include <string>
 #include <ctype.h>
 #include <vector>
 
 namespace shared {
-
-	template <typename T>
 	class BinarySerializer;
-
-	template <typename T>
 	class BinaryDeserializer;
 	
 	enum class ServerMessageType {
 		None = 0,
-		ResponseAskClientToResolve,
-		ResponseAskClientForUpdate,
 		ResponseStartComm,
 		ReponseEndComm,
 		Created,
@@ -27,16 +22,15 @@ namespace shared {
 	struct ServerMessageData {
 		ServerMessageType type;
 		std::string filePath = "";
-		std::vector<shared::Event> eventsToUpdate;
-		std::vector<size_t> hashList;
+		std::vector<Event> eventsForClient;
 	};
 
-	class ServerMessage {
+	class ServerMessage : public ISerializable {
 	public:
 		ServerMessage() { }
 		ServerMessage(ServerMessageData data);
-		void serialize(BinarySerializer<ServerMessage>* serializer);
-		void deserialize(BinaryDeserializer<ServerMessage>* serializer);
+		void serialize(BinarySerializer& serializer);
+		void deserialize(BinaryDeserializer& serializer);
 		ServerMessageData getData();
 	private:
 	    ServerMessageData mData;

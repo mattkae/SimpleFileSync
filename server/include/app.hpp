@@ -18,7 +18,7 @@ namespace server {
     private:
         bool mIsRunning = false;
         Config mConfig;
-        shared::BinarySerializer<shared::ServerMessage> mServerSerializer;
+        shared::BinarySerializer mServerSerializer;
         shared::State mState;
         shared::EventLedger mLedger;
     };

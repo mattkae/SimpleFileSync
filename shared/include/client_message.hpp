@@ -3,13 +3,10 @@
 #include <ctype.h>
 #include <vector>
 #include "event.hpp"
+#include "serializable.hpp"
 
 namespace shared {
-
-	template <typename T>
 	class BinarySerializer;
-
-	template <typename T>
 	class BinaryDeserializer;
 	
 	enum class ClientMessageType {
@@ -27,16 +24,16 @@ namespace shared {
 		std::vector<size_t> hashList;
 	};
 
-	class ClientMessage {
+	class ClientMessage: public ISerializable {
 	public:
 		ClientMessage();
 		ClientMessage(ClientMessageData data);
-		void serialize(BinarySerializer<ClientMessage>* serializer);
-		void deserialize(BinaryDeserializer<ClientMessage>* serializer);
+		void serialize(BinarySerializer& serializer);
+		void deserialize(BinaryDeserializer& serializer);
 		ClientMessageData getData();
 	private:
 		ClientMessageData mData;
-		void writeFile(BinarySerializer<ClientMessage>* serializer);
+		void writeFile(BinarySerializer& serializer);
 		
 	};
 

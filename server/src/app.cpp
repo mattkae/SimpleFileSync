@@ -1,4 +1,5 @@
 #include "app.hpp"
+#include <algorithm>
 #include <exception>
 #include <filesystem>
 #include <iostream>
@@ -52,38 +53,42 @@ namespace server {
                     size_t bytesDeserialized = 0;
 
                     while (bytesRead != bytesDeserialized) {
-                        shared::BinaryDeserializer<shared::ClientMessage> clientSerializer({ &buf.data()[bytesDeserialized], bytesRead });
-                        shared::ClientMessage incoming;
-                        bytesDeserialized += clientSerializer.deserialize(incoming);
+                        shared::BinaryDeserializer clientSerializer({ &buf.data()[bytesDeserialized], bytesRead });
+                        shared::ClientMessage incoming = clientSerializer.readObject<shared::ClientMessage>();
+                        bytesDeserialized += clientSerializer.getCursor();
 
                         spdlog::info("bytes read={0} / bytes deserialized={1}", bytesRead, bytesDeserialized);
 
                         switch (incoming.getData().type) {
                         case shared::ClientMessageType::RequestStartComm: {
                             spdlog::info("Client has begun communication.");
-                            auto clientHash = incoming.getData().hash;
-                            // Hash can either be:
-                            //      1) Current hash so do nothing
-                            //      2) Past hash so catch the client up
-                            //      3) Future hash so ask the client to catch us up
-
+                            auto lastConfirmedClientHash = incoming.getData().hash;
+                            
+                            // @NOTE: The last confirmed client hash is either in sync with the server or behind the server.
                             shared::ServerMessageData data;
-                            if (clientHash == mState.getHash()) {
+                            if (lastConfirmedClientHash == mState.getHash()) {
                                 spdlog::info("Clients are in sync.");
                                 data.type = shared::ServerMessageType::ResponseStartComm;
                             }
                             else {
-                                spdlog::info("Client is NOT in sync, beginning resolution.");
-                                // data.type = shared::ServerMessageType::ResponseAskClientToResolve;
-                                // data.hashList = mState.getHashList();
+                                spdlog::info("Client is NOT in sync, catching it up.");
                                 data.type = shared::ServerMessageType::ResponseStartComm;
+                                auto hashList = mState.getHashList();
+                                auto it = std::find(hashList.begin(), hashList.end(), lastConfirmedClientHash);
+                                if (it != hashList.end()) {
+                                    auto lastHashIndex = it - hashList.begin();
+                                    auto hashesToSend = std::vector<size_t>(hashList.begin() + lastHashIndex, hashList.end());
+									for (size_t hash : hashesToSend) {
+										auto event = mLedger.retrieve(hash);
+									}
+                                }
                             }
 
 
                             shared::ServerMessage response(data);
                             boost::system::error_code ignored_error;
                             mServerSerializer.reset();
-                            mServerSerializer.serialize(response);
+                            mServerSerializer.writeObject(response);
                             boost::asio::write(socket, boost::asio::buffer(mServerSerializer.getData(), mServerSerializer.getSize()), ignored_error);
                             break;
                         }
