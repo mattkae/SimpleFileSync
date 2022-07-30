@@ -74,18 +74,27 @@ namespace server {
                                 spdlog::info("Client is NOT in sync, catching it up.");
                                 data.type = shared::ServerMessageType::ResponseStartComm;
                                 auto hashList = mState.getHashList();
-                                auto it = std::find(hashList.begin(), hashList.end(), lastConfirmedClientHash);
-                                if (it != hashList.end()) {
-                                    auto lastHashIndex = it - hashList.begin();
-                                    auto hashesToSend = std::vector<size_t>(hashList.begin() + lastHashIndex, hashList.end());
-                                    std::vector<shared::Event> eventsToSend;
-									for (size_t hash : hashesToSend) {
-										auto event = mLedger.retrieve(hash);
-                                        eventsToSend.push_back(event);
-									}
-
-                                    data.eventsForClient = eventsToSend;
+                                std::vector<size_t> hashesToSend;
+                                if (lastConfirmedClientHash == 0) {
+                                    hashesToSend = hashList;
                                 }
+                                else {
+                                    auto it = std::find(hashList.begin(), hashList.end(), lastConfirmedClientHash);
+                                    if (it != hashList.end()) {
+                                        auto lastHashIndex = it - hashList.begin();
+                                        hashesToSend = std::vector<size_t>(hashList.begin() + lastHashIndex, hashList.end());
+                                    }
+                                }
+                                
+                                std::vector<shared::Event> eventsToSend;
+                                for (size_t hash : hashesToSend) {
+                                    auto event = mLedger.retrieve(hash);
+                                    // @TODO: Cleanup unserialized nonsense
+                                    event.fullpath = mConfig.getDirectory() + "/" + event.path;
+                                    eventsToSend.push_back(event);
+                                }
+
+                                data.eventsForClient = eventsToSend;
                             }
 
                             shared::ServerMessage response(data);
@@ -131,6 +140,8 @@ namespace server {
         mState.addHash(hash);
         mState.write();
 
+        // @TODO: Cleanup unserialized nonsense
+        data.event.fullpath = mConfig.getDirectory() + "/" + data.event.path;
         shared::executeEvent(data.event, mConfig.getDirectory());
         data.event.hash = hash; // @TODO: Send hash in the message instead
         mLedger.record(data.event);

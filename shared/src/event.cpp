@@ -47,6 +47,7 @@ namespace shared {
 
         if (type == shared::EventType::Created || type == shared::EventType::Modified) {
             content = serializer.readString();
+            spdlog::info("{0}: {1}", content, (int)type);
         }
     }
     
@@ -57,6 +58,7 @@ namespace shared {
         ss << "\t type=" << (int)type << "\n";
         ss << "\t timeModifiedUtcMs=" << timeModifiedUtcMs << "\n";
         ss << "\t path=" << path << "\n";
+        ss << "\t content=" << content << "\n";
         ss << "}";
         return ss.str();
     }

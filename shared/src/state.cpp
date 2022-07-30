@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 namespace shared {
     State::State(): BaseConfig() { }
@@ -27,17 +28,19 @@ namespace shared {
     }
 
     const std::string SPACE_DELIMITER = " ";
+    const std::string NEWLINE_DELIMITER = "\n";
     bool State::processToken(std::string key, std::string value) {
+        mHashList.clear();
         if (key == "hashes") {
             std::vector<std::string> words;
-            size_t pos = 0;
-            while ((pos = value.find(SPACE_DELIMITER)) != std::string::npos) {
-                words.push_back(value.substr(0, pos));
-                value.erase(0, pos + SPACE_DELIMITER.length());
-            }
+            std::istringstream iss(value);
+            std::copy(std::istream_iterator<std::string>(iss),
+                std::istream_iterator<std::string>(),
+                std::back_inserter(words));
+                
             
-            for (const auto &str : words) {
-                mHashList.push_back(std::stoi(str));
+            for (const std::string &str : words) {
+                mHashList.push_back(std::stoul(str));
             }
 
             return true;

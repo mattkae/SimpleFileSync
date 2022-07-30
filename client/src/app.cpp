@@ -79,6 +79,7 @@ namespace client {
 				if (response.getData().eventsForClient.size()) {
 					spdlog::info("Client is behind by {0} events. Time to catch up.", response.getData().eventsForClient.size());
 					for (auto event : response.getData().eventsForClient) {
+						shared::executeEvent(event, mConfig.getDirectory());
 						addNewEvent(event);
 					}
 				}
@@ -150,7 +151,7 @@ namespace client {
 		spdlog::info("Writing new hash to disk: {0} ...", event.hash);
 		mAppData.addHash(event.hash);
 		mAppData.write();
-		spdlog::info("Has written to disk.");
+		spdlog::info("Hash written to disk.");
 		mLedger.record(event);
 	}
 };
