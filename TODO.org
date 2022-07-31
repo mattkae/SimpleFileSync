@@ -1,12 +1,12 @@
 * V1.0
 ** DONE Recording file changes in zip files on the client 
 ** DONE Recording file changes in zip files on the server
-** PROGRESS Client scenario #1: Client is behind and server catches up by downloading zip files
+** DONE Client scenario #1: Client is behind and server catches up by downloading zip files
 ** DONE Client scenario #2: Client is ahead and posts all changes to server
 ** TODO Reset script for data
 ** TODO Better configuration
 - Specify save directories for data
 - Specify data directory for load data
-** TODO Handle systems with different number representations (i32 vs i64, little vs big endian, etc)
+** PROGRESS Handle systems with different number representations (i32 vs i64, little vs big endian, etc)
 * V1.1
 ** TODO Testing

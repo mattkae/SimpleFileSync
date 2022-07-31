@@ -3,6 +3,43 @@
 ## Overview
 The goal of this project is to reacquint myself with modern C++ by solving some of my organization problems. Essentially, I have a bunch of org files scattered throughout my computers and accounts that I would like to sync with a centralized server. Of course, there are many services that would easily do this for me, but I think that it would be more fun to do it by myself and, in the process, discover all of the new things that I've been missing in C++.
 
+## How to build
+
+### Preqequisites
+
+#### Cmake
+We want **version 3.23**.
+
+#### spdlog (for logging)
+```
+git submodule init
+git submodule update
+cd spdlog && mkdir -p build && cd build && cmake .. && make
+```
+
+#### boost (for TCP srever/client and program options)
+You must have boost installed on your system. As an example, you can install on Ubuntu via:
+```
+sudo apt-get install libboost-all-dev
+```
+
+Obviously this will be different on your repository, so please check!
+
+#### shared (glue between client and server)
+```
+cd ./shared && mkdir -p build && cd build && cmake .. && make
+```
+
+### Server
+```
+cd ./server && mkdir build && cd build && cmake .. && make
+```
+
+### Client
+```
+cd ./client && mkdir build && cd build && cmake .. && make
+```
+
 ### What does it mean to use modern C++?
 - No raw pointers
 - No raw strings
