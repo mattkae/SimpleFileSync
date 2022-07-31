@@ -8,7 +8,8 @@ namespace client {
 	public:
 		Config() :shared::BaseConfig() { }
 		Config(std::string mPath) : shared::BaseConfig(mPath) { }
-		virtual bool processToken(std::string key, std::string value) override;
+		bool processToken(std::string key, std::string value) override;
+		void writeTokens(std::ofstream& writer) override;
 		std::string getDirectory();
 		std::string getIp();
 		int getPort();

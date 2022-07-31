@@ -142,7 +142,7 @@ namespace server {
         // @TODO: Cleanup unserialized nonsense
         data.event.fullpath = mConfig.getDirectory() + "/" + data.event.path;
         shared::executeEvent(data.event, mConfig.getDirectory());
-        data.event.hash = hash; // @TODO: Send hash in the message instead
+        data.event.hash = hash;
         mLedger.record(data.event);
 
         return true;

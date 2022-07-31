@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 		po::options_description desc("Allowed options");
 		desc.add_options()
 			("help", "produce help message")
-			("blank_slate", po::value<bool>(), "Start from a blank slate, erasing all saved data on the client side.");
+			("clean_slate", po::value<bool>(), "Start from a blank slate, erasing all saved data on the client side.");
 
 		po::variables_map vm;
 		po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -24,8 +24,8 @@ int main(int argc, char** argv) {
 			return 0;
 		}
 
-		if (vm.count("blank_slate")) {
-			opts.blankSlate = vm["blank_slate"].as<bool>();
+		if (vm.count("clean_slate")) {
+			opts.blankSlate = vm["clean_slate"].as<bool>();
 		}
 	}
 	catch(std::exception& e) {

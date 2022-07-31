@@ -14,6 +14,12 @@ add_library(${PROJECT_NAME} STATIC
   src/event_ledger.cpp
 )
 
+if(MSVC)
+  target_compile_options(${PROJECT_NAME} /W4 /WX)
+else()
+  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
+
 target_include_directories(${PROJECT_NAME}
     PUBLIC 
         ${PROJECT_SOURCE_DIR}/include

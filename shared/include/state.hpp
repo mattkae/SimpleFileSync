@@ -17,7 +17,7 @@ namespace shared {
         bool processToken(std::string key, std::string value) override;
         void writeTokens(std::ofstream& writer) override;
         size_t getHash();
-        void addHash(size_t hash, std::vector<char> data = {});
+        void addHash(size_t hash);
         const std::vector<size_t> getHashList();
     
     private:

@@ -10,9 +10,8 @@
 
 namespace shared {
 
-    // @TODO: Duplicated from client_message.hpp
     void writeFile(BinarySerializer& serializer, Event& event) {
-		// @TODO Investigate efficiency as files get larger
+		// @Performance Investigate efficiency as files get larger
 	    constexpr auto read_size = std::size_t(4096);
 		auto stream = std::ifstream(event.fullpath);
 		stream.exceptions(std::ios_base::badbit);

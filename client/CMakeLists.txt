@@ -17,6 +17,11 @@ include_directories(${Boost_INCLUDE_DIR}
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
+if(MSVC)
+  target_compile_options(${PROJECT_NAME} /W4 /WX)
+else()
+  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
   ${Boost_LIBRARIES} 

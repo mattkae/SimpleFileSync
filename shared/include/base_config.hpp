@@ -9,8 +9,8 @@ namespace shared {
         BaseConfig();
         BaseConfig(std::string configPath);
 
-        virtual bool processToken(std::string key, std::string value) { return false; };
-        virtual void writeTokens(std::ofstream& writer) { }
+        virtual bool processToken(std::string key, std::string value) = 0;
+        virtual void writeTokens(std::ofstream& writer) = 0;
 
         bool load();
         void write();

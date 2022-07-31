@@ -23,6 +23,12 @@ namespace client {
 		}
 	}
 
+	void Config::writeTokens(std::ofstream& writer) {
+		writeToken(writer, DIRECTORY, mWatchDirectory);
+		writeToken(writer, IP, mIp);
+		writeToken(writer, PORT, mPort);
+	}
+
 	std::string Config::getDirectory() { return mWatchDirectory; };
 	std::string Config::getIp() { return mIp; }
 	int Config::getPort() { return mPort; }

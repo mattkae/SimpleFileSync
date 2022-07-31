@@ -6,7 +6,8 @@ namespace server {
 	public:
 		Config() :shared::BaseConfig() { }
 		Config(std::string mPath) : shared::BaseConfig(mPath) { }
-		bool processToken(std::string key, std::string value);
+		bool processToken(std::string key, std::string value) override;
+		void writeTokens(std::ofstream& writer) override;
 		std::string getDirectory();
 		int getPort();
 	private:

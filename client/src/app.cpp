@@ -19,9 +19,9 @@
 
 namespace client {
 	App::App(const AppOptions& opts): 
-		mLedger(shared::getSaveAreaPath(".client_events"), opts.blankSlate),
+		mConfig(shared::getSaveAreaPath("client.conf")),
 		mAppData(shared::getSaveAreaPath(".client_saved.data"), opts.blankSlate),
-		mConfig(shared::getSaveAreaPath("client.conf"))
+		mLedger(shared::getSaveAreaPath(".client_events"), opts.blankSlate)
 	{
 		mAppData.load();
 		mConfig.load();
@@ -31,7 +31,7 @@ namespace client {
 			try {
 				this->onDirectoryChange(eventList);
 			}
-			catch (boost::wrapexcept<boost::system::system_error> e) {
+			catch (const boost::wrapexcept<boost::system::system_error>& e) {
 				spdlog::error("Failed to connect to socket: {0}", e.what());
 			}
 		}, mConfig.getDirectory());

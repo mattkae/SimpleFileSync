@@ -23,7 +23,7 @@ namespace shared {
 
     const std::vector<size_t> State::getHashList() { return mHashList; }
 
-    void State::addHash(size_t hash, std::vector<char> data) {
+    void State::addHash(size_t hash) {
         mHashList.push_back(hash);
     }
 

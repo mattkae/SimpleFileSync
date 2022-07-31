@@ -23,6 +23,11 @@ namespace server {
 		}	
 	}
 
+	void Config::writeTokens(std::ofstream& writer) {
+		writeToken(writer, DIRECTORY, mWatchDirectory);
+		writeToken(writer, PORT, mPort);
+	}
+
 	std::string Config::getDirectory() { return mWatchDirectory; }
 	int Config::getPort() { return mPort; }
 };
