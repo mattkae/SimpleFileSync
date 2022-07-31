@@ -72,9 +72,10 @@ namespace shared {
 		}
 
 		template<typename S>
-		std::vector<S> readClassVector() {
+		std::vector<S> readObjectVector() {
 			size_t l = read<size_t>();
-			std::vector<S> retval(l);
+			std::vector<S> retval;
+			retval.reserve(1);
 			for (size_t i = 0; i < l; i++) {
 				retval.push_back(readObject<S>());
 			}

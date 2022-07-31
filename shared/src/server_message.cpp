@@ -28,7 +28,7 @@ namespace shared {
         mData.type = static_cast<ServerMessageType>(deserializer.read<int>());
         switch (mData.type) {
             case ServerMessageType::ResponseStartComm:
-                mData.eventsForClient = deserializer.readClassVector<Event>();
+                mData.eventsForClient = deserializer.readObjectVector<Event>();
                 break;
             default:
                 break;
