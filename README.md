@@ -5,7 +5,8 @@ The goal of this project is to reacquint myself with modern C++ by solving some 
 
 ## How to build
 
-### Preqequisites
+### Prerequisites
+You must install the following in order before building the server and client:
 
 #### Cmake
 We want **version 3.23**.
