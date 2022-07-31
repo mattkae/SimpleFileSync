@@ -10,7 +10,7 @@
 
 namespace shared {
 	struct BinaryDeserializerOptions {
-        Byte* data = NULL;
+        byte* data = NULL;
 		size_t dataSize = 0;
 		size_t cursorOffset = 0;
 	};
@@ -29,7 +29,7 @@ namespace shared {
 
 		size_t getSize() { return mSize; }
 		size_t getCursor() { return mCursor; }
-		Byte* getData() { return mData; };
+		byte* getData() { return mData; };
 
 		template<typename S>
 		S read() {
@@ -91,7 +91,7 @@ namespace shared {
 		}
 
 	private:
-		Byte* mData = NULL;
+		byte* mData = NULL;
 		size_t mCursor = 0;
 		size_t mSize = 0;
 

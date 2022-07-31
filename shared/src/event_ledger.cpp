@@ -32,7 +32,6 @@ namespace shared {
         BinarySerializer serializer;
         serializer.writeObject(event);
 
-        spdlog::info("Writing event to ledger: hash={0}, size={1}", event.hash, serializer.getSize());
         auto path = mGetEventPath(event.hash);
         std::ofstream wf(path, std::ios::out | std::ios::binary);
         if(!wf) {
@@ -41,7 +40,6 @@ namespace shared {
         else {
             wf.write((char*) serializer.getData(), serializer.getSize());
             wf.close();
-            spdlog::info("Wrote event to path: {0}", path);
         }
     }
 
@@ -56,11 +54,10 @@ namespace shared {
         fseek(f, 0L, SEEK_END);
         long filesize = ftell(f); // get file size
         fseek(f, 0L ,SEEK_SET); //go back to the beginning
-        Byte* buffer = new Byte[filesize]; // allocate the read buf
+        byte* buffer = new byte[filesize]; // allocate the read buf
         fread(buffer, 1, filesize, f);
         fclose(f);
 
-        spdlog::info("Attempting to read {0} bytes from ledger for hash={1}", filesize, hash);
         BinaryDeserializer deserializer({ &buffer[0], static_cast<size_t>(filesize), 0 });
         Event e = deserializer.readObject<Event>();
         e.hash = hash;

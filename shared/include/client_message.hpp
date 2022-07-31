@@ -4,12 +4,13 @@
 #include <vector>
 #include "event.hpp"
 #include "serializable.hpp"
+#include "type.hpp"
 
 namespace shared {
 	class BinarySerializer;
 	class BinaryDeserializer;
 	
-	enum class ClientMessageType {
+	enum class ClientMessageType: shared::i8 {
 		None = 0,
 		RequestStartComm,
 		RequestEndComm,
@@ -17,24 +18,14 @@ namespace shared {
 		RequestResolution
 	};
 
-	struct ClientMessageData {
-		ClientMessageType type;
-	    size_t hash;
-		Event event;
-		std::vector<size_t> hashList;
-	};
-
 	class ClientMessage: public ISerializable {
 	public:
 		ClientMessage();
-		ClientMessage(ClientMessageData data);
 		void serialize(BinarySerializer& serializer);
 		void deserialize(BinaryDeserializer& serializer);
-		ClientMessageData getData();
-	private:
-		ClientMessageData mData;
-		void writeFile(BinarySerializer& serializer);
-		
-	};
 
+		ClientMessageType type;
+		Event event;
+		std::vector<shared::u64> hashList;
+	};
 }

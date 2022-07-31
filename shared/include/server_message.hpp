@@ -5,12 +5,13 @@
 #include <string>
 #include <ctype.h>
 #include <vector>
+#include "type.hpp"
 
 namespace shared {
 	class BinarySerializer;
 	class BinaryDeserializer;
 	
-	enum class ServerMessageType {
+	enum class ServerMessageType: shared::i8 {
 		None = 0,
 		ResponseStartComm,
 		ReponseEndComm,
@@ -19,21 +20,15 @@ namespace shared {
 		Modified
 	};
 
-	struct ServerMessageData {
-		ServerMessageType type;
-		std::string filePath = "";
-		std::vector<Event> eventsForClient;
-	};
-
 	class ServerMessage : public ISerializable {
 	public:
 		ServerMessage() { }
-		ServerMessage(ServerMessageData data);
 		void serialize(BinarySerializer& serializer);
 		void deserialize(BinaryDeserializer& serializer);
-		ServerMessageData getData();
-	private:
-	    ServerMessageData mData;
+
+		ServerMessageType type;
+		std::string filePath = "";
+		std::vector<Event> eventsForClient;
 	};
 	
 }

@@ -45,7 +45,7 @@ namespace server {
                 //socket.set_option(boost::asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO>{ 200 });
 
                 const size_t MAX_BUFF_SIZE = 1024;
-                boost::array<shared::Byte, MAX_BUFF_SIZE> buf;
+                boost::array<shared::byte, MAX_BUFF_SIZE> buf;
                 while (socket.is_open()) {
                     boost::system::error_code error;
                     socket.wait(socket.wait_read);
@@ -59,20 +59,20 @@ namespace server {
 
                         spdlog::info("bytes read={0} / bytes deserialized={1}", bytesRead, bytesDeserialized);
 
-                        switch (incoming.getData().type) {
+                        switch (incoming.type) {
                         case shared::ClientMessageType::RequestStartComm: {
                             spdlog::info("Client has begun communication.");
-                            auto lastConfirmedClientHash = incoming.getData().hash;
+                            auto lastConfirmedClientHash = incoming.event.hash;
                             
                             // @NOTE: The last confirmed client hash is either in sync with the server or behind the server.
-                            shared::ServerMessageData data;
+                            shared::ServerMessage message;
                             if (lastConfirmedClientHash == mState.getHash()) {
                                 spdlog::info("Clients are in sync.");
-                                data.type = shared::ServerMessageType::ResponseStartComm;
+                                message.type = shared::ServerMessageType::ResponseStartComm;
                             }
                             else {
-                                spdlog::info("Client is NOT in sync, catching it up.");
-                                data.type = shared::ServerMessageType::ResponseStartComm;
+                                spdlog::info("Client is not in sync.");
+                                message.type = shared::ServerMessageType::ResponseStartComm;
                                 auto hashList = mState.getHashList();
                                 std::vector<size_t> hashesToSend;
                                 if (lastConfirmedClientHash == 0) {
@@ -94,18 +94,17 @@ namespace server {
                                     eventsToSend.push_back(event);
                                 }
 
-                                data.eventsForClient = eventsToSend;
+                                message.eventsForClient = eventsToSend;
                             }
 
-                            shared::ServerMessage response(data);
                             boost::system::error_code ignored_error;
                             mServerSerializer.reset();
-                            mServerSerializer.writeObject(response);
+                            mServerSerializer.writeObject(message);
                             boost::asio::write(socket, boost::asio::buffer(mServerSerializer.getData(), mServerSerializer.getSize()), ignored_error);
                             break;
                         }
                         case shared::ClientMessageType::ChangeEvent:
-                            spdlog::info("Processing change event, hash={0}", incoming.getData().hash);
+                            spdlog::info("Processing change event, hash={0}", incoming.event.hash);
                             processChangeEvent(incoming);
                             break;
                         case shared::ClientMessageType::RequestEndComm:
@@ -113,7 +112,7 @@ namespace server {
                             socket.close();
                             break;
                         default:
-                            spdlog::warn("Unknown request: {0}", (int)incoming.getData().type);
+                            spdlog::warn("Unknown request: {0}", (int)incoming.type);
                             break;
                         }
                     }
@@ -127,8 +126,8 @@ namespace server {
     }
 
     bool App::processChangeEvent(shared::ClientMessage& incoming) {
-        auto data = incoming.getData();
-        auto hash = data.hash;
+        auto data = incoming;
+        auto hash = data.event.hash;
         
         auto expectedNextHash = shared::getHash(mState.getHash(), data.event);
         if (expectedNextHash != hash) {

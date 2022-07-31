@@ -4,6 +4,7 @@
 #include "deserializer.hpp"
 #include "stringable.hpp"
 #include "serializable.hpp"
+#include "type.hpp"
 
 namespace shared {
 	enum class EventType {
@@ -14,11 +15,11 @@ namespace shared {
 	};
 
 	struct Event : public IStringable, public ISerializable {
-		size_t hash;		  // @Warning: Not serialized
+		shared::u64 hash;	// @Warning: Not serialized
 		EventType type;
 		std::string fullpath; // @Warning: Not serialized
 		std::string path;
-		long timeModifiedUtcMs;
+		shared::u64 timeModifiedUtcMs;
 		std::string content;
 
 		void serialize(BinarySerializer& serializer);

@@ -29,7 +29,7 @@ namespace client {
 	private:
 		void onDirectoryChange(std::vector<shared::Event> eventList);
 		void addNewEvent(shared::Event& event);
-		shared::Byte mResponseBuffer[DEFAULT_BUF_SIZE];
+		shared::byte mResponseBuffer[DEFAULT_BUF_SIZE];
 		
 		client::Config mConfig;
 		shared::BinarySerializer mClientSerializer;

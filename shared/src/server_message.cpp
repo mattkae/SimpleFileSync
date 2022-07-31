@@ -1,23 +1,14 @@
 #include "server_message.hpp"
 #include "serializer.hpp"
 #include "deserializer.hpp"
-#include "util.hpp"
 #include <cstddef>
 
 namespace shared {
-    ServerMessage::ServerMessage(ServerMessageData data) {
-        mData = data;
-    }
-
-	ServerMessageData ServerMessage::getData() {
-		return mData;
-	}
-	
     void ServerMessage::serialize(BinarySerializer& serializer) {
-        serializer.write(enumToUnderlying(mData.type));
-        switch (mData.type) {
+        serializer.write(getEnumType(type));
+        switch (type) {
             case ServerMessageType::ResponseStartComm:
-                serializer.writeObjectVector(mData.eventsForClient);
+                serializer.writeObjectVector(eventsForClient);
                 break;
             default:
                 break;
@@ -25,10 +16,10 @@ namespace shared {
     }
 
     void ServerMessage::deserialize(BinaryDeserializer& deserializer) {
-        mData.type = static_cast<ServerMessageType>(deserializer.read<int>());
-        switch (mData.type) {
+        type = static_cast<ServerMessageType>(deserializer.read<shared::i8>());
+        switch (type) {
             case ServerMessageType::ResponseStartComm:
-                mData.eventsForClient = deserializer.readObjectVector<Event>();
+                eventsForClient = deserializer.readObjectVector<Event>();
                 break;
             default:
                 break;

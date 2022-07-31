@@ -54,12 +54,11 @@ namespace client {
 
 		// Begin communicaton with the server: Write exactly the amount of data that we need and expect the 
 		// start communication in response
-		shared::ClientMessageData startCommData;
-		startCommData.type = shared::ClientMessageType::RequestStartComm;
-		startCommData.hash = mAppData.getHash();
-		shared::ClientMessage startComm(startCommData);
+		shared::ClientMessage startMessage;
+		startMessage.type = shared::ClientMessageType::RequestStartComm;
+		startMessage.event.hash = mAppData.getHash();
 		mClientSerializer.reset();
-		mClientSerializer.writeObject(startComm);
+		mClientSerializer.writeObject(startMessage);
 		boost::system::error_code error;
 		socket.wait(socket.wait_write);
 		socket.write_some(
@@ -74,29 +73,29 @@ namespace client {
 		shared::BinaryDeserializer mServerSerializer({ mResponseBuffer, len, 0 });
 		shared::ServerMessage response = mServerSerializer.readObject<shared::ServerMessage>();
 
-		switch (response.getData().type) {
+		switch (response.type) {
 			case shared::ServerMessageType::ResponseStartComm:
-				if (response.getData().eventsForClient.size()) {
-					spdlog::info("Client is behind by {0} events. Time to catch up.", response.getData().eventsForClient.size());
-					for (auto event : response.getData().eventsForClient) {
+				if (response.eventsForClient.size()) {
+					spdlog::info("Client is behind by {0} events.", response.eventsForClient.size());
+					for (auto event : response.eventsForClient) {
 						shared::executeEvent(event, mConfig.getDirectory());
 						addNewEvent(event);
 					}
+					spdlog::info("Client caught up.");
 				}
 				break;
 			default:
-				spdlog::error("Invalid initial response from server: type={0}", (int)response.getData().type);
+				spdlog::error("Invalid initial response from server: type={0}", (int)response.type);
 				socket.close();
 				return;
 		}
 
 		// Start sending the events
 		for (auto event : eventList) {
-			shared::ClientMessageData fileUpdateData;
-			fileUpdateData.type = shared::ClientMessageType::ChangeEvent;
-			fileUpdateData.event = event;
-			fileUpdateData.hash = shared::getHash(mAppData.getHash(), event);
-			event.hash = fileUpdateData.hash;
+			shared::ClientMessage fileUpdateMsg;
+			fileUpdateMsg.type = shared::ClientMessageType::ChangeEvent;
+			fileUpdateMsg.event = event;
+			fileUpdateMsg.event.hash = shared::getHash(mAppData.getHash(), event);
 			switch (event.type) {
 			case shared::EventType::Created: {
 				spdlog::info("Created file: {0}", event.path);
@@ -117,10 +116,9 @@ namespace client {
 
 			addNewEvent(event);
 
-			shared::ClientMessage fileUpdate(fileUpdateData);
 			socket.wait(socket.wait_write);
 			mClientSerializer.reset();
-			mClientSerializer.writeObject(fileUpdate);
+			mClientSerializer.writeObject(fileUpdateMsg);
 			socket.wait(socket.wait_write);
 			socket.write_some(
 				boost::asio::buffer(
@@ -131,10 +129,9 @@ namespace client {
 
 		// Tell the server that we won't be sending data anymore and close the connection
 		mClientSerializer.reset();
-		shared::ClientMessageData endCommData;
-		endCommData.type = shared::ClientMessageType::RequestEndComm;
-		shared::ClientMessage endComm(endCommData);
-		mClientSerializer.writeObject(endComm);
+		shared::ClientMessage endCommMsg;
+		endCommMsg.type = shared::ClientMessageType::RequestEndComm;
+		mClientSerializer.writeObject(endCommMsg);
 		socket.wait(socket.wait_write);
 		socket.write_some(
 			boost::asio::buffer(
@@ -148,10 +145,8 @@ namespace client {
 	}
 
 	void App::addNewEvent(shared::Event& event) {
-		spdlog::info("Writing new hash to disk: {0} ...", event.hash);
 		mAppData.addHash(event.hash);
 		mAppData.write();
-		spdlog::info("Hash written to disk.");
 		mLedger.record(event);
 	}
 };

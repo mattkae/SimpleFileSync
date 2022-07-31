@@ -24,7 +24,7 @@ namespace shared {
 			if (mData) {
 				free();
 			}
-			mData = new Byte[bso.bufferSize];
+			mData = new byte[bso.bufferSize];
 			mCurrentCapacity = bso.bufferSize;
 			mCurrentSize = 0;
 		}
@@ -45,7 +45,7 @@ namespace shared {
 		}
 
 		int getSize() { return mCurrentSize; }
-		Byte* getData() { return mData; };
+		byte* getData() { return mData; };
 
 		template<typename S>
 		void write(S x) {
@@ -83,13 +83,13 @@ namespace shared {
 		}
 
 	private:
-		Byte* mData = NULL;
+		byte* mData = NULL;
 		int mCurrentSize = 0;
 		int mCurrentCapacity = 0;
 		void tryGrow(int nextSize) {
 		    if (mCurrentSize + nextSize >= mCurrentCapacity) {
-				Byte* newData = new Byte[mCurrentCapacity * 2];
-				memccpy(newData, mData, 0, sizeof(Byte) * mCurrentSize);
+				byte* newData = new byte[mCurrentCapacity * 2];
+				memccpy(newData, mData, 0, sizeof(byte) * mCurrentSize);
 				delete[] mData;
 				mData = newData;
 				mCurrentCapacity = mCurrentCapacity * 2;

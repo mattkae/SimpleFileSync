@@ -1,7 +1,6 @@
 #include "event.hpp"
 #include "save_area.hpp"
 #include "server_message.hpp"
-#include "util.hpp"
 #include <string>
 #include <string_view>
 #include <iostream>
@@ -30,7 +29,7 @@ namespace shared {
 
     void Event::serialize(BinarySerializer& serializer) {
         serializer.write<size_t>(hash);
-        serializer.write<int>(enumToUnderlying(type));
+        serializer.write<int>(getEnumType(type));
         serializer.write(timeModifiedUtcMs);
         serializer.writeString(path);
 
