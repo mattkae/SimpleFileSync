@@ -8,6 +8,15 @@ set(SOURCES
   src/file_watcher.cpp
 )
 set(CMAKE_CXX_STANDARD 20)
+
+find_package(PkgConfig REQUIRED)
+pkg_search_module(OPENSSL REQUIRED openssl)
+set(OPENSSL_USE_STATIC_LIBS TRUE)
+if( OPENSSL_FOUND )
+    include_directories(${OPENSSL_INCLUDE_DIRS})
+    message(STATUS "Using OpenSSL ${OPENSSL_VERSION}")
+endif()
+
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost COMPONENTS system program_options REQUIRED)
 
@@ -27,4 +36,5 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
   ${Boost_LIBRARIES} 
   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/build/libsfs_shared.a
   ${CMAKE_CURRENT_SOURCE_DIR}/../spdlog/build/libspdlog.a
+  ${OPENSSL_LIBRARIES}
 )

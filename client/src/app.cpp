@@ -3,6 +3,8 @@
 #include "config.hpp"
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
+#include <boost/asio/connect.hpp>
+#include <boost/asio/ip/basic_endpoint.hpp>
 #include <cstddef>
 #include <iostream>
 #include <filesystem>
@@ -16,6 +18,12 @@
 #include "server_message.hpp"
 #include "hash_calculator.hpp"
 #include <spdlog/spdlog.h>
+#include <boost/asio/ssl/context.hpp>
+#include <boost/asio/ssl.hpp>
+#include <boost/bind.hpp>
+
+using boost::asio::ip::tcp;
+typedef boost::asio::ssl::stream<tcp::socket> SslSocket;
 
 namespace client {
 	App::App(const AppOptions& opts): 
@@ -40,6 +48,25 @@ namespace client {
 	App::~App() {
 	}
 
+	bool verify_certificate(bool preverified,
+      boost::asio::ssl::verify_context& ctx)
+	{
+		// The verify callback can be used to check whether the certificate that is
+		// being presented is valid for the peer. For example, RFC 2818 describes
+		// the steps involved in doing this for HTTPS. Consult the OpenSSL
+		// documentation for more details. Note that the callback is called once
+		// for each certificate in the certificate chain, starting from the root
+		// certificate authority.
+
+		// In this example we will simply print the certificate's subject name.
+		char subject_name[256];
+		X509* cert = X509_STORE_CTX_get_current_cert(ctx.native_handle());
+		X509_NAME_oneline(X509_get_subject_name(cert), subject_name, 256);
+		std::cout << "Verifying " << subject_name << "\n";
+
+		return preverified;
+	}
+
 	void App::onDirectoryChange(std::vector<shared::Event> eventList) {
 		spdlog::info("Processing next client update...");
 		client::Config globalConfig(shared::getSaveAreaPath("client.conf"));
@@ -47,10 +74,18 @@ namespace client {
 		boost::asio::io_service ios;
 		std::string host = globalConfig.getIp();
 		int port = globalConfig.getPort();
-		spdlog::info("Making connection to {0}: {1}", host, port);
-		boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(host), port);
-		boost::asio::ip::tcp::socket socket(ios);
-		socket.connect(endpoint);
+		spdlog::info("Making connection to {0}:{1}", host, port);
+
+		// See: https://github.com/miseri/asio-ssl-client/blob/master/main.cpp
+		// https://stackoverflow.com/questions/33640084/boost-asio-encryption-in-a-loop-without-closing-connection
+		boost::asio::ssl::context sslContext(boost::asio::ssl::context::sslv23);
+		sslContext.load_verify_file("/home/matthewk/Projects/SimpleFileSync/server/build/server.crt");
+		sslContext.set_verify_mode(boost::asio::ssl::verify_peer);
+		SslSocket socket(ios, sslContext);
+		tcp::resolver resolver(ios);
+		boost::asio::connect(socket.lowest_layer(), resolver.resolve({boost::asio::ip::address::from_string(host), boost::asio::ip::port_type(port)}));
+		socket.set_verify_callback(boost::bind(&verify_certificate, _1, _2));
+		socket.handshake(boost::asio::ssl::stream<boost::asio::ip::tcp::socket>::client);
 
 		// Begin communicaton with the server: Write exactly the amount of data that we need and expect the 
 		// start communication in response
@@ -60,7 +95,6 @@ namespace client {
 		mClientSerializer.reset();
 		mClientSerializer.writeObject(startMessage);
 		boost::system::error_code error;
-		socket.wait(socket.wait_write);
 		socket.write_some(
 			boost::asio::buffer(
 				mClientSerializer.getData(), 
@@ -68,7 +102,6 @@ namespace client {
 			),  error);
 
 		// Receiving a start communicaton message from the server
-		socket.wait(socket.wait_read);
 		size_t len = socket.read_some(boost::asio::buffer(mResponseBuffer, 1024), error);
 		shared::BinaryDeserializer mServerSerializer({ mResponseBuffer, len, 0 });
 		shared::ServerMessage response = mServerSerializer.readObject<shared::ServerMessage>();
@@ -86,7 +119,7 @@ namespace client {
 				break;
 			default:
 				spdlog::error("Invalid initial response from server: type={0}", (int)response.type);
-				socket.close();
+				socket.lowest_layer().close();
 				return;
 		}
 
@@ -116,10 +149,8 @@ namespace client {
 
 			addNewEvent(event);
 
-			socket.wait(socket.wait_write);
 			mClientSerializer.reset();
 			mClientSerializer.writeObject(fileUpdateMsg);
-			socket.wait(socket.wait_write);
 			socket.write_some(
 				boost::asio::buffer(
 					mClientSerializer.getData(), 
@@ -132,7 +163,6 @@ namespace client {
 		shared::ClientMessage endCommMsg;
 		endCommMsg.type = shared::ClientMessageType::RequestEndComm;
 		mClientSerializer.writeObject(endCommMsg);
-		socket.wait(socket.wait_write);
 		socket.write_some(
 			boost::asio::buffer(
 				mClientSerializer.getData(), 
@@ -140,7 +170,7 @@ namespace client {
 			),  error);
 
 		spdlog::info("Closing connection.");
-		socket.close();	
+		socket.lowest_layer().close();	
 		return;
 	}
 

@@ -1,8 +1,11 @@
 #include "app.hpp"
 #include <algorithm>
+#include <boost/asio/ssl/context.hpp>
 #include <exception>
 #include <filesystem>
 #include <iostream>
+#include <boost/asio.hpp> 
+#include <boost/asio/ssl.hpp> 
 #include <boost/array.hpp>
 #include <iterator>
 #include "client_message.hpp"
@@ -14,6 +17,9 @@
 #include "spdlog/common.h"
 #include <spdlog/spdlog.h>
 #include <unistd.h>
+
+using boost::asio::ip::tcp;
+typedef boost::asio::ssl::stream<tcp::socket> SslSocket;
 
 namespace server {
     App::App():
@@ -32,14 +38,35 @@ namespace server {
 
     App::~App() { mIsRunning = false; }
 
+    std::string App::getPassword() {
+        return "matthew";
+    }
+
     void App::run() {
         mIsRunning = true;
         try {
-            boost::asio::io_context io_context;
-		    boost::asio::ip::tcp::acceptor acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), mConfig.getPort()));
+            boost::asio::io_context ioContext;
+		    tcp::acceptor acceptor(ioContext, tcp::endpoint(tcp::v4(), mConfig.getPort()));
+            boost::asio::ssl::context sslContext(boost::asio::ssl::context::sslv23);
+            //sslContext.set_password_callback(std::bind(&App::getPassword, this));
+
+            // Creating a self-signed certificate: https://stackoverflow.com/questions/10175812/how-to-generate-a-self-signed-ssl-certificate-using-openssl/10176685#10176685
+            sslContext.use_certificate_chain_file("./server.crt");
+            sslContext.use_private_key_file("./server.key", boost::asio::ssl::context::pem);
+            sslContext.use_tmp_dh_file("./dh512.pem");
+            
             while (mIsRunning) {
-                boost::asio::ip::tcp::socket socket(io_context);
+                tcp::socket socket(ioContext);
                 acceptor.accept(socket);
+
+                boost::asio::ssl::stream<tcp::socket> sslSocket(std::move(socket), sslContext);
+                try {
+                    sslSocket.handshake(boost::asio::ssl::stream_base::server);
+                }
+                catch (const boost::system::system_error& error) {
+                    spdlog::error("Could not complete handshake with client: {0}", error.what());
+                    continue;
+                }
 
                 spdlog::info("Client connected.");
                 //socket.set_option(boost::asio::detail::socket_option::integer<SOL_SOCKET, SO_RCVTIMEO>{ 200 });

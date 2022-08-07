@@ -14,6 +14,7 @@ namespace server {
 
         void run();
         bool processChangeEvent(shared::ClientMessage& incoming);
+        std::string getPassword();
 
     private:
         bool mIsRunning = false;

@@ -22,7 +22,8 @@ namespace shared {
 
 	class ServerMessage : public ISerializable {
 	public:
-		ServerMessage() { }
+		ServerMessage();
+		~ServerMessage();
 		void serialize(BinarySerializer& serializer);
 		void deserialize(BinaryDeserializer& serializer);
 
