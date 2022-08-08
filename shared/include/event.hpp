@@ -15,6 +15,8 @@ namespace shared {
 	};
 
 	struct Event : public IStringable, public ISerializable {
+		Event();
+		~Event();
 		shared::u64 hash;	// @Warning: Not serialized
 		EventType type;
 		std::string fullpath; // @Warning: Not serialized

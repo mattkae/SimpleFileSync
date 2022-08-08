@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 set(SOURCES
 	src/main.cpp
-	src/app.cpp
+	src/server_app.cpp
 	src/config.cpp
 )
 find_package(PkgConfig REQUIRED)

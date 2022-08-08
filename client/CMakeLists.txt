@@ -3,9 +3,10 @@ project(sfs_client)
 include_directories(include)
 set(SOURCES
   src/main.cpp
-  src/app.cpp
+  src/client_app.cpp
   src/config.cpp
   src/file_watcher.cpp
+  src/client_socket.cpp
 )
 set(CMAKE_CXX_STANDARD 20)
 

@@ -7,10 +7,10 @@
 #include "event_ledger.hpp"
 
 namespace server {
-    class App {
+    class ServerApp {
     public:
-        App();
-        ~App();
+        ServerApp();
+        ~ServerApp();
 
         void run();
         bool processChangeEvent(shared::ClientMessage& incoming);

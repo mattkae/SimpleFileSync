@@ -1,4 +1,4 @@
-#include "app.hpp"
+#include "client_app.hpp"
 #include <filesystem>
 #include "save_area.hpp"
 #include <boost/program_options.hpp>
@@ -8,7 +8,7 @@
 namespace po = boost::program_options;
 
 int main(int argc, char** argv) {
-	client::AppOptions opts;
+	client::ClientOptions opts;
 	try {
 		po::options_description desc("Allowed options");
 		desc.add_options()
@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
-	client::App app(opts);
+	client::ClientApp app(opts);
 	return 0;
 }
 

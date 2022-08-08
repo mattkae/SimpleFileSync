@@ -1,4 +1,4 @@
-#include "app.hpp"
+#include "server_app.hpp"
 #include <algorithm>
 #include <boost/asio/ssl/context.hpp>
 #include <exception>
@@ -22,7 +22,7 @@ using boost::asio::ip::tcp;
 typedef boost::asio::ssl::stream<tcp::socket> SslSocket;
 
 namespace server {
-    App::App():
+    ServerApp::ServerApp():
         mState(shared::getSaveAreaPath(".server_saved.data")),
         mLedger(shared::getSaveAreaPath(".server_events"))
     {
@@ -36,13 +36,13 @@ namespace server {
         }
     }
 
-    App::~App() { mIsRunning = false; }
+    ServerApp::~ServerApp() { mIsRunning = false; }
 
-    std::string App::getPassword() {
+    std::string ServerApp::getPassword() {
         return "matthew";
     }
 
-    void App::run() {
+    void ServerApp::run() {
         mIsRunning = true;
         try {
             boost::asio::io_context ioContext;
@@ -152,7 +152,7 @@ namespace server {
         }
     }
 
-    bool App::processChangeEvent(shared::ClientMessage& incoming) {
+    bool ServerApp::processChangeEvent(shared::ClientMessage& incoming) {
         auto data = incoming;
         auto hash = data.event.hash;
         
