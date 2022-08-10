@@ -25,7 +25,7 @@ namespace client {
 		void bumpCurrentVersion();
 		
 	private:
-		void onDirectoryChange(std::vector<shared::Event> eventList);
+		void onDirectoryChange(const std::vector<shared::Event>& eventList);
 		void addNewEvent(shared::Event& event);
 		
 		client::Config mConfig;

@@ -26,7 +26,7 @@ namespace client {
 		mConfig.load();
 		auto bso = shared::BinarySerializerOptions();
 		mClientSerializer = shared::BinarySerializer(bso);
-		mFw = client::FileWatcher([this](std::vector<shared::Event> eventList) {
+		mFw = client::FileWatcher([this](const std::vector<shared::Event>& eventList) {
 			try {
 				this->onDirectoryChange(eventList);
 			}
@@ -39,7 +39,7 @@ namespace client {
 	ClientApp::~ClientApp() {
 	}
 
-	void ClientApp::onDirectoryChange(std::vector<shared::Event> eventList) {
+	void ClientApp::onDirectoryChange(const std::vector<shared::Event>& eventList) {
 		spdlog::info("Processing next client update...");
 		client::Config globalConfig(shared::getSaveAreaPath("client.conf"));
 		globalConfig.load();

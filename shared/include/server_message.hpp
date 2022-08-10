@@ -24,8 +24,8 @@ namespace shared {
 	public:
 		ServerMessage();
 		~ServerMessage();
-		void serialize(BinarySerializer& serializer);
-		void deserialize(BinaryDeserializer& serializer);
+		void serialize(BinarySerializer& serializer) override;
+		void deserialize(BinaryDeserializer& serializer) override;
 
 		ServerMessageType type;
 		std::string filePath = "";

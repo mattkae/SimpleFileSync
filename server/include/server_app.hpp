@@ -1,5 +1,4 @@
 #include "config.hpp"
-#include <boost/asio.hpp>
 #include "serializer.hpp"
 #include "server_message.hpp"
 #include "client_message.hpp"
@@ -7,6 +6,8 @@
 #include "event_ledger.hpp"
 
 namespace server {
+    struct SocketConnection;
+
     class ServerApp {
     public:
         ServerApp();
@@ -14,13 +15,13 @@ namespace server {
 
         void run();
         bool processChangeEvent(shared::ClientMessage& incoming);
-        std::string getPassword();
 
     private:
-        bool mIsRunning = false;
         Config mConfig;
         shared::BinarySerializer mServerSerializer;
         shared::State mState;
         shared::EventLedger mLedger;
+
+        size_t _onData(SocketConnection& data);
     };
 }

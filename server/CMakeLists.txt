@@ -7,6 +7,7 @@ set(SOURCES
 	src/main.cpp
 	src/server_app.cpp
 	src/config.cpp
+	src/server_socket.cpp
 )
 find_package(PkgConfig REQUIRED)
 pkg_search_module(OPENSSL REQUIRED openssl)
