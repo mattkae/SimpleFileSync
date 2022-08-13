@@ -10,7 +10,8 @@
 #include "server_message.hpp"
 #include "hash_calculator.hpp"
 #include "server_socket.hpp"
-#include "server_socket.hpp"
+#include "socket_buffer.hpp"
+#include "socket_connection.hpp"
 #include "spdlog/common.h"
 #include <spdlog/spdlog.h>
 
@@ -31,77 +32,81 @@ namespace server {
 
     ServerApp::~ServerApp() { }
 
-    size_t ServerApp::_onData(SocketConnection& conn) {
-        shared::BinaryDeserializer clientSerializer({ &conn.buffer[conn.bytesDeserialized], conn.bytesRead });
-        shared::ClientMessage incoming = clientSerializer.readObject<shared::ClientMessage>();
+    void ServerApp::_onData(SocketBuffer& buff) {
+        size_t bytesDeserialized = 0;
+        const size_t bytesRead = buff.bytesRead;
+        while (bytesDeserialized < bytesRead) {
+            shared::BinaryDeserializer clientSerializer({ &buff.buffer[bytesDeserialized], bytesRead });
+            shared::ClientMessage incoming = clientSerializer.readObject<shared::ClientMessage>();
 
-        spdlog::info("bytes read={0} / bytes deserialized={1}", conn.bytesRead, conn.bytesDeserialized);
+            spdlog::info("bytes read={0} / bytes deserialized={1}", bytesRead, bytesDeserialized);
 
-        switch (incoming.type) {
-        case shared::ClientMessageType::RequestStartComm: {
-            spdlog::info("Client has begun communication.");
-            auto lastConfirmedClientHash = incoming.event.hash;
-            
-            // @NOTE: The last confirmed client hash is either in sync with the server or behind the server.
-            shared::ServerMessage message;
-            if (lastConfirmedClientHash == mState.getHash()) {
-                spdlog::info("Clients are in sync.");
-                message.type = shared::ServerMessageType::ResponseStartComm;
-            }
-            else {
-                spdlog::info("Client is not in sync.");
-                message.type = shared::ServerMessageType::ResponseStartComm;
-                auto hashList = mState.getHashList();
-                std::vector<size_t> hashesToSend;
-                if (lastConfirmedClientHash == 0) {
-                    hashesToSend = hashList;
+            switch (incoming.type) {
+            case shared::ClientMessageType::RequestStartComm: {
+                spdlog::info("Client has begun communication.");
+                auto lastConfirmedClientHash = incoming.event.hash;
+                
+                // @NOTE: The last confirmed client hash is either in sync with the server or behind the server.
+                shared::ServerMessage message;
+                if (lastConfirmedClientHash == mState.getHash()) {
+                    spdlog::info("Clients are in sync.");
+                    message.type = shared::ServerMessageType::ResponseStartComm;
                 }
                 else {
-                    auto it = std::find(hashList.begin(), hashList.end(), lastConfirmedClientHash);
-                    if (it != hashList.end()) {
-                        auto lastHashIndex = it - hashList.begin();
-                        hashesToSend = std::vector<size_t>(hashList.begin() + lastHashIndex, hashList.end());
+                    spdlog::info("Client is not in sync.");
+                    message.type = shared::ServerMessageType::ResponseStartComm;
+                    auto hashList = mState.getHashList();
+                    std::vector<size_t> hashesToSend;
+                    if (lastConfirmedClientHash == 0) {
+                        hashesToSend = hashList;
                     }
-                }
-                
-                std::vector<shared::Event> eventsToSend;
-                for (size_t hash : hashesToSend) {
-                    auto event = mLedger.retrieve(hash);
-                    // @TODO: Cleanup unserialized nonsense
-                    event.fullpath = mConfig.getDirectory() + "/" + event.path;
-                    eventsToSend.push_back(event);
+                    else {
+                        auto it = std::find(hashList.begin(), hashList.end(), lastConfirmedClientHash);
+                        if (it != hashList.end()) {
+                            auto lastHashIndex = it - hashList.begin();
+                            hashesToSend = std::vector<size_t>(hashList.begin() + lastHashIndex, hashList.end());
+                        }
+                    }
+                    
+                    std::vector<shared::Event> eventsToSend;
+                    for (size_t hash : hashesToSend) {
+                        auto event = mLedger.retrieve(hash);
+                        // @TODO: Cleanup unserialized nonsense
+                        event.fullpath = mConfig.getDirectory() + "/" + event.path;
+                        eventsToSend.push_back(event);
+                    }
+
+                    message.eventsForClient = eventsToSend;
                 }
 
-                message.eventsForClient = eventsToSend;
+                mServerSerializer.reset();
+                mServerSerializer.writeObject(message);
+                buff.connection->writeData(mServerSerializer.getData(), mServerSerializer.getSize());
+                break;
+            }
+            case shared::ClientMessageType::ChangeEvent:
+                spdlog::info("Processing change event, hash={0}", incoming.event.hash);
+                processChangeEvent(incoming);
+                break;
+            case shared::ClientMessageType::RequestEndComm:
+                spdlog::info("Client requesting termination of communication.");
+                buff.connection->destroy();
+                break;
+            default:
+                spdlog::warn("Unknown request: {0}", (int)incoming.type);
+                break;
             }
 
-            mServerSerializer.reset();
-            mServerSerializer.writeObject(message);
-            conn.write(mServerSerializer.getData(), mServerSerializer.getSize());
-            break;
+            bytesDeserialized += clientSerializer.getCursor();
         }
-        case shared::ClientMessageType::ChangeEvent:
-            spdlog::info("Processing change event, hash={0}", incoming.event.hash);
-            processChangeEvent(incoming);
-            break;
-        case shared::ClientMessageType::RequestEndComm:
-            spdlog::info("Client requesting termination of communication.");
-            conn.doClose();
-            break;
-        default:
-            spdlog::warn("Unknown request: {0}", (int)incoming.type);
-            break;
-        }
-
-        return clientSerializer.getCursor();
     }
 
     void ServerApp::run() {
         try {
             ServerSocketOptions options;
-            options.onRead = [this](SocketConnection& data) { return this->_onData(data); };
+            options.onRead = [this](SocketBuffer& data) { return this->_onData(data); };
             options.port = mConfig.getPort();
-            options.useSsl = true;
+            options.useSsl = false;
             ServerSocket mSocket(options);
             mSocket.run();
         } catch (std::exception& e) {

@@ -2,35 +2,23 @@
 #include <ctype.h>
 #include <string>
 #include <functional>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
 #include "type.hpp"
 
 
 namespace server {
+    struct SocketBuffer;
     struct SslOptions {
         std::string certChainFile;
         std::string privateKeyFile;
         std::string tmpDhFile;
     };
 
-    class SocketConnection {
-    public:
-        SocketConnection(int sockfd);
-        ~SocketConnection();
-        static const size_t MAX_BUFF_SIZE = 1024;
-        size_t bytesDeserialized = 0;
-        size_t bytesRead = 0;
-        unsigned char buffer[SocketConnection::MAX_BUFF_SIZE];
-
-        void write(shared::byte* data, size_t size);
-        void doClose();
-    private:
-        int mSockfd;
-    };
-
     struct ServerSocketOptions {
         int port = 5555;
         bool useSsl = false;
-        std::function<size_t(SocketConnection&)> onRead;
+        std::function<void(SocketBuffer&)> onRead;
 
         SslOptions sslOptions;
     };
@@ -39,13 +27,17 @@ namespace server {
     public:
         ServerSocket(const ServerSocketOptions& opts);
         ~ServerSocket();
-        void run();
         void stop();
+        void run();
 
     private:
-        std::function<size_t((SocketConnection&))> mOnRead;
+        SSL_CTX* _getSslContext();
+
+        std::function<void((SocketBuffer&))> mOnRead;
         bool mIsRunning = false;
         int mPort = 0;
+        bool mUseSsl = false;
+        SslOptions mSslOptions;
     };
 }
 
