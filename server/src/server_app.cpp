@@ -86,7 +86,7 @@ namespace server {
             break;
         case shared::ClientMessageType::RequestEndComm:
             spdlog::info("Client requesting termination of communication.");
-            conn.close();
+            conn.doClose();
             break;
         default:
             spdlog::warn("Unknown request: {0}", (int)incoming.type);

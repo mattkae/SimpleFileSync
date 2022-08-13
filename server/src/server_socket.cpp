@@ -58,18 +58,22 @@ namespace server {
                     continue;
                 }
 
-                SocketConnection conn;
+                SocketConnection conn(clientfd);
 
-                int bytesRead = recv(clientfd, &conn.buffer, SocketConnection::MAX_BUFF_SIZE - 1, 0);
-                if (bytesRead == -1) {
-                    spdlog::error("Failed to read message from client.");
-                    continue;
+                while (true) {
+                    int bytesRead = recv(clientfd, &conn.buffer, SocketConnection::MAX_BUFF_SIZE - 1, 0);
+                    if (bytesRead == -1) {
+                        spdlog::error("Failed to read message from client.");
+                        continue;
+                    }
+                    else if (bytesRead == 0) {
+                        break; // Client has closed the connection
+                    }
+
+                    conn.buffer[bytesRead] = '\0';
+                    conn.bytesRead += bytesRead;
+                    conn.bytesDeserialized += mOnRead(conn);
                 }
-
-                conn.buffer[bytesRead] = '\0';
-                conn.bytesRead += bytesRead;
-                mOnRead(conn);
-                spdlog::info("Client closed.");
             } catch (std::exception& e) {
                 spdlog::error("Exception while talking to client: {0}", e.what());
             }
@@ -80,13 +84,26 @@ namespace server {
         mIsRunning = false;
     }
 
-    SocketConnection::SocketConnection() {
+    SocketConnection::SocketConnection(int sockfd) {
+        mSockfd = sockfd;
     }
 
-    void SocketConnection::close() {
+    SocketConnection::~SocketConnection() {
+        doClose();
+    }
+
+    void SocketConnection::doClose() {
+        close(mSockfd);
+        spdlog::info("Client closed.");
     }
 
     void SocketConnection::write(shared::byte* data, size_t size) {
+        if (send(mSockfd, data, size, 0) == 0) {
+            spdlog::error("Failed to write message to client.");
+        }
+        else {
+            spdlog::info("Message sent to client.");
+        }
     }
 
 }

@@ -14,7 +14,7 @@ namespace client {
     struct ClientReadResult {
         static const size_t BUFFER_SIZE = 1024;
         shared::byte data[BUFFER_SIZE];
-        size_t len = 0;
+        int len = 0;
     };
 
     class ClientSocket {

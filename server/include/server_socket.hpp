@@ -14,14 +14,17 @@ namespace server {
 
     class SocketConnection {
     public:
-        SocketConnection();
+        SocketConnection(int sockfd);
+        ~SocketConnection();
         static const size_t MAX_BUFF_SIZE = 1024;
         size_t bytesDeserialized = 0;
         size_t bytesRead = 0;
         unsigned char buffer[SocketConnection::MAX_BUFF_SIZE];
 
         void write(shared::byte* data, size_t size);
-        void close();
+        void doClose();
+    private:
+        int mSockfd;
     };
 
     struct ServerSocketOptions {

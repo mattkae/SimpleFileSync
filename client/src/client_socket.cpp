@@ -59,6 +59,15 @@ namespace client {
 
     ClientReadResult ClientSocket::read() {
         ClientReadResult result;
+        result.len = recv(mSockfd, &result.data, result.BUFFER_SIZE - 1, 0);
+        spdlog::info("Bytes read from server: {0}", result.len);
+        if (result.len == -1) {
+            spdlog::error("Failed to read message from client.");
+            return result;
+        }
+        else if (result.len == 0) {
+            this->_close();
+        }
         return result;
     }
 
