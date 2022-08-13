@@ -22,9 +22,10 @@ namespace shared {
 
 	class ServerMessage : public ISerializable {
 	public:
-		ServerMessage() { }
-		void serialize(BinarySerializer& serializer);
-		void deserialize(BinaryDeserializer& serializer);
+		ServerMessage();
+		~ServerMessage();
+		void serialize(BinarySerializer& serializer) override;
+		void deserialize(BinaryDeserializer& serializer) override;
 
 		ServerMessageType type;
 		std::string filePath = "";

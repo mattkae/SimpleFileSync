@@ -9,7 +9,6 @@
 #include <spdlog/spdlog.h>
 
 namespace shared {
-
     void writeFile(BinarySerializer& serializer, Event& event) {
 		// @Performance Investigate efficiency as files get larger
 	    constexpr auto read_size = std::size_t(4096);

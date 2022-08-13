@@ -21,8 +21,8 @@ namespace shared {
 	class ClientMessage: public ISerializable {
 	public:
 		ClientMessage();
-		void serialize(BinarySerializer& serializer);
-		void deserialize(BinaryDeserializer& serializer);
+		void serialize(BinarySerializer& serializer) override;
+		void deserialize(BinaryDeserializer& serializer) override;
 
 		ClientMessageType type;
 		Event event;

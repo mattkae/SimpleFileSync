@@ -12,24 +12,21 @@
 #include <string>
 
 namespace client {
-	const int DEFAULT_BUF_SIZE = 256;
-
-	struct AppOptions {
+	struct ClientOptions {
 		bool blankSlate = false;
 	};
 
-	class App{
+	class ClientApp{
 	public:
-		App(const AppOptions& opts);
-		~App();
+		ClientApp(const ClientOptions& opts);
+		~ClientApp();
 
 		int getCurrentVersion();
 		void bumpCurrentVersion();
 		
 	private:
-		void onDirectoryChange(std::vector<shared::Event> eventList);
+		void onDirectoryChange(const std::vector<shared::Event>& eventList);
 		void addNewEvent(shared::Event& event);
-		shared::byte mResponseBuffer[DEFAULT_BUF_SIZE];
 		
 		client::Config mConfig;
 		shared::BinarySerializer mClientSerializer;

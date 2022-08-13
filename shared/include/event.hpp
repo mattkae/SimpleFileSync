@@ -14,16 +14,18 @@ namespace shared {
 		Modified
 	};
 
-	struct Event : public IStringable, public ISerializable {
-		shared::u64 hash;	// @Warning: Not serialized
+	class Event : public IStringable, public ISerializable {
+	public:
+		virtual ~Event() = default; // See: https://stackoverflow.com/questions/10024796/c-virtual-functions-but-no-virtual-destructors
+		shared::u64 hash;
 		EventType type;
 		std::string fullpath; // @Warning: Not serialized
 		std::string path;
 		shared::u64 timeModifiedUtcMs;
 		std::string content;
 
-		void serialize(BinarySerializer& serializer);
-		void deserialize(BinaryDeserializer& serializer);
+		void serialize(BinarySerializer& serializer) override;
+		void deserialize(BinaryDeserializer& serializer) override;
 		std::string toString() const override;
 	};
 

@@ -1,6 +1,6 @@
-#include "app.hpp"
+#include "server_app.hpp"
 int main() {
-	server::App app;
+	server::ServerApp app;
 	app.run();
 	return 0;
 }

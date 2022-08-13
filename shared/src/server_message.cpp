@@ -4,6 +4,9 @@
 #include <cstddef>
 
 namespace shared {
+    ServerMessage::ServerMessage() { }
+    ServerMessage::~ServerMessage() { }
+
     void ServerMessage::serialize(BinarySerializer& serializer) {
         serializer.write(getEnumType(type));
         switch (type) {
