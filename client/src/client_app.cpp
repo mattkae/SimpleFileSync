@@ -43,7 +43,6 @@ namespace client {
 		spdlog::info("Processing next client update...");
 		client::Config globalConfig(shared::getSaveAreaPath("client.conf"));
 		globalConfig.load();
-		boost::asio::io_service ios;
 		std::string host = globalConfig.getIp();
 		int port = globalConfig.getPort();
 		spdlog::info("Making connection to {0}:{1}", host, port);

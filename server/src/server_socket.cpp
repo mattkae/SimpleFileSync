@@ -1,67 +1,74 @@
 #include "server_socket.hpp"
-#include <boost/asio.hpp> 
-#include <boost/asio/io_context.hpp>
-#include <boost/asio/ssl/context.hpp>
-#include <boost/asio/ssl.hpp> 
-#include <boost/array.hpp>
+#include <netdb.h>
+#include <string>
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <spdlog/spdlog.h>
 
 namespace server {
-
-    using boost::asio::ip::tcp;
-    typedef boost::asio::ssl::stream<tcp::socket> SslSocket;
-
-    ServerSocket::ServerSocket(const ServerSocketOptions& opts) :
-        mIoContext(), 
-        mAcceptor(mIoContext, tcp::endpoint(tcp::v4(), opts.port)),
-        mSslContext(boost::asio::ssl::context::sslv23)
-    {
-
-        if (opts.useSsl) {
-            // Creating a self-signed certificate: https://stackoverflow.com/questions/10175812/how-to-generate-a-self-signed-ssl-certificate-using-openssl/10176685#10176685
-            mSslContext.use_certificate_chain_file("./server.crt");
-            mSslContext.use_private_key_file("./server.key", boost::asio::ssl::context::pem);
-            mSslContext.use_tmp_dh_file("./dh512.pem");
-            //mSslContext.set_password_callback(std::bind(&App::getPassword, this));
-        }
-
+    ServerSocket::ServerSocket(const ServerSocketOptions& opts) {
         mOnRead = opts.onRead;
+        mPort = opts.port;
     }
 
     ServerSocket::~ServerSocket() {
         
     }
 
+    #define BACKLOG 20
+    #define MAXDATASIZE 1024
+
     void ServerSocket::run() {
         mIsRunning = true;
+        addrinfo hints = {};
+        memset(&hints, 0, sizeof hints);
+        addrinfo* res = nullptr;
+        int sockfd = 
+        hints.ai_family = AF_UNSPEC; // IPv4 or IPv6
+        hints.ai_socktype = SOCK_STREAM; // TCP
+        hints.ai_flags = AI_PASSIVE;
+
+        std::string port = std::to_string(mPort);
+        int rv;
+        if ((rv = getaddrinfo(NULL, port.c_str(), &hints, &res)) != 0) {
+            spdlog::error("Unable to get address info for port {0}. Error: {1}", port, gai_strerror(rv));
+            return;
+        }
+
+        sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol); // @TODO: Select the right thing
+        if (sockfd < 0) {
+            spdlog::error("Unable to open server socket.");
+            return;
+        }
+
+        if (bind(sockfd, res->ai_addr, res->ai_addrlen) < 0) {
+            spdlog::error("Unable to bind server socket.");
+            return;
+        }
+
+        freeaddrinfo(res);
+        listen(sockfd, BACKLOG);
         while (mIsRunning) {
             try {
-                tcp::socket socket(mIoContext);
-                mAcceptor.accept(socket);
-
-                SslSocket sslSocket(std::move(socket), mSslContext);
-                try {
-                    sslSocket.handshake(boost::asio::ssl::stream_base::server);
-                }
-                catch (const boost::system::system_error& error) {
-                    spdlog::error("Could not complete handshake with client: {0}", error.what());
+                sockaddr_storage clientAddr;
+                socklen_t addrSize = sizeof clientAddr;
+                int clientfd = accept(sockfd, (sockaddr*)&clientAddr, &addrSize);
+                if (clientfd < 0) {
+                    spdlog::error("Unable to accept clinet connection.");
                     continue;
                 }
 
-                spdlog::info("Client connected.");
+                SocketConnection conn;
 
-                SocketConnection connection(&sslSocket);
-                while (sslSocket.lowest_layer().is_open()) {
-                    boost::system::error_code error;
-                    sslSocket.lowest_layer().wait(sslSocket.lowest_layer().wait_read);
-                    connection.bytesRead = sslSocket.read_some(boost::asio::buffer(connection.buffer), error);
-                    connection.bytesDeserialized = 0;
-
-                    while (connection.bytesRead != connection.bytesDeserialized) {
-                        connection.bytesDeserialized += mOnRead(connection);
-                    }
+                int bytesRead = recv(clientfd, &conn.buffer, SocketConnection::MAX_BUFF_SIZE - 1, 0);
+                if (bytesRead == -1) {
+                    spdlog::error("Failed to read message from client.");
+                    continue;
                 }
 
+                conn.buffer[bytesRead] = '\0';
+                conn.bytesRead += bytesRead;
+                mOnRead(conn);
                 spdlog::info("Client closed.");
             } catch (std::exception& e) {
                 spdlog::error("Exception while talking to client: {0}", e.what());
@@ -73,18 +80,13 @@ namespace server {
         mIsRunning = false;
     }
 
-    SocketConnection::SocketConnection(boost::asio::ssl::stream<boost::asio::ip::tcp::socket>* stream) {
-        mStream = stream;
+    SocketConnection::SocketConnection() {
     }
 
     void SocketConnection::close() {
-        mStream->lowest_layer().close();
     }
 
     void SocketConnection::write(shared::byte* data, size_t size) {
-        // @TODO: Check error
-        boost::system::error_code ignored_error;
-        mStream->write_some( boost::asio::buffer(data, size), ignored_error);
     }
 
 }

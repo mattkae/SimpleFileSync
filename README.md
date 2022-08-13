@@ -18,14 +18,6 @@ git submodule update
 cd spdlog && mkdir -p build && cd build && cmake .. && make
 ```
 
-#### boost (for TCP srever/client and program options)
-You must have boost installed on your system. As an example, you can install on Ubuntu via:
-```
-sudo apt-get install libboost-all-dev
-```
-
-Obviously this will be different on your repository, so please check!
-
 #### shared (glue between client and server)
 ```
 cd ./shared && mkdir -p build && cd build && cmake .. && make

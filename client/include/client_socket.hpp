@@ -3,15 +3,12 @@
 #include <string>
 #include <ctype.h>
 #include "type.hpp"
-#include <boost/asio.hpp>
-#include <boost/asio/ssl.hpp>
 
 namespace client {
-    typedef boost::asio::ssl::stream<boost::asio::ip::tcp::socket> SslSocket;
-
     struct ClientSocketOptions {
         std::string host;
-        uint_least16_t port;
+        uint_least16_t port = 0;
+        bool useSsl = false;
     };
 
     struct ClientReadResult {
@@ -27,8 +24,8 @@ namespace client {
         void write(shared::byte* data, size_t size);
         ClientReadResult read();
     private:
+        int mSockfd;
         void _close();
-        SslSocket mSocket;
     };
 }
 

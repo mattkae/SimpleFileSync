@@ -32,7 +32,7 @@ namespace server {
     ServerApp::~ServerApp() { }
 
     size_t ServerApp::_onData(SocketConnection& conn) {
-        shared::BinaryDeserializer clientSerializer({ &conn.buffer.data()[conn.bytesDeserialized], conn.bytesRead });
+        shared::BinaryDeserializer clientSerializer({ &conn.buffer[conn.bytesDeserialized], conn.bytesRead });
         shared::ClientMessage incoming = clientSerializer.readObject<shared::ClientMessage>();
 
         spdlog::info("bytes read={0} / bytes deserialized={1}", conn.bytesRead, conn.bytesDeserialized);
