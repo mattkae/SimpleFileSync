@@ -4,6 +4,8 @@
 #include <cstring>
 #include <iostream>
 #include <netdb.h>
+#include <openssl/ossl_typ.h>
+#include <openssl/ssl.h>
 #include <string>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -45,6 +47,26 @@ namespace client {
         }
 
         freeaddrinfo(serverInfo);
+
+        mUseSsl = options.useSsl;
+        if (mUseSsl) {
+            spdlog::info("Using SSL client.");
+            auto method = TLS_client_method();
+            mSslCtx = SSL_CTX_new(method);
+            if (mSslCtx == NULL) {
+                spdlog::error("Failed to get SSL context.");
+                ERR_print_errors_fp(stderr);
+                return;
+            }
+
+            mSsl = SSL_new(mSslCtx);
+            SSL_set_fd(mSsl, mSockfd);
+            if ( SSL_connect(mSsl) == -1 ) {
+                spdlog::error("Failed to connect to server with SSL.");
+                ERR_print_errors_fp(stderr);
+                return;
+            }
+        }
     }
 
     ClientSocket::~ClientSocket() {
@@ -52,14 +74,28 @@ namespace client {
     }
 
     void ClientSocket::write(shared::byte* data, size_t size) {
-        if (send(mSockfd, data, size, 0) == -1) {
-            spdlog::error("Failed to send data.");
+        if (mUseSsl) {
+            int readResult;
+            if ((readResult = SSL_write(mSsl, data, size)) <= 0) {
+                auto error = SSL_get_error(mSsl, readResult);
+                spdlog::error("Failed to write message to server: {0}", error);
+            }
+        }
+        else {
+            if (send(mSockfd, data, size, 0) == -1) {
+                spdlog::error("Failed to send data.");
+            }
         }
     }
 
     ClientReadResult ClientSocket::read() {
         ClientReadResult result;
-        result.len = recv(mSockfd, &result.data, result.BUFFER_SIZE - 1, 0);
+        if (mUseSsl) {
+            result.len = SSL_read(mSsl, &result.data, result.BUFFER_SIZE - 1);
+        }
+        else {
+            result.len = recv(mSockfd, &result.data, result.BUFFER_SIZE - 1, 0);
+        }
         spdlog::info("Bytes read from server: {0}", result.len);
         if (result.len == -1) {
             spdlog::error("Failed to read message from client.");
@@ -72,6 +108,8 @@ namespace client {
     }
 
     void ClientSocket::_close() {
+        SSL_free(mSsl);
         close(mSockfd);
+        SSL_CTX_free(mSslCtx);
     }
 }

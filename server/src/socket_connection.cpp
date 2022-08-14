@@ -61,11 +61,13 @@ namespace server {
         SSL_set_fd(mSsl, mSockfd);
 
         if (SSL_accept(mSsl) <= 0) {
+            stop();
             spdlog::warn("Client not accepted");
             ERR_print_errors_fp(stderr);
             return false;
         }
 
+        spdlog::info("New client accepted.");
         return true;
     }
 
@@ -87,10 +89,14 @@ namespace server {
 
     SocketBuffer SslSocketConnection::readData() {
         SocketBuffer result;
+        result.connection = this;
         result.bytesRead = SSL_read(mSsl, &result.buffer, SocketBuffer::MAX_BUFF_SIZE - 1);
-        if (result.bytesRead == -1) {
+        if (result.bytesRead <= 0) {
+            auto errorCode = result.bytesRead;
+            result.bytesRead = 0;
+            result.buffer[0] = '\0';
             result.connectionClosed = true;
-            spdlog::error("Failed to read message from client.");
+            spdlog::error("Failed to read message from client: {0} {1}", errorCode, ERR_error_string(ERR_get_error(), NULL));
             return result;
         }
         else if (result.bytesRead == 0) {

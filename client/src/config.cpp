@@ -5,6 +5,8 @@ namespace client {
 	const std::string DIRECTORY = "directory";
 	const std::string PORT = "port";
 	const std::string IP = "ip";
+	const std::string USE_SSL = "useSsl";
+	
 
 	bool Config::processToken(std::string key, std::string value) {
 		if (key == DIRECTORY) {
@@ -16,6 +18,10 @@ namespace client {
 			return true;
 		} else if (key == PORT) {
 			mPort = stoi(value);
+			return true;
+		}
+		else if (key == USE_SSL) {
+			mUseSsl = value == "true";
 			return true;
 		}
 		else {

@@ -79,7 +79,12 @@ namespace server {
 
                 BaseSocketConnection* conn;
                 if (mUseSsl) {
-                    conn = new SslSocketConnection(clientfd, ctx);
+                    auto sslConn = new SslSocketConnection(clientfd, ctx);
+                    bool couldConnect = sslConn->connect();
+                    conn = sslConn;
+                    if (!couldConnect) {
+                        spdlog::error("Failed to accept client as SSL.");
+                    }
                 }
                 else {
                     conn = new NoSslSocketConnection(clientfd);

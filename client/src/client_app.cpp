@@ -47,7 +47,7 @@ namespace client {
 		int port = globalConfig.getPort();
 		spdlog::info("Making connection to {0}:{1}", host, port);
 
-		ClientSocket socket({ host, static_cast<uint_least16_t>(port) });
+		ClientSocket socket({ host, static_cast<uint_least16_t>(port), globalConfig.useSsl() });
 
 		// Begin communicaton with the server: Write exactly the amount of data that we need and expect the 
 		// start communication in response

@@ -25,7 +25,7 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 if(MSVC)
   target_compile_options(${PROJECT_NAME} /W4 /WX)
 else()
-  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
+  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -g3)
 endif()
 target_link_libraries(${PROJECT_NAME} PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/../shared/build/libsfs_shared.a
