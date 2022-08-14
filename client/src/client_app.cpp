@@ -86,8 +86,8 @@ namespace client {
 		for (auto event : eventList) {
 			shared::ClientMessage fileUpdateMsg;
 			fileUpdateMsg.type = shared::ClientMessageType::ChangeEvent;
+			event.hash = shared::getHash(mAppData.getHash(), event);
 			fileUpdateMsg.event = event;
-			fileUpdateMsg.event.hash = shared::getHash(mAppData.getHash(), event);
 			switch (event.type) {
 			case shared::EventType::Created: {
 				spdlog::info("Created file: {0}", event.path);

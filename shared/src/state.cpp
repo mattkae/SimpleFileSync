@@ -1,5 +1,6 @@
 #include "state.hpp"
 #include "base_config.hpp"
+#include "spdlog/spdlog.h"
 #include <cstddef>
 #include <sstream>
 #include <iterator>
@@ -13,6 +14,7 @@ namespace shared {
 
     State::State(std::string mPath, bool eraseData): BaseConfig(mPath) {
         if (eraseData) {
+            spdlog::info("Erasing state data.");
             std::ofstream ofs;
             ofs.open(mPath, std::ofstream::out | std::ofstream::trunc);
             ofs.close();
