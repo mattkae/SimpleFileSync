@@ -3,6 +3,8 @@
 #include <string>
 #include <ctype.h>
 #include "type.hpp"
+#include <openssl/ssl.h>
+#include <openssl/err.h>
 
 namespace client {
     struct ClientSocketOptions {
@@ -26,6 +28,10 @@ namespace client {
     private:
         int mSockfd;
         void _close();
+
+        bool mUseSsl = false;
+        SSL_CTX* mSslCtx = NULL;
+        SSL* mSsl = NULL;
     };
 }
 

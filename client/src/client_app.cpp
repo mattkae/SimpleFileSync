@@ -47,7 +47,7 @@ namespace client {
 		int port = globalConfig.getPort();
 		spdlog::info("Making connection to {0}:{1}", host, port);
 
-		ClientSocket socket({ host, static_cast<uint_least16_t>(port) });
+		ClientSocket socket({ host, static_cast<uint_least16_t>(port), globalConfig.useSsl() });
 
 		// Begin communicaton with the server: Write exactly the amount of data that we need and expect the 
 		// start communication in response
@@ -86,8 +86,8 @@ namespace client {
 		for (auto event : eventList) {
 			shared::ClientMessage fileUpdateMsg;
 			fileUpdateMsg.type = shared::ClientMessageType::ChangeEvent;
+			event.hash = shared::getHash(mAppData.getHash(), event);
 			fileUpdateMsg.event = event;
-			fileUpdateMsg.event.hash = shared::getHash(mAppData.getHash(), event);
 			switch (event.type) {
 			case shared::EventType::Created: {
 				spdlog::info("Created file: {0}", event.path);

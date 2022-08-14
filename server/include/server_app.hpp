@@ -6,7 +6,7 @@
 #include "event_ledger.hpp"
 
 namespace server {
-    struct SocketConnection;
+    struct SocketBuffer;
 
     class ServerApp {
     public:
@@ -22,6 +22,6 @@ namespace server {
         shared::State mState;
         shared::EventLedger mLedger;
 
-        size_t _onData(SocketConnection& data);
+        void _onData(SocketBuffer& data);
     };
 }

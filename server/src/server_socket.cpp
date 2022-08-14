@@ -4,11 +4,16 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <spdlog/spdlog.h>
+#include "socket_connection.hpp"
 
 namespace server {
     ServerSocket::ServerSocket(const ServerSocketOptions& opts) {
         mOnRead = opts.onRead;
         mPort = opts.port;
+        mUseSsl = opts.useSsl;
+        if (mUseSsl) {
+            mSslOptions = opts.sslOptions;
+        }
     }
 
     ServerSocket::~ServerSocket() {
@@ -48,62 +53,89 @@ namespace server {
 
         freeaddrinfo(res);
         listen(sockfd, BACKLOG);
+        SSL_CTX* ctx = NULL;
+        if (mUseSsl) {
+            ctx = _getSslContext();
+            if (ctx == NULL) {
+                spdlog::error("Unable to start server without valid SSL context.");
+                return;
+            }
+
+            spdlog::info("Using SSL.");
+        }
+        else {
+            spdlog::info("Not using SSL.");
+        }
+        
         while (mIsRunning) {
             try {
                 sockaddr_storage clientAddr;
                 socklen_t addrSize = sizeof clientAddr;
                 int clientfd = accept(sockfd, (sockaddr*)&clientAddr, &addrSize);
                 if (clientfd < 0) {
-                    spdlog::error("Unable to accept clinet connection.");
+                    spdlog::error("Unable to accept client connection.");
                     continue;
                 }
 
-                SocketConnection conn(clientfd);
-
-                while (true) {
-                    int bytesRead = recv(clientfd, &conn.buffer, SocketConnection::MAX_BUFF_SIZE - 1, 0);
-                    if (bytesRead == -1) {
-                        spdlog::error("Failed to read message from client.");
-                        continue;
+                BaseSocketConnection* conn;
+                if (mUseSsl) {
+                    auto sslConn = new SslSocketConnection(clientfd, ctx);
+                    bool couldConnect = sslConn->connect();
+                    conn = sslConn;
+                    if (!couldConnect) {
+                        spdlog::error("Failed to accept client as SSL.");
                     }
-                    else if (bytesRead == 0) {
-                        break; // Client has closed the connection
-                    }
-
-                    conn.buffer[bytesRead] = '\0';
-                    conn.bytesRead += bytesRead;
-                    conn.bytesDeserialized += mOnRead(conn);
                 }
+                else {
+                    conn = new NoSslSocketConnection(clientfd);
+                }
+
+                while (!conn->isClosed()) {
+                    SocketBuffer readResult = conn->readData();
+                    mOnRead(readResult);
+                }
+
+                delete conn;
             } catch (std::exception& e) {
                 spdlog::error("Exception while talking to client: {0}", e.what());
             }
         }
+
+        close(sockfd);
+        if (ctx) SSL_CTX_free(ctx);
+    }
+
+    SSL_CTX* ServerSocket::_getSslContext() {
+        // This post usefully explained the keys that are in play here:
+        // https://superuser.com/questions/620121/what-is-the-difference-between-a-certificate-and-a-key-with-respect-to-ssl
+        const SSL_METHOD *method;
+        SSL_CTX *ctx;
+
+        method = TLS_server_method();
+
+        ctx = SSL_CTX_new(method);
+        if (!ctx) {
+            spdlog::error("Unable to create SSL context");
+            ERR_print_errors_fp(stderr);
+            return NULL;
+        }
+
+        if (SSL_CTX_use_certificate_file(ctx, mSslOptions.certChainFile.c_str(), SSL_FILETYPE_PEM) <= 0) {
+            spdlog::error("Unable to create use certificate file.");
+            ERR_print_errors_fp(stderr);
+            return NULL;
+        }
+
+        if (SSL_CTX_use_PrivateKey_file(ctx, mSslOptions.privateKeyFile.c_str(), SSL_FILETYPE_PEM) <= 0 ) {
+            spdlog::error("Unable to create use key file.");
+            ERR_print_errors_fp(stderr);
+            return NULL;
+        }
+
+        return ctx;
     }
 
     void ServerSocket::stop() {
         mIsRunning = false;
     }
-
-    SocketConnection::SocketConnection(int sockfd) {
-        mSockfd = sockfd;
-    }
-
-    SocketConnection::~SocketConnection() {
-        doClose();
-    }
-
-    void SocketConnection::doClose() {
-        close(mSockfd);
-        spdlog::info("Client closed.");
-    }
-
-    void SocketConnection::write(shared::byte* data, size_t size) {
-        if (send(mSockfd, data, size, 0) == 0) {
-            spdlog::error("Failed to write message to client.");
-        }
-        else {
-            spdlog::info("Message sent to client.");
-        }
-    }
-
 }

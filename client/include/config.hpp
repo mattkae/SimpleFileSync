@@ -13,6 +13,7 @@ namespace client {
 		std::string getDirectory();
 		std::string getIp();
 		int getPort();
+		bool useSsl() { return mUseSsl; };
 	private:
 		std::string mConfigPath;
 		
@@ -20,6 +21,7 @@ namespace client {
 		int mPort;
 		std::string mIdentifier;
 		std::string mWatchDirectory;
+		bool mUseSsl = false;
 	};
 };
 
