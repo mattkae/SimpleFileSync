@@ -1,4 +1,5 @@
 #include "socket_connection.hpp"
+#include <openssl/ssl.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <spdlog/spdlog.h>
@@ -7,6 +8,7 @@ namespace server {
     /* Base */
     BaseSocketConnection::~BaseSocketConnection() {}
     bool BaseSocketConnection::isClosed() { return mClosed; }
+    void BaseSocketConnection::stop() { mClosed = true; }
 
     /* No ssl */
     NoSslSocketConnection::NoSslSocketConnection(int sockfd) {
@@ -14,12 +16,7 @@ namespace server {
     }
 
     NoSslSocketConnection::~NoSslSocketConnection() {
-        destroy();
-    }
-
-    void NoSslSocketConnection::destroy() {
         close(mSockfd);
-        mClosed = true;
         spdlog::info("Client closed.");
     }
 
@@ -43,8 +40,8 @@ namespace server {
             return result;
         }
         else if (result.bytesRead == 0) {
-            mClosed = true;
             result.buffer[result.bytesRead] = '\0';
+            stop();
             return result;
         }
 
@@ -73,14 +70,9 @@ namespace server {
     }
 
     SslSocketConnection::~SslSocketConnection() {
-        destroy();
-    }
-
-    void SslSocketConnection::destroy() {
         SSL_shutdown(mSsl);
         SSL_free(mSsl);
         close(mSockfd);
-        mClosed = true;
         spdlog::info("Client closed.");
     }
 
@@ -95,14 +87,14 @@ namespace server {
 
     SocketBuffer SslSocketConnection::readData() {
         SocketBuffer result;
-        result.bytesRead = recv(mSockfd, &result.buffer, SocketBuffer::MAX_BUFF_SIZE - 1, 0);
+        result.bytesRead = SSL_read(mSsl, &result.buffer, SocketBuffer::MAX_BUFF_SIZE - 1);
         if (result.bytesRead == -1) {
             result.connectionClosed = true;
             spdlog::error("Failed to read message from client.");
             return result;
         }
         else if (result.bytesRead == 0) {
-            mClosed = true;
+            stop();
             return result;
         }
 

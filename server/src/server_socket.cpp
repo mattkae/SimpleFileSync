@@ -60,6 +60,11 @@ namespace server {
                 spdlog::error("Unable to start server without valid SSL context.");
                 return;
             }
+
+            spdlog::info("Using SSL.");
+        }
+        else {
+            spdlog::info("Not using SSL.");
         }
         
         while (mIsRunning) {
@@ -96,7 +101,9 @@ namespace server {
     }
 
     SSL_CTX* ServerSocket::_getSslContext() {
-         const SSL_METHOD *method;
+        // This post usefully explained the keys that are in play here:
+        // https://superuser.com/questions/620121/what-is-the-difference-between-a-certificate-and-a-key-with-respect-to-ssl
+        const SSL_METHOD *method;
         SSL_CTX *ctx;
 
         method = TLS_server_method();
@@ -108,13 +115,13 @@ namespace server {
             return NULL;
         }
 
-        if (SSL_CTX_use_certificate_file(ctx, "cert.pem", SSL_FILETYPE_PEM) <= 0) {
+        if (SSL_CTX_use_certificate_file(ctx, mSslOptions.certChainFile.c_str(), SSL_FILETYPE_PEM) <= 0) {
             spdlog::error("Unable to create use certificate file.");
             ERR_print_errors_fp(stderr);
             return NULL;
         }
 
-        if (SSL_CTX_use_PrivateKey_file(ctx, "key.pem", SSL_FILETYPE_PEM) <= 0 ) {
+        if (SSL_CTX_use_PrivateKey_file(ctx, mSslOptions.privateKeyFile.c_str(), SSL_FILETYPE_PEM) <= 0 ) {
             spdlog::error("Unable to create use key file.");
             ERR_print_errors_fp(stderr);
             return NULL;

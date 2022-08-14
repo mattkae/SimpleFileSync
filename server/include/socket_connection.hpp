@@ -11,8 +11,8 @@ namespace server {
         virtual ~BaseSocketConnection();
         virtual SocketBuffer readData() = 0;
         virtual void writeData(shared::byte* data, size_t size) = 0;
-        virtual void destroy() = 0;
         bool isClosed();
+        void stop();
 
     protected:
         bool mClosed = false;
@@ -25,7 +25,6 @@ namespace server {
 
         SocketBuffer readData() override;
         void writeData(shared::byte* data, size_t size) override;
-        void destroy() override;
     private:
         int mSockfd;
     };
@@ -37,7 +36,6 @@ namespace server {
         SocketBuffer readData() override;
         bool connect();
         void writeData(shared::byte* data, size_t size) override;
-        void destroy() override;
     private:
         int mSockfd;
         SSL* mSsl;

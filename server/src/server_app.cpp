@@ -90,7 +90,7 @@ namespace server {
                 break;
             case shared::ClientMessageType::RequestEndComm:
                 spdlog::info("Client requesting termination of communication.");
-                buff.connection->destroy();
+                buff.connection->stop();
                 break;
             default:
                 spdlog::warn("Unknown request: {0}", (int)incoming.type);
@@ -106,7 +106,8 @@ namespace server {
             ServerSocketOptions options;
             options.onRead = [this](SocketBuffer& data) { return this->_onData(data); };
             options.port = mConfig.getPort();
-            options.useSsl = false;
+            options.useSsl = mConfig.useSsl();
+            options.sslOptions = mConfig.getSslOptions();
             ServerSocket mSocket(options);
             mSocket.run();
         } catch (std::exception& e) {
