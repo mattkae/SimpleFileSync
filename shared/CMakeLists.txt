@@ -12,6 +12,7 @@ add_library(${PROJECT_NAME} STATIC
   src/state.cpp
   src/event.cpp
   src/event_ledger.cpp
+  src/program_options.cpp
 )
 
 if(MSVC)
