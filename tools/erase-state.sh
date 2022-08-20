@@ -1,1 +1,4 @@
-rm ~/.simplefilesync/.client_saved.data && rm ~/.simplefilesync/.server_saved.data && rm -rf ~/.simplefilesync/.client_events && rm -rf ~/.simplefilesync/.server_events
+rm ~/.local/share/simplefilesync/.client_saved.data 
+rm ~/.local/share/simplefilesync/.server_saved.data 
+rm -rf ~/.local/share/simplefilesync/.client_events
+rm -rf ~/.local/share/simplefilesync/.server_events

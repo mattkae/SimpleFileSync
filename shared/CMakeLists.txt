@@ -8,7 +8,7 @@ add_library(${PROJECT_NAME} STATIC
   src/server_message.cpp
   src/hash_calculator.cpp
   src/base_config.cpp
-  src/save_area.cpp
+  src/environment.cpp
   src/state.cpp
   src/event.cpp
   src/event_ledger.cpp

@@ -1,5 +1,4 @@
 #include "event.hpp"
-#include "save_area.hpp"
 #include "server_message.hpp"
 #include <string>
 #include <string_view>

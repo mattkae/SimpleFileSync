@@ -1,6 +1,5 @@
 #include "client_app.hpp"
 #include <filesystem>
-#include "save_area.hpp"
 #include <iostream>
 #include <exception>
 #include "program_options.hpp"

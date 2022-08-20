@@ -8,19 +8,19 @@
 #include "event.hpp"
 #include "event_ledger.hpp"
 #include "file_watcher.hpp"
-#include "save_area.hpp"
 #include "serializer.hpp"
 #include "server_message.hpp"
 #include "hash_calculator.hpp"
 #include <spdlog/spdlog.h>
 #include "client_socket.hpp"
+#include "environment.hpp"
 
 
 namespace client {
 	ClientApp::ClientApp(const ClientOptions& opts): 
-		mConfig(shared::getSaveAreaPath("client.conf")),
-		mAppData(shared::getSaveAreaPath(".client_saved.data"), opts.blankSlate),
-		mLedger(shared::getSaveAreaPath(".client_events"), opts.blankSlate)
+		mConfig(shared::Environment::get().getConfigDirectory() + "client.conf"),
+		mAppData(shared::Environment::get().getDataDirectory() + ".client_saved.data", opts.blankSlate),
+		mLedger(shared::Environment::get().getDataDirectory() + ".client_events", opts.blankSlate)
 	{
 		mAppData.load();
 		mConfig.load();
@@ -41,13 +41,11 @@ namespace client {
 
 	void ClientApp::onDirectoryChange(const std::vector<shared::Event>& eventList) {
 		spdlog::info("Processing next client update...");
-		client::Config globalConfig(shared::getSaveAreaPath("client.conf"));
-		globalConfig.load();
-		std::string host = globalConfig.getIp();
-		int port = globalConfig.getPort();
+		std::string host = mConfig.getIp();
+		int port = mConfig.getPort();
 		spdlog::info("Making connection to {0}:{1}", host, port);
 
-		ClientSocket socket({ host, static_cast<uint_least16_t>(port), globalConfig.useSsl() });
+		ClientSocket socket({ host, static_cast<uint_least16_t>(port), mConfig.useSsl() });
 
 		// Begin communicaton with the server: Write exactly the amount of data that we need and expect the 
 		// start communication in response

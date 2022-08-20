@@ -6,20 +6,20 @@
 #include "client_message.hpp"
 #include "deserializer.hpp"
 #include "event.hpp"
-#include "save_area.hpp"
 #include "server_message.hpp"
 #include "hash_calculator.hpp"
 #include "server_socket.hpp"
 #include "socket_buffer.hpp"
 #include "socket_connection.hpp"
+#include "environment.hpp"
 #include "spdlog/common.h"
 #include <spdlog/spdlog.h>
 
 namespace server {
     ServerApp::ServerApp():
-        mConfig(shared::getSaveAreaPath("server.conf")),
-        mState(shared::getSaveAreaPath(".server_saved.data")),
-        mLedger(shared::getSaveAreaPath(".server_events"))
+        mConfig(shared::Environment::get().getConfigDirectory() + "server.conf"),
+        mState(shared::Environment::get().getDataDirectory() + ".server_saved.data"),
+        mLedger(shared::Environment::get().getDataDirectory() + ".server_events")
     {
 		mState.load();
 

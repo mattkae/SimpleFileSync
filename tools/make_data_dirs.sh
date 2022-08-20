@@ -1,1 +1,3 @@
-mkdir -p ~/.simplefilesync && cp ../example/server.conf ~/.simplefilesync/ && cp ../example/client.conf ~/.simplefilesync/
+mkdir -p ~/.config/simplefilesync
+cp ../example/server.conf ~/.config/simplefilesync/
+cp ../example/client.conf ~/.config/simplefilesync/
