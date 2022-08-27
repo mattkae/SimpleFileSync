@@ -10,7 +10,7 @@ namespace shared {
 	class BinarySerializer;
 	class BinaryDeserializer;
 	
-	enum class ClientMessageType: shared::i8 {
+	enum class ClientMessageType: shared::i16 {
 		None = 0,
 		RequestStartComm,
 		RequestEndComm,

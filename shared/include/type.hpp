@@ -8,6 +8,7 @@
 namespace shared {
 	typedef unsigned char byte;
 	typedef int8_t i8;
+	typedef int16_t i16;
 	typedef int32_t i32;
 	typedef uint64_t u64;
 	typedef uint32_t u32;

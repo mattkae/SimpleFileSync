@@ -3,8 +3,10 @@
 #include <iostream>
 #include <exception>
 #include "program_options.hpp"
+#include <spdlog/spdlog.h>
 
 int main(int argc, char** argv) {
+	spdlog::set_level(spdlog::level::trace);
 	client::ClientOptions opts;
 	try {
 		shared::ProgramOptions po("sfs_client");

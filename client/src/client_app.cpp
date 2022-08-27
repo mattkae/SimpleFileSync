@@ -58,7 +58,7 @@ namespace client {
 
 		// Receiving a start communicaton message from the server
 		auto socketRead = socket.read();
-		shared::BinaryDeserializer mServerSerializer({ socketRead.data, static_cast<size_t>(socketRead.len), 0 });
+		shared::BinaryDeserializer mServerSerializer({ socketRead.data, static_cast<shared::u64>(socketRead.len), 0 });
 		shared::ServerMessage response = mServerSerializer.readObject<shared::ServerMessage>();
 
 		switch (response.type) {

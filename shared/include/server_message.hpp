@@ -11,7 +11,7 @@ namespace shared {
 	class BinarySerializer;
 	class BinaryDeserializer;
 	
-	enum class ServerMessageType: shared::i8 {
+	enum class ServerMessageType: shared::i16 {
 		None = 0,
 		ResponseStartComm,
 		ReponseEndComm,
