@@ -2,9 +2,14 @@
 #include <cstdlib>
 #include <sstream>
 #include <iostream>
+#include <unistd.h>
 
 namespace shared {
     inline std::string findConfigDirectory() {
+        if (geteuid() == 0) {
+            return std::string("/etc/simplefilesync/");
+        }
+        
         std::stringstream ss;
         auto xdgConfigHome = getenv("XDG_CONFIG_HOME");
         if (xdgConfigHome) {
@@ -24,6 +29,10 @@ namespace shared {
     }
 
     inline std::string findDataDirectory() {
+        if (geteuid() == 0) {
+            return std::string("/var/lib/simplefilesync/");
+        }
+
         std::stringstream ss;
         auto xdgDataHome = getenv("XDG_DATA_HOME");
         if (xdgDataHome) {

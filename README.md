@@ -3,6 +3,14 @@
 ## Overview
 The goal of this project is to reacquint myself with modern C++ by solving some of my organization problems. Essentially, I have a bunch of org files scattered throughout my computers and accounts that I would like to sync with a centralized server. Of course, there are many services that would easily do this for me, but I think that it would be more fun to do it by myself and, in the process, discover all of the new things that I've been missing in C++.
 
+## Table of Contents
+- [Bulding](#building)
+- [Configuration](#configuration)
+- [Running](#running)
+- [Directories](#directories)
+- [Architecture](#architecture)
+- [Future](#future)
+
 ## Building
 
 ### Prerequisites
@@ -40,7 +48,7 @@ To get setup quickly, you can edit the configurations found in the `sample` dire
 cd tools && ./make-data-dirs.sh
 ```
 
-This will propagate your configurations to `~/.config/simplefilesync` so that you can easily run them locally.
+This will propagate your configurations to `~/.config/simplefilesync` if you are NOT super user, otherwise they will be saved in `/etc/simplefilesync`.
 
 ### Server
 ```js
@@ -72,6 +80,15 @@ cd ./server/build && ./sfs_server
 ```sh
 cd ./client/build && ./sfs_client
 ```
+
+## Directories
+When NOT `sudo` user:
+- Configuration: `~/.config/simplefilesync`
+- Data: `~/.local/share/simplefilesync`
+
+When `sudo` user:
+- Configuration: `/etc/simplefilesync`
+- Data: `/var/lib/simplefilesync`
 
 ## Architecture
 The project will feature a single centralized server talking to multiple clients (daemons). The server will know the latest hash of the data. At a set interval, the client will try and post any changes to the server. In this moment, one of three things will happen:
