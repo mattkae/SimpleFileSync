@@ -1,5 +1,6 @@
 #include "event_ledger.hpp"
 #include "deserializer.hpp"
+#include "type.hpp"
 #include <spdlog/spdlog.h>
 #include <string>
 #include <filesystem>
@@ -58,7 +59,7 @@ namespace shared {
         fread(buffer, 1, filesize, f);
         fclose(f);
 
-        BinaryDeserializer deserializer({ &buffer[0], static_cast<size_t>(filesize), 0 });
+        BinaryDeserializer deserializer({ &buffer[0], static_cast<u64>(filesize), 0 });
         Event e = deserializer.readObject<Event>();
         e.hash = hash;
         delete[] buffer;

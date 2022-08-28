@@ -1,5 +1,6 @@
 #include "event.hpp"
 #include "server_message.hpp"
+#include "type.hpp"
 #include <string>
 #include <string_view>
 #include <iostream>
@@ -25,8 +26,8 @@ namespace shared {
 	}
 
     void Event::serialize(BinarySerializer& serializer) {
-        serializer.write<size_t>(hash);
-        serializer.write<int>(getEnumType(type));
+        serializer.write(hash);
+        serializer.write(getEnumType(type));
         serializer.write(timeModifiedUtcMs);
         serializer.writeString(path);
 
@@ -36,9 +37,9 @@ namespace shared {
     }
 
     void Event::deserialize(BinaryDeserializer& serializer){
-        hash = serializer.read<size_t>();
-        type = (shared::EventType)serializer.read<int>();
-        timeModifiedUtcMs = serializer.read<long>();
+        hash = serializer.readu64();
+        type = (shared::EventType)serializer.readi16();
+        timeModifiedUtcMs = serializer.readu64();
         path = serializer.readString();
 
         if (type == shared::EventType::Created || type == shared::EventType::Modified) {

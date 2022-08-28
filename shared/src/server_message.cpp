@@ -1,6 +1,7 @@
 #include "server_message.hpp"
 #include "serializer.hpp"
 #include "deserializer.hpp"
+#include "type.hpp"
 #include <cstddef>
 
 namespace shared {
@@ -19,7 +20,7 @@ namespace shared {
     }
 
     void ServerMessage::deserialize(BinaryDeserializer& deserializer) {
-        type = static_cast<ServerMessageType>(deserializer.read<shared::i8>());
+        type = static_cast<ServerMessageType>(deserializer.readi16());
         switch (type) {
             case ServerMessageType::ResponseStartComm:
                 eventsForClient = deserializer.readObjectVector<Event>();

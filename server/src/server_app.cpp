@@ -13,6 +13,7 @@
 #include "socket_connection.hpp"
 #include "environment.hpp"
 #include "spdlog/common.h"
+#include "type.hpp"
 #include <spdlog/spdlog.h>
 
 namespace server {
@@ -33,11 +34,12 @@ namespace server {
     ServerApp::~ServerApp() { }
 
     void ServerApp::_onData(SocketBuffer& buff) {
-        size_t bytesDeserialized = 0;
-        const size_t bytesRead = buff.bytesRead;
+        shared::u64 bytesDeserialized = 0;
+        const shared::u64 bytesRead = buff.bytesRead;
         while (bytesDeserialized < bytesRead) {
-            shared::BinaryDeserializer clientSerializer({ &buff.buffer[bytesDeserialized], bytesRead });
+            shared::BinaryDeserializer clientSerializer({ &buff.buffer[bytesDeserialized], bytesRead, 0 });
             shared::ClientMessage incoming = clientSerializer.readObject<shared::ClientMessage>();
+            bytesDeserialized += clientSerializer.getCursor();
 
             spdlog::info("bytes read={0} / bytes deserialized={1}", bytesRead, bytesDeserialized);
 
@@ -56,7 +58,7 @@ namespace server {
                     spdlog::info("Client is not in sync.");
                     message.type = shared::ServerMessageType::ResponseStartComm;
                     auto hashList = mState.getHashList();
-                    std::vector<size_t> hashesToSend;
+                    std::vector<shared::u64> hashesToSend;
                     if (lastConfirmedClientHash == 0) {
                         hashesToSend = hashList;
                     }
@@ -64,12 +66,12 @@ namespace server {
                         auto it = std::find(hashList.begin(), hashList.end(), lastConfirmedClientHash);
                         if (it != hashList.end()) {
                             auto lastHashIndex = it - hashList.begin();
-                            hashesToSend = std::vector<size_t>(hashList.begin() + lastHashIndex, hashList.end());
+                            hashesToSend = std::vector<shared::u64>(hashList.begin() + lastHashIndex, hashList.end());
                         }
                     }
                     
                     std::vector<shared::Event> eventsToSend;
-                    for (size_t hash : hashesToSend) {
+                    for (shared::u64 hash : hashesToSend) {
                         auto event = mLedger.retrieve(hash);
                         // @TODO: Cleanup unserialized nonsense
                         event.fullpath = mConfig.getDirectory() + "/" + event.path;
@@ -96,8 +98,6 @@ namespace server {
                 spdlog::warn("Unknown request: {0}", (int)incoming.type);
                 break;
             }
-
-            bytesDeserialized += clientSerializer.getCursor();
         }
     }
 

@@ -26,7 +26,7 @@ namespace shared {
             }
         }
         catch(std::filesystem::filesystem_error const& ex) {
-            spdlog::error("Failed to initialize config: {0}", ex.what());
+            spdlog::error("Failed to initialize config from path {0} because {1}", configPath, ex.what());
         }
     }
 

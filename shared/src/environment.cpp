@@ -1,9 +1,10 @@
 #include "environment.hpp"
 #include <cstdlib>
 #include <sstream>
+#include <iostream>
 
 namespace shared {
-    inline std::string getConfigDirectory() {
+    inline std::string findConfigDirectory() {
         std::stringstream ss;
         auto xdgConfigHome = getenv("XDG_CONFIG_HOME");
         if (xdgConfigHome) {
@@ -22,7 +23,7 @@ namespace shared {
         return ss.str();
     }
 
-    inline std::string getDataDirectory() {
+    inline std::string findDataDirectory() {
         std::stringstream ss;
         auto xdgDataHome = getenv("XDG_DATA_HOME");
         if (xdgDataHome) {
@@ -42,8 +43,8 @@ namespace shared {
     }
 
     Environment::Environment() {
-        mConfigDirectory = getConfigDirectory();
-        mDataDirectory = getDataDirectory();
+        mConfigDirectory = findConfigDirectory();
+        mDataDirectory = findDataDirectory();
     }
 
     const std::string& Environment::getConfigDirectory() {

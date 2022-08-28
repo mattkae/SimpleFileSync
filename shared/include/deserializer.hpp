@@ -1,18 +1,23 @@
 #pragma once
 #include <cstddef>
 #include <cstring>
+#include <exception>
+#include <netinet/in.h>
 #include <ostream>
 #include <string>
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <vector>
 #include "type.hpp"
+#include <arpa/inet.h>
+
+#define ntohll(x) ((1==ntohl(1)) ? (x) : ((uint64_t)ntohl((x) & 0xFFFFFFFF) << 32) | ntohl((x) >> 32))
 
 namespace shared {
 	struct BinaryDeserializerOptions {
         byte* data = NULL;
-		size_t dataSize = 0;
-		size_t cursorOffset = 0;
+		u64 dataSize = 0;
+		u64 cursorOffset = 0;
 	};
 	
 	class BinaryDeserializer {
@@ -27,29 +32,50 @@ namespace shared {
 			mCursor = bso.cursorOffset;
 		}
 
-		size_t getSize() { return mSize; }
-		size_t getCursor() { return mCursor; }
+		u64 getSize() { return mSize; }
+		u64 getCursor() { return mCursor; }
 		byte* getData() { return mData; };
 
 		template<typename S>
-		S read() {
+		S _readInternal(const char* debugMessage) {
+			S s = 0;
 			if (!canRead(sizeof(S))) {
-				spdlog::error("Failed to read type, type=", typeid(S).name());
-				return -1;
+				spdlog::error("Failed to read value: {0} -> currentSize: {1}, cursor: {2}, desiredSize: {3}", debugMessage, getSize(), getCursor(), getSize() + sizeof(S));
+				return s;
 			}
 
-			S s;
 			memcpy(&s, &mData[mCursor], sizeof(S));
 			mCursor += sizeof(S);
-			return s;
+			return  s;
+		}
+
+		u64 readu64() {
+			u64 value = _readInternal<u64>("u64");
+			return ntohll(value);
+		}
+
+		u32 readu32() {
+			return ntohl(_readInternal<u32>("u32"));
+		}
+
+		i32 readi32() {
+			return ntohl(_readInternal<i32>("i32"));
+		}
+
+		i16 readi16() {
+			return ntohs(_readInternal<i16>("i16"));
+		}
+
+		i8 readi8() {
+			return ntohs(_readInternal<i8>("i8"));
 		}
 
 		std::string readString() {
-			size_t l = read<size_t>();
+			u64 l = readu64();
 			std::string s;
 
 			if (!canRead(l)) {
-				spdlog::error("Failed to read type, type=string");
+				spdlog::error("Failed to read string value, size={0}", l);
 				return s;
 			}
 			
@@ -62,9 +88,9 @@ namespace shared {
 
 		template<typename S>
 		std::vector<S> readVector() {
-			size_t l = read<size_t>();
+			u64 l = readu64();
 			std::vector<S> retval(l);
-			for (size_t i = 0; i < l; i++) {
+			for (u64 i = 0; i < l; i++) {
 				retval.push_back(read<S>());
 			}
 
@@ -73,7 +99,7 @@ namespace shared {
 
 		template<typename S>
 		std::vector<S> readObjectVector() {
-			size_t l = read<size_t>();
+			u64 l = readu64();
 			std::vector<S> retval;
 			retval.reserve(1);
 			for (size_t i = 0; i < l; i++) {
@@ -92,11 +118,11 @@ namespace shared {
 
 	private:
 		byte* mData = NULL;
-		size_t mCursor = 0;
-		size_t mSize = 0;
+		u64 mCursor = 0;
+		u64 mSize = 0;
 
-		bool canRead(int increment) {
-			return (mCursor + increment) <= mSize;
+		bool canRead(u64 increment) {
+			return (getCursor() + increment) <= getSize();
 		}
 	};
 }

@@ -3,12 +3,13 @@
 #include "event.hpp"
 #include "serializer.hpp"
 #include "deserializer.hpp"
+#include "spdlog/spdlog.h"
 
 namespace shared {
 	ClientMessage::ClientMessage() { }
 
 	void ClientMessage::serialize(BinarySerializer& serializer) {
-		serializer.write<shared::i8>(getEnumType(type));
+		serializer.write(getEnumType(type));
 		switch (type) {
 		case ClientMessageType::RequestStartComm: {
 			serializer.write(event.hash);
@@ -23,10 +24,10 @@ namespace shared {
 	}
 
 	void ClientMessage::deserialize(BinaryDeserializer& serializer) {
-		type = static_cast<ClientMessageType>(serializer.read<shared::i8>());
+		type = static_cast<ClientMessageType>(serializer.readi16());
 		switch (type) {
 		case ClientMessageType::RequestStartComm: {
-			event.hash = serializer.read<shared::u64>();
+			event.hash = serializer.readu64();
 			break;
 		}
 		case ClientMessageType::ChangeEvent: {

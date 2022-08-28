@@ -7,7 +7,7 @@
 #include "type.hpp"
 
 namespace shared {
-	enum class EventType {
+	enum class EventType: shared::i16 {
 		None = 0,
 		Created,
 		Deleted,
