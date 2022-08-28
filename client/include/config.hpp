@@ -23,7 +23,7 @@ namespace client {
 		std::string mIdentifier;
 		std::string mWatchDirectory;
 		bool mUseSsl = false;
-		int mUpdateIntervalSeconds = 5000;
+		int mUpdateIntervalSeconds = 10;
 	};
 };
 
