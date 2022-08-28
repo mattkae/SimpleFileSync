@@ -7,6 +7,7 @@ The goal of this project is to reacquint myself with modern C++ by solving some 
 - [Bulding](#building)
 - [Configuration](#configuration)
 - [Running](#running)
+- [systemd](#systemd)
 - [Directories](#directories)
 - [Architecture](#architecture)
 - [Future](#future)
