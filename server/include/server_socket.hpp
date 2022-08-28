@@ -10,9 +10,8 @@
 namespace server {
     struct SocketBuffer;
     struct SslOptions {
-        std::string certChainFile;
-        std::string privateKeyFile;
-        std::string tmpDhFile;
+        std::string certChainFile  = "server.crt";
+        std::string privateKeyFile = "server.key";
     };
 
     struct ServerSocketOptions {

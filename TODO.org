@@ -9,7 +9,7 @@
 *** DONE Specify data directory for load data
 *** DONE Specify client update interval
 ** DONE Handle systems with different number representations (i32 vs i64, little vs big endian, etc)
-** TODO Configuration documentation 
+** DONE Configuration documentation 
 ** TODO Getting started documentation
 ** TODO Install scripts
 

@@ -18,10 +18,9 @@ namespace client {
 	private:
 		std::string mConfigPath;
 		
-		std::string mIp;
-		int mPort;
-		std::string mIdentifier;
-		std::string mWatchDirectory;
+		std::string mIp = "127.0.0.1";
+		int mPort = 3490;
+		std::string mWatchDirectory = "./files";
 		bool mUseSsl = false;
 		int mUpdateIntervalSeconds = 10;
 	};

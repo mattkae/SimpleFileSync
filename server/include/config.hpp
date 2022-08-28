@@ -17,10 +17,9 @@ namespace server {
 	private:
 		std::string mConfigPath;
 
-		std::string mWatchDirectory;
-		int mMaxRevisions;
-		int mPort;
-		bool mUseSsl;
+		std::string mWatchDirectory = "./files";
+		int mPort = 3490;
+		bool mUseSsl = false;
 		SslOptions mSslOptions;
 	};
 };
