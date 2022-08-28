@@ -6,9 +6,9 @@ The goal of this project is to reacquint myself with modern C++ by solving some 
 ## Table of Contents
 - [Bulding](#building)
 - [Configuration](#configuration)
+- [Directories](#directories)
 - [Running](#running)
 - [systemd](#systemd)
-- [Directories](#directories)
 - [Architecture](#architecture)
 - [Future](#future)
 
@@ -21,14 +21,14 @@ You must install the following in order before building the server and client:
 **Version 3.23**.
 
 #### spdlog (for logging)
-```
+```sh
 git submodule init
 git submodule update
 cd spdlog && mkdir -p build && cd build && cmake .. && make
 ```
 
 #### Shared (glue between client and server)
-```
+```sh
 cd ./shared && mkdir -p build && cd build && cmake .. && make
 ```
 
@@ -70,6 +70,15 @@ useSsl false                // Enable if server uses ssl (default : false)
 updateIntervalSeconds 10    // Interval at which we will check for file changes (default: 10 seconds)
 ```
 
+## Directories
+When NOT `sudo` user:
+- Configuration: `~/.config/simplefilesync`
+- Data: `~/.local/share/simplefilesync`
+
+When `sudo` user:
+- Configuration: `/etc/simplefilesync`
+- Data: `/var/lib/simplefilesync`
+
 ## Running
 
 ### Server
@@ -81,15 +90,6 @@ cd ./server/build && ./simplefilesync_s
 ```sh
 cd ./client/build && ./simplefilesync_c
 ```
-
-## Directories
-When NOT `sudo` user:
-- Configuration: `~/.config/simplefilesync`
-- Data: `~/.local/share/simplefilesync`
-
-When `sudo` user:
-- Configuration: `/etc/simplefilesync`
-- Data: `/var/lib/simplefilesync`
 
 ## systemd
 Once built, you can install either the server or client as a systemd service. Make sure that your configurations are in the right place however!
