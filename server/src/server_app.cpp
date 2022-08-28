@@ -34,11 +34,12 @@ namespace server {
     ServerApp::~ServerApp() { }
 
     void ServerApp::_onData(SocketBuffer& buff) {
-        shared::i32 bytesDeserialized = 0;
-        const shared::i32 bytesRead = buff.bytesRead;
+        shared::u64 bytesDeserialized = 0;
+        const shared::u64 bytesRead = buff.bytesRead;
         while (bytesDeserialized < bytesRead) {
-            shared::BinaryDeserializer clientSerializer({ &buff.buffer[bytesDeserialized], static_cast<shared::u64>(bytesRead) });
+            shared::BinaryDeserializer clientSerializer({ &buff.buffer[bytesDeserialized], bytesRead, 0 });
             shared::ClientMessage incoming = clientSerializer.readObject<shared::ClientMessage>();
+            bytesDeserialized += clientSerializer.getCursor();
 
             spdlog::info("bytes read={0} / bytes deserialized={1}", bytesRead, bytesDeserialized);
 
@@ -97,8 +98,6 @@ namespace server {
                 spdlog::warn("Unknown request: {0}", (int)incoming.type);
                 break;
             }
-
-            bytesDeserialized += clientSerializer.getCursor();
         }
     }
 

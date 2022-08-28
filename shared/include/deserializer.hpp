@@ -1,6 +1,7 @@
 #pragma once
 #include <cstddef>
 #include <cstring>
+#include <exception>
 #include <netinet/in.h>
 #include <ostream>
 #include <string>
@@ -49,7 +50,8 @@ namespace shared {
 		}
 
 		u64 readu64() {
-			return ntohll(_readInternal<u64>("u64"));
+			u64 value = _readInternal<u64>("u64");
+			return ntohll(value);
 		}
 
 		u32 readu32() {
