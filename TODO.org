@@ -3,11 +3,15 @@
 ** DONE Recording file changes in zip files on the server
 ** DONE Client scenario #1: Client is behind and server catches up by downloading zip files
 ** DONE Client scenario #2: Client is ahead and posts all changes to server
-** TODO Reset script for data
-** TODO Better configuration
-- Specify save directories for data
-- Specify data directory for load data
-** PROGRESS Handle systems with different number representations (i32 vs i64, little vs big endian, etc)
+** DONE Reset script for data
+** PROGRESS Better configuration
+*** DONE Specify save directories for data
+*** DONE Specify data directory for load data
+*** DONE Specify client update interval
+** DONE Handle systems with different number representations (i32 vs i64, little vs big endian, etc)
+** TODO Configuration documentation 
+** TODO Getting started documentation
+** TODO Install scripts
 
 * V1.1
 ** TODO Testing

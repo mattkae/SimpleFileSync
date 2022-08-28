@@ -33,7 +33,7 @@ namespace client {
 			catch (const std::exception& e) {
 				spdlog::error("Failed to connect to socket: {0}", e.what());
 			}
-		}, mConfig.getDirectory());
+		}, mConfig.getDirectory(), mConfig.getUpdateInterval());
 	}
 
 	ClientApp::~ClientApp() {

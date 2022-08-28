@@ -6,7 +6,7 @@ namespace client {
 	const std::string PORT = "port";
 	const std::string IP = "ip";
 	const std::string USE_SSL = "useSsl";
-	
+	const std::string UPDATE_INTERVAL_SECONDS = "updateIntervalSeconds";
 
 	bool Config::processToken(std::string key, std::string value) {
 		if (key == DIRECTORY) {
@@ -24,6 +24,10 @@ namespace client {
 			mUseSsl = value == "true";
 			return true;
 		}
+		else if (key == UPDATE_INTERVAL_SECONDS) {
+			mUpdateIntervalSeconds = stoi(value);
+			return true;
+		}
 		else {
 			return false;
 		}
@@ -38,4 +42,5 @@ namespace client {
 	std::string Config::getDirectory() { return mWatchDirectory; };
 	std::string Config::getIp() { return mIp; }
 	int Config::getPort() { return mPort; }
+	int Config::getUpdateInterval() { return mUpdateIntervalSeconds; }
 };

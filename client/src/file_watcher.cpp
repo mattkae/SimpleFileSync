@@ -7,10 +7,10 @@ namespace client {
 		fw->begin();
 	}
 
-	FileWatcher::FileWatcher(FileWatchFunc callback, std::string directory) {
+	FileWatcher::FileWatcher(FileWatchFunc callback, std::string directory, shared::i32 updateIntervalSeconds) {
 		mDirectory = directory;
 		mCallback = callback;
-		delay = std::chrono::milliseconds(5000);
+		delay = std::chrono::milliseconds(updateIntervalSeconds * 1000);
 		begin();
 	}
 
@@ -28,7 +28,6 @@ namespace client {
 		std::vector<shared::Event> eventList;
 		while (mIsRunning) {
 			eventList.clear();
-			std::this_thread::sleep_for(delay);
 
 			auto it = mPaths.begin();
 			while (it != mPaths.end()) {
@@ -73,6 +72,8 @@ namespace client {
 			}
 
 			mCallback(eventList);
+
+			std::this_thread::sleep_for(delay);
 		}
 	}
 

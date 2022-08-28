@@ -14,6 +14,7 @@ namespace client {
 		std::string getIp();
 		int getPort();
 		bool useSsl() { return mUseSsl; };
+		int getUpdateInterval();
 	private:
 		std::string mConfigPath;
 		
@@ -22,6 +23,7 @@ namespace client {
 		std::string mIdentifier;
 		std::string mWatchDirectory;
 		bool mUseSsl = false;
+		int mUpdateIntervalSeconds = 5000;
 	};
 };
 
