@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
 	spdlog::set_level(spdlog::level::trace);
 	client::ClientOptions opts;
 	try {
-		shared::ProgramOptions po("sfs_client");
+		shared::ProgramOptions po("simplefilesync_c");
 		po.addOption("c", "clean", "Erase all saved data and start from a blank slate.")
 			.addOption("h", "help", "Print help message");
 

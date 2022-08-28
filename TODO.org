@@ -4,14 +4,16 @@
 ** DONE Client scenario #1: Client is behind and server catches up by downloading zip files
 ** DONE Client scenario #2: Client is ahead and posts all changes to server
 ** DONE Reset script for data
-** PROGRESS Better configuration
+** DONE Better configuration
 *** DONE Specify save directories for data
 *** DONE Specify data directory for load data
 *** DONE Specify client update interval
 ** DONE Handle systems with different number representations (i32 vs i64, little vs big endian, etc)
 ** DONE Configuration documentation 
-** TODO Getting started documentation
-** TODO Install scripts
+** DONE Getting started documentation
+** DONE Install scripts
 
 * V1.1
-** TODO Testing
+** TODO Testing suite
+** TODO Improve command line options
+** TODO Add the ability to watch multiple directories from the same process

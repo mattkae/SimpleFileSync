@@ -1,0 +1,10 @@
+[Unit]
+Description=SimpleFileSync Server
+[Service]
+Type=simple
+ExecStart=simplefilesync_s
+Restart=on-failure
+RestartSec=10
+KillMode=process
+[Install]
+WantedBy=multi-user.target

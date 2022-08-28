@@ -73,12 +73,12 @@ updateIntervalSeconds 10    // Interval at which we will check for file changes 
 
 ### Server
 ```sh
-cd ./server/build && ./sfs_server
+cd ./server/build && ./simplefilesync_s
 ```
 
 ### Client
 ```sh
-cd ./client/build && ./sfs_client
+cd ./client/build && ./simplefilesync_c
 ```
 
 ## Directories
@@ -89,6 +89,21 @@ When NOT `sudo` user:
 When `sudo` user:
 - Configuration: `/etc/simplefilesync`
 - Data: `/var/lib/simplefilesync`
+
+## systemd
+Once built, you can install either the server or client as a systemd service. Make sure that your configurations are in the right place however!
+
+### Server
+```sh
+cd tools
+sudo ./install-server-service.sh
+```
+
+### Client
+```sh
+cd tools
+sudo ./install-client-service.sh
+```
 
 ## Architecture
 The project will feature a single centralized server talking to multiple clients (daemons). The server will know the latest hash of the data. At a set interval, the client will try and post any changes to the server. In this moment, one of three things will happen:

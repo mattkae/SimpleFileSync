@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.23)
-project(sfs_server)
+project(simplefilesync_s)
 include_directories(include)
 set(CMAKE_CXX_STANDARD 20)
 
@@ -25,10 +25,10 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 if(MSVC)
   target_compile_options(${PROJECT_NAME} /W4 /WX)
 else()
-  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -g3)
+  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 target_link_libraries(${PROJECT_NAME} PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/../shared/build/libsfs_shared.a
+	${CMAKE_CURRENT_SOURCE_DIR}/../shared/build/libsimplefilesync_l.a
 	${CMAKE_CURRENT_SOURCE_DIR}/../spdlog/build/libspdlog.a
 	${OPENSSL_LIBRARIES}
 )
