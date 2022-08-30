@@ -1,6 +1,5 @@
 #include "client_socket.hpp"
-#include "spdlog/common.h"
-#include "spdlog/spdlog.h"
+#include "logger.hpp"
 #include <cstring>
 #include <iostream>
 #include <netdb.h>
@@ -10,6 +9,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <unistd.h>
 
 namespace client {
     ClientSocket::ClientSocket(const ClientSocketOptions& options) {
@@ -21,7 +21,7 @@ namespace client {
 
         int rv;
         if ((rv = getaddrinfo(options.host.c_str(), std::to_string(options.port).c_str(), &hints, &serverInfo)) != 0) {
-            spdlog::error("Unable to getaddrinfo to server: {0}:{1} because: {2}", options.host, options.port, gai_strerror(rv));
+            logger_error("Unable to getaddrinfo to server: %s:%d because: %s", options.host.c_str(), options.port, gai_strerror(rv));
             return;
         }
 
@@ -42,7 +42,7 @@ namespace client {
         }
 
         if (p == NULL) {
-            spdlog::error("Unable to connect to server: {0}:{1}", options.host, options.port);
+            logger_error("Unable to connect to server: %s:%d", options.host.c_str(), options.port);
             return;
         }
 
@@ -50,11 +50,11 @@ namespace client {
 
         mUseSsl = options.useSsl;
         if (mUseSsl) {
-            spdlog::info("Using SSL client.");
+            logger_info("Using SSL client.");
             auto method = TLS_client_method();
             mSslCtx = SSL_CTX_new(method);
             if (mSslCtx == NULL) {
-                spdlog::error("Failed to get SSL context.");
+                logger_error("Failed to get SSL context.");
                 ERR_print_errors_fp(stderr);
                 return;
             }
@@ -62,7 +62,7 @@ namespace client {
             mSsl = SSL_new(mSslCtx);
             SSL_set_fd(mSsl, mSockfd);
             if ( SSL_connect(mSsl) == -1 ) {
-                spdlog::error("Failed to connect to server with SSL.");
+                logger_error("Failed to connect to server with SSL.");
                 ERR_print_errors_fp(stderr);
                 return;
             }
@@ -78,12 +78,12 @@ namespace client {
             int readResult;
             if ((readResult = SSL_write(mSsl, data, size)) <= 0) {
                 auto error = SSL_get_error(mSsl, readResult);
-                spdlog::error("Failed to write message to server: {0}", error);
+                logger_error("Failed to write message to server: %d", error);
             }
         }
         else {
             if (send(mSockfd, data, size, 0) == -1) {
-                spdlog::error("Failed to send data.");
+                logger_error("Failed to send data.");
             }
         }
     }
@@ -96,9 +96,9 @@ namespace client {
         else {
             result.len = recv(mSockfd, &result.data, result.BUFFER_SIZE - 1, 0);
         }
-        spdlog::info("Bytes read from server: {0}", result.len);
+        logger_info("Bytes read from server: %d", result.len);
         if (result.len == -1) {
-            spdlog::error("Failed to read message from client.");
+            logger_error("Failed to read message from client.");
             return result;
         }
         else if (result.len == 0) {

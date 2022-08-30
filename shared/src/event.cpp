@@ -1,12 +1,12 @@
 #include "event.hpp"
 #include "server_message.hpp"
+#include "logger.hpp"
 #include "type.hpp"
 #include <string>
 #include <string_view>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <spdlog/spdlog.h>
 
 namespace shared {
     void writeFile(BinarySerializer& serializer, Event& event) {
@@ -66,7 +66,7 @@ namespace shared {
             case shared::EventType::Modified: {
                 std::ofstream fs(path); 
                 if(!fs) {
-                    spdlog::error("Failed to open file at path={0}", path);
+                    logger_error("Failed to open file at path=%s", path.c_str());
                     return false;
                 }
 
@@ -77,14 +77,14 @@ namespace shared {
             case shared::EventType::Deleted: {
                 const int deleteResult = remove(path.c_str());
                 if (deleteResult >= 0) {
-                    spdlog::error("Failed to delete file at path={0}", path);
+                    logger_error("Failed to delete file at path=%s", path.c_str());
                     return false;
                 }
 
                 return true;
             }
             default:
-                spdlog::error("Unsupported change type, type={0}", (int)event.type);
+                logger_error("Unsupported change type, type=%d", (int)event.type);
                 return false;
         }
     }

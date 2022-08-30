@@ -3,7 +3,8 @@
 #include <string>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <spdlog/spdlog.h>
+#include <unistd.h>
+#include "logger.hpp"
 #include "socket_connection.hpp"
 
 namespace server {
@@ -36,18 +37,18 @@ namespace server {
         std::string port = std::to_string(mPort);
         int rv;
         if ((rv = getaddrinfo(NULL, port.c_str(), &hints, &res)) != 0) {
-            spdlog::error("Unable to get address info for port {0}. Error: {1}", port, gai_strerror(rv));
+            logger_error("Unable to get address info for port %s. Error: %s", port.c_str(), gai_strerror(rv));
             return;
         }
 
         sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol); // @TODO: Select the right thing
         if (sockfd < 0) {
-            spdlog::error("Unable to open server socket.");
+            logger_error("Unable to open server socket.");
             return;
         }
 
         if (bind(sockfd, res->ai_addr, res->ai_addrlen) < 0) {
-            spdlog::error("Unable to bind server socket.");
+            logger_error("Unable to bind server socket.");
             return;
         }
 
@@ -57,14 +58,14 @@ namespace server {
         if (mUseSsl) {
             ctx = _getSslContext();
             if (ctx == NULL) {
-                spdlog::error("Unable to start server without valid SSL context.");
+                logger_error("Unable to start server without valid SSL context.");
                 return;
             }
 
-            spdlog::info("Using SSL.");
+            logger_info("Using SSL.");
         }
         else {
-            spdlog::info("Not using SSL.");
+            logger_info("Not using SSL.");
         }
         
         while (mIsRunning) {
@@ -73,7 +74,7 @@ namespace server {
                 socklen_t addrSize = sizeof clientAddr;
                 int clientfd = accept(sockfd, (sockaddr*)&clientAddr, &addrSize);
                 if (clientfd < 0) {
-                    spdlog::error("Unable to accept client connection.");
+                    logger_info("Unable to accept client connection.");
                     continue;
                 }
 
@@ -83,7 +84,7 @@ namespace server {
                     bool couldConnect = sslConn->connect();
                     conn = sslConn;
                     if (!couldConnect) {
-                        spdlog::error("Failed to accept client as SSL.");
+                        logger_error("Failed to accept client as SSL.");
                     }
                 }
                 else {
@@ -97,7 +98,7 @@ namespace server {
 
                 delete conn;
             } catch (std::exception& e) {
-                spdlog::error("Exception while talking to client: {0}", e.what());
+                logger_error("Exception while talking to client: %s", e.what());
             }
         }
 
@@ -115,19 +116,19 @@ namespace server {
 
         ctx = SSL_CTX_new(method);
         if (!ctx) {
-            spdlog::error("Unable to create SSL context");
+            logger_error("Unable to create SSL context");
             ERR_print_errors_fp(stderr);
             return NULL;
         }
 
         if (SSL_CTX_use_certificate_file(ctx, mSslOptions.certChainFile.c_str(), SSL_FILETYPE_PEM) <= 0) {
-            spdlog::error("Unable to create use certificate file.");
+            logger_error("Unable to create use certificate file.");
             ERR_print_errors_fp(stderr);
             return NULL;
         }
 
         if (SSL_CTX_use_PrivateKey_file(ctx, mSslOptions.privateKeyFile.c_str(), SSL_FILETYPE_PEM) <= 0 ) {
-            spdlog::error("Unable to create use key file.");
+            logger_error("Unable to create use key file.");
             ERR_print_errors_fp(stderr);
             return NULL;
         }

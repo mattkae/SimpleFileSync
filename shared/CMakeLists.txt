@@ -13,6 +13,7 @@ add_library(${PROJECT_NAME} STATIC
   src/event.cpp
   src/event_ledger.cpp
   src/program_options.cpp
+  src/logger.cpp
 )
 
 if(MSVC)
@@ -24,9 +25,6 @@ endif()
 target_include_directories(${PROJECT_NAME}
     PUBLIC 
         ${PROJECT_SOURCE_DIR}/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/../spdlog/include
 )
 
-target_link_libraries(${PROJECT_NAME} PUBLIC 
-  ${CMAKE_CURRENT_SOURCE_DIR}/../spdlog/build/libspdlog.a
-)
+target_link_libraries(${PROJECT_NAME} PUBLIC )

@@ -1,11 +1,11 @@
 #include "base_config.hpp"
+#include "logger.hpp"
 #include <iostream>
 #include <vector>
 #include <sstream>
 #include <algorithm>
 #include <iterator>
 #include <filesystem>
-#include <spdlog/spdlog.h>
 
 namespace shared {
     BaseConfig::BaseConfig() { }
@@ -26,7 +26,7 @@ namespace shared {
             }
         }
         catch(std::filesystem::filesystem_error const& ex) {
-            spdlog::error("Failed to initialize config from path {0} because {1}", configPath, ex.what());
+            logger_error("Failed to initialize config from path %s because %s", configPath.c_str(), ex.what());
         }
     }
 
@@ -35,7 +35,7 @@ namespace shared {
         std::string line;
         std::ifstream reader(mConfigPath);
         if (!reader) {
-            spdlog::error("Failed to load config");
+            logger_error("Failed to load config");
             return false;
         }
 
@@ -59,7 +59,7 @@ namespace shared {
             value = results[1];
 
             if (!processToken(key, value)) {
-                spdlog::warn("Unknown key option, config={0}, line={1} key={2}, value={3}", mConfigPath, lineNumber, key, value);
+                logger_warning("Unknown key option, config=%s, line=%d, key=%s, value=%s", mConfigPath.c_str(), lineNumber, key.c_str(), value.c_str());
             }			 	
         }
 

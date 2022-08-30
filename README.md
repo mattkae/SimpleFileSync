@@ -20,13 +20,6 @@ You must install the following in order before building the server and client:
 #### Cmake
 **Version 3.23**.
 
-#### spdlog (for logging)
-```sh
-git submodule init
-git submodule update
-cd spdlog && mkdir -p build && cd build && cmake .. && make
-```
-
 #### Shared (glue between client and server)
 ```sh
 cd ./shared && mkdir -p build && cd build && cmake .. && make

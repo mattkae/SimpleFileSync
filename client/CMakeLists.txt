@@ -20,7 +20,6 @@ endif()
 
 include_directories(${Boost_INCLUDE_DIR} 
   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/include 
-  ${CMAKE_CURRENT_SOURCE_DIR}/../spdlog/include
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
@@ -32,6 +31,5 @@ endif()
 
 target_link_libraries(${PROJECT_NAME} PUBLIC 
   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/build/libsimplefilesync_l.a
-  ${CMAKE_CURRENT_SOURCE_DIR}/../spdlog/build/libspdlog.a
   ${OPENSSL_LIBRARIES}
 )

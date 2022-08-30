@@ -1,8 +1,8 @@
 #include "socket_connection.hpp"
+#include "logger.hpp"
 #include <openssl/ssl.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <spdlog/spdlog.h>
 
 namespace server {
     /* Base */
@@ -17,15 +17,15 @@ namespace server {
 
     NoSslSocketConnection::~NoSslSocketConnection() {
         close(mSockfd);
-        spdlog::info("Client closed.");
+        logger_info("Client closed.");
     }
 
     void NoSslSocketConnection::writeData(shared::byte* data, size_t size) {
         if (send(mSockfd, data, size, 0) == 0) {
-            spdlog::error("Failed to write message to client.");
+            logger_error("Failed to write message to client.");
         }
         else {
-            spdlog::info("Message sent to client.");
+            logger_info("Message sent to client.");
         }
     }
 
@@ -36,7 +36,7 @@ namespace server {
         result.bytesRead = recv(mSockfd, &result.buffer, SocketBuffer::MAX_BUFF_SIZE - 1, 0);
         if (result.bytesRead == -1) {
             result.connectionClosed = true;
-            spdlog::error("Failed to read message from client.");
+            logger_error("Failed to read message from client.");
             return result;
         }
         else if (result.bytesRead == 0) {
@@ -45,7 +45,7 @@ namespace server {
             return result;
         }
 
-        spdlog::info("Bytes read: {0}", result.bytesRead);
+        logger_info("Bytes read: %d", result.bytesRead);
         result.buffer[result.bytesRead] = '\0';
         return result;
     }
@@ -62,12 +62,12 @@ namespace server {
 
         if (SSL_accept(mSsl) <= 0) {
             stop();
-            spdlog::warn("Client not accepted");
+            logger_warning("Client not accepted");
             ERR_print_errors_fp(stderr);
             return false;
         }
 
-        spdlog::info("New client accepted.");
+        logger_info("New client accepted.");
         return true;
     }
 
@@ -75,15 +75,15 @@ namespace server {
         SSL_shutdown(mSsl);
         SSL_free(mSsl);
         close(mSockfd);
-        spdlog::info("Client closed.");
+        logger_info("Client closed.");
     }
 
     void SslSocketConnection::writeData(shared::byte* data, size_t size) {
         if (SSL_write(mSsl, data, size) == 0) {
-            spdlog::error("Failed to write message to client.");
+            logger_error("Failed to write message to client.");
         }
         else {
-            spdlog::info("Message sent to client.");
+            logger_info("Message sent to client.");
         }
     }
 
@@ -96,7 +96,7 @@ namespace server {
             result.bytesRead = 0;
             result.buffer[0] = '\0';
             result.connectionClosed = true;
-            spdlog::error("Failed to read message from client: {0} {1}", errorCode, ERR_error_string(ERR_get_error(), NULL));
+            logger_error("Failed to read message from client: %d %s", errorCode, ERR_error_string(ERR_get_error(), NULL));
             return result;
         }
         else if (result.bytesRead == 0) {

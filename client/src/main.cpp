@@ -3,10 +3,10 @@
 #include <iostream>
 #include <exception>
 #include "program_options.hpp"
-#include <spdlog/spdlog.h>
+#include "logger.hpp"
 
 int main(int argc, char** argv) {
-	spdlog::set_level(spdlog::level::trace);
+	Logger::initialize({});
 	client::ClientOptions opts;
 	try {
 		shared::ProgramOptions po("simplefilesync_c");

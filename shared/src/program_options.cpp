@@ -1,6 +1,6 @@
 #include "program_options.hpp"
+#include "logger.hpp"
 #include <iostream>
-#include <spdlog/spdlog.h>
 #include <sstream>
 
 namespace shared {
@@ -10,11 +10,11 @@ namespace shared {
     ProgramOptions& ProgramOptions::addOption(std::string shortName, std::string longName, std::string desc, bool isOptional) {
         for (auto arg : mArguments) {
             if (arg.shortName == shortName) {
-                spdlog::error("Cannot add more than one arg with same short name: {0}", shortName);
+                logger_error("Cannot add more than one arg with same short name: %s", shortName.c_str());
                 return *this;
             }
             if (arg.longName == longName) {
-                spdlog::error("Cannot add more than one arg with long short name: {0}", shortName);
+                logger_error("Cannot add more than one arg with long short name: %s", shortName.c_str());
                 return *this;
             }
         }

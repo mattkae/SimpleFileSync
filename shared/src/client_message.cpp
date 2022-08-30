@@ -3,7 +3,6 @@
 #include "event.hpp"
 #include "serializer.hpp"
 #include "deserializer.hpp"
-#include "spdlog/spdlog.h"
 
 namespace shared {
 	ClientMessage::ClientMessage() { }

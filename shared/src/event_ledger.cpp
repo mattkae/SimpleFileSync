@@ -1,7 +1,7 @@
 #include "event_ledger.hpp"
 #include "deserializer.hpp"
+#include "logger.hpp"
 #include "type.hpp"
-#include <spdlog/spdlog.h>
 #include <string>
 #include <filesystem>
 #include <iostream>
@@ -13,7 +13,7 @@ namespace shared {
         mDirectory = directory;
 
         if (!std::filesystem::is_directory(mDirectory) || !std::filesystem::exists(mDirectory)) {
-            spdlog::info("Creating directory for the ledger: {0}", mDirectory);
+            logger_error("Creating directory for the ledger: %s", mDirectory.c_str());
             std::filesystem::create_directories(mDirectory);
         }
 
@@ -36,7 +36,7 @@ namespace shared {
         auto path = mGetEventPath(event.hash);
         std::ofstream wf(path, std::ios::out | std::ios::binary);
         if(!wf) {
-            spdlog::error("Unable to write event to path: {0}", path);
+            logger_error("Unable to write event to path: %s", path.c_str());
         }
         else {
             wf.write((char*) serializer.getData(), serializer.getSize());
@@ -48,7 +48,7 @@ namespace shared {
         auto path = mGetEventPath(hash);
         FILE *f = fopen(path.c_str(), "rb+");
         if (!f) {
-            spdlog::error("Unable to read event: {0}", hash);
+            logger_error("Unable to read event: %lu", hash);
             return Event();
         }
 

@@ -6,8 +6,8 @@
 #include <ostream>
 #include <string>
 #include <iostream>
-#include <spdlog/spdlog.h>
 #include <vector>
+#include "logger.hpp"
 #include "type.hpp"
 #include <arpa/inet.h>
 
@@ -40,7 +40,7 @@ namespace shared {
 		S _readInternal(const char* debugMessage) {
 			S s = 0;
 			if (!canRead(sizeof(S))) {
-				spdlog::error("Failed to read value: {0} -> currentSize: {1}, cursor: {2}, desiredSize: {3}", debugMessage, getSize(), getCursor(), getSize() + sizeof(S));
+				logger_error("Failed to read value: %s -> currentSize: %lu, cursor: %lu, desiredSize: %lu", debugMessage, getSize(), getCursor(), getSize() + sizeof(S));
 				return s;
 			}
 
@@ -75,7 +75,7 @@ namespace shared {
 			std::string s;
 
 			if (!canRead(l)) {
-				spdlog::error("Failed to read string value, size={0}", l);
+				logger_error("Failed to read string value, size=%lu", l);
 				return s;
 			}
 			
@@ -84,17 +84,6 @@ namespace shared {
 			s = std::string((char*)mData + start, end - start);
 			mCursor += l;
 			return s;
-		}
-
-		template<typename S>
-		std::vector<S> readVector() {
-			u64 l = readu64();
-			std::vector<S> retval(l);
-			for (u64 i = 0; i < l; i++) {
-				retval.push_back(read<S>());
-			}
-
-			return retval;
 		}
 
 		template<typename S>

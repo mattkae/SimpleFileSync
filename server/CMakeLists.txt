@@ -19,8 +19,7 @@ if( OPENSSL_FOUND )
 endif()
 
 include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}/../shared/include 
-	${CMAKE_CURRENT_SOURCE_DIR}/../spdlog/include)
+	${CMAKE_CURRENT_SOURCE_DIR}/../shared/include)
 add_executable(${PROJECT_NAME} ${SOURCES})
 if(MSVC)
   target_compile_options(${PROJECT_NAME} /W4 /WX)
@@ -29,6 +28,5 @@ else()
 endif()
 target_link_libraries(${PROJECT_NAME} PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/../shared/build/libsimplefilesync_l.a
-	${CMAKE_CURRENT_SOURCE_DIR}/../spdlog/build/libspdlog.a
 	${OPENSSL_LIBRARIES}
 )

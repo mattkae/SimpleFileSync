@@ -11,9 +11,9 @@
 #include "serializer.hpp"
 #include "server_message.hpp"
 #include "hash_calculator.hpp"
-#include <spdlog/spdlog.h>
 #include "client_socket.hpp"
 #include "environment.hpp"
+#include "logger.hpp"
 
 
 namespace client {
@@ -31,7 +31,7 @@ namespace client {
 				this->onDirectoryChange(eventList);
 			}
 			catch (const std::exception& e) {
-				spdlog::error("Failed to connect to socket: {0}", e.what());
+				logger_error("Failed to connect to socket: %s", e.what());
 			}
 		}, mConfig.getDirectory(), mConfig.getUpdateInterval());
 	}
@@ -40,10 +40,10 @@ namespace client {
 	}
 
 	void ClientApp::onDirectoryChange(const std::vector<shared::Event>& eventList) {
-		spdlog::info("Processing next client update...");
+		logger_info("Processing next client update...");
 		std::string host = mConfig.getIp();
 		int port = mConfig.getPort();
-		spdlog::info("Making connection to {0}:{1}", host, port);
+		logger_info("Making connection to %s:%d", host.c_str(), port);
 
 		ClientSocket socket({ host, static_cast<uint_least16_t>(port), mConfig.useSsl() });
 
@@ -64,19 +64,19 @@ namespace client {
 		switch (response.type) {
 			case shared::ServerMessageType::ResponseStartComm:
 				if (response.eventsForClient.size()) {
-					spdlog::info("Client is behind by {0} events.", response.eventsForClient.size());
+					logger_info("Client is behind by %d events.", response.eventsForClient.size());
 					for (auto event : response.eventsForClient) {
 						shared::executeEvent(event, mConfig.getDirectory());
 						addNewEvent(event);
 					}
-					spdlog::info("Client caught up.");
+					logger_info("Client caught up.");
 				}
 				else {
-					spdlog::info("Client already caught up.");
+					logger_info("Client already caught up.");
 				}
 				break;
 			default:
-				spdlog::error("Invalid initial response from server: type={0}", (int)response.type);
+				logger_error("Invalid initial response from server: type=%d", (int)response.type);
 				return;
 		}
 
@@ -88,19 +88,19 @@ namespace client {
 			fileUpdateMsg.event = event;
 			switch (event.type) {
 			case shared::EventType::Created: {
-				spdlog::info("Created file: {0}", event.path);
+				logger_info("Created file: %s", event.path.c_str());
 				break;
 			}
 			case shared::EventType::Modified: {
-				spdlog::info("Modified file: {0}", event.path);
+				logger_info("Modified file: %s", event.path.c_str());
 				break;
 			}
 			case shared::EventType::Deleted: {
-				spdlog::info("Deleted file: {0}", event.path);
+				logger_info("Deleted file: %s", event.path.c_str());
 				break;
 			}
 			default:
-				spdlog::error("Unknown event type, ignoring: {0}", (int)event.type);
+				logger_error("Unknown event type, ignoring: %d", (int)event.type);
 				break;
 			}
 

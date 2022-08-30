@@ -15,7 +15,7 @@ namespace server {
     };
 
     struct ServerSocketOptions {
-        int port = 5555;
+        int port = 3490;
         bool useSsl = false;
         std::function<void(SocketBuffer&)> onRead;
 

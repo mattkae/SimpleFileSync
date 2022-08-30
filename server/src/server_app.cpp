@@ -6,15 +6,14 @@
 #include "client_message.hpp"
 #include "deserializer.hpp"
 #include "event.hpp"
+#include "logger.hpp"
 #include "server_message.hpp"
 #include "hash_calculator.hpp"
 #include "server_socket.hpp"
 #include "socket_buffer.hpp"
 #include "socket_connection.hpp"
 #include "environment.hpp"
-#include "spdlog/common.h"
 #include "type.hpp"
-#include <spdlog/spdlog.h>
 
 namespace server {
     ServerApp::ServerApp():
@@ -26,7 +25,7 @@ namespace server {
 
         mConfig.load();
         if (!std::filesystem::is_directory(mConfig.getDirectory()) || !std::filesystem::exists(mConfig.getDirectory())) {
-            spdlog::info("Creating directory defined in the configuration: {0}", mConfig.getDirectory());
+            logger_info("Creating directory defined in the configuration: %s", mConfig.getDirectory().c_str());
             std::filesystem::create_directories(mConfig.getDirectory());
         }
     }
@@ -41,21 +40,21 @@ namespace server {
             shared::ClientMessage incoming = clientSerializer.readObject<shared::ClientMessage>();
             bytesDeserialized += clientSerializer.getCursor();
 
-            spdlog::info("bytes read={0} / bytes deserialized={1}", bytesRead, bytesDeserialized);
+            logger_info("bytes read=%lu / bytes deserialized=%lu", bytesRead, bytesDeserialized);
 
             switch (incoming.type) {
             case shared::ClientMessageType::RequestStartComm: {
-                spdlog::info("Client has begun communication.");
+                logger_info("Client has begun communication.");
                 auto lastConfirmedClientHash = incoming.event.hash;
                 
                 // @NOTE: The last confirmed client hash is either in sync with the server or behind the server.
                 shared::ServerMessage message;
                 if (lastConfirmedClientHash == mState.getHash()) {
-                    spdlog::info("Clients are in sync.");
+                    logger_info("Clients are in sync.");
                     message.type = shared::ServerMessageType::ResponseStartComm;
                 }
                 else {
-                    spdlog::info("Client is not in sync.");
+                    logger_info("Client is not in sync.");
                     message.type = shared::ServerMessageType::ResponseStartComm;
                     auto hashList = mState.getHashList();
                     std::vector<shared::u64> hashesToSend;
@@ -87,15 +86,15 @@ namespace server {
                 break;
             }
             case shared::ClientMessageType::ChangeEvent:
-                spdlog::info("Processing change event, hash={0}", incoming.event.hash);
+                logger_info("Processing change event, hash=%lu", incoming.event.hash);
                 processChangeEvent(incoming);
                 break;
             case shared::ClientMessageType::RequestEndComm:
-                spdlog::info("Client requesting termination of communication.");
+                logger_info("Client requesting termination of communication.");
                 buff.connection->stop();
                 break;
             default:
-                spdlog::warn("Unknown request: {0}", (int)incoming.type);
+                logger_warning("Unknown request: %d", (int)incoming.type);
                 break;
             }
         }
@@ -111,7 +110,7 @@ namespace server {
             ServerSocket mSocket(options);
             mSocket.run();
         } catch (std::exception& e) {
-            spdlog::error("Exception while talking to client: {0}", e.what());
+            logger_error("Exception while talking to client: %s", e.what());
         }
     }
 
@@ -121,11 +120,11 @@ namespace server {
         
         auto expectedNextHash = shared::getHash(mState.getHash(), data.event);
         if (expectedNextHash != hash) {
-            spdlog::error("Hashes do not add up, expected={0}, received={1}", expectedNextHash, hash);;
+            logger_error("Hashes do not add up, expected=%lu, received=%lu", expectedNextHash, hash);;
             return false;
         }
 
-        spdlog::info("New hash accepted, hash={0}", hash);
+        logger_info("New hash accepted, hash=%lu", hash);
         mState.addHash(hash);
         mState.write();
 
