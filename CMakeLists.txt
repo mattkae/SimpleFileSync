@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.0)
 project(sfs)
 add_subdirectory(shared)
 add_subdirectory(client)

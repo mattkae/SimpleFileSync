@@ -18,7 +18,7 @@ The goal of this project is to reacquint myself with modern C++ by solving some 
 You must install the following in order before building the server and client:
 
 #### Cmake
-**Version 3.23**.
+**Version 3.0**.
 
 #### Shared (glue between client and server)
 ```sh

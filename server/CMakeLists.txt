@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.0)
 project(simplefilesync_s)
 include_directories(include)
 set(CMAKE_CXX_STANDARD 20)
