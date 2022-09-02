@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.1)
 project(simplefilesync_c)
 include_directories(include)
 set(SOURCES
