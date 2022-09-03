@@ -18,7 +18,17 @@ The goal of this project is to reacquint myself with modern C++ by solving some 
 You must install the following in order before building the server and client:
 
 #### Cmake
-**Version 3.0**.
+**Version 3.1**.
+
+#### pkg-config
+```sh
+sudo apt-get install -y pkg-config
+```
+
+#### openssl dev
+```sh
+sudo apt-get install libssl-dev
+```
 
 #### Shared (glue between client and server)
 ```sh
