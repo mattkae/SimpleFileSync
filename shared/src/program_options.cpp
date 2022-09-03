@@ -28,7 +28,7 @@ namespace shared {
     }
 
     bool ProgramOptions::tryGetOption(std::string name, std::string& out) {
-        if (!mValueMap.contains(name)) return false;
+        if (!hasOption(name)) return false;
         out = mValueMap.at(name);
         return true;
     }
