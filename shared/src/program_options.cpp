@@ -24,7 +24,7 @@ namespace shared {
     }
 
     bool ProgramOptions::hasOption(std::string name) {
-        return mValueMap.contains(name);
+        return mValueMap.find(name) != mValueMap.end();
     }
 
     bool ProgramOptions::tryGetOption(std::string name, std::string& out) {
@@ -50,12 +50,18 @@ namespace shared {
         return ss.str();
     }
 
+	inline bool startsWith(const std::string& in, const std::string value) {
+	    if (in.length() < value.length()) return false;
+
+		return strncmp(in.c_str(), value.c_str(), value.length()) == 0;
+	}
+
     inline bool isShortArg(const std::string& foundArg) {
-        return foundArg.starts_with("-");
+		return startsWith(foundArg, std::string("-"));
     }
 
     inline bool isLongArg(const std::string& foundArg) {
-        return foundArg.starts_with("--");
+		return startsWith(foundArg, std::string("--"));
     }
 
     void ProgramOptions::parse(int argc, char** argv) {
