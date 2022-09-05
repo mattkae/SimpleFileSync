@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.1)
 project(simplefilesync_s)
 include_directories(include)
+
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)   
 
 set(SOURCES
 	src/main.cpp
@@ -29,4 +32,5 @@ endif()
 target_link_libraries(${PROJECT_NAME} PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/../shared/build/libsimplefilesync_l.a
 	${OPENSSL_LIBRARIES}
+	stdc++fs
 )

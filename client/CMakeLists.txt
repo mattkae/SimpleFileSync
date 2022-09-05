@@ -8,7 +8,10 @@ set(SOURCES
   src/file_watcher.cpp
   src/client_socket.cpp
 )
+
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(PkgConfig REQUIRED)
 pkg_search_module(OPENSSL REQUIRED openssl)
@@ -32,4 +35,5 @@ endif()
 target_link_libraries(${PROJECT_NAME} PUBLIC 
   ${CMAKE_CURRENT_SOURCE_DIR}/../shared/build/libsimplefilesync_l.a
   ${OPENSSL_LIBRARIES}
+  stdc++fs
 )

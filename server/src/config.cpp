@@ -32,7 +32,7 @@ namespace server {
 		}
 		else {
 			return false;
-		}	
+		}
 	}
 
 	void Config::writeTokens(std::ofstream& writer) {
