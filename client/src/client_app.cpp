@@ -55,6 +55,7 @@ namespace client {
 		mClientSerializer.reset();
 		mClientSerializer.writeObject(startMessage);
 		socket.write(mClientSerializer.getData(), mClientSerializer.getSize());
+		logger_info("Client is currently at hash: %lu", startMessage.event.hash);
 
 		// Receiving a start communicaton message from the server
 		auto socketRead = socket.read();

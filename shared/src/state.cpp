@@ -1,4 +1,5 @@
 #include "state.hpp"
+#include "logger.hpp"
 #include "base_config.hpp"
 #include "logger.hpp"
 #include <cstddef>
@@ -13,6 +14,7 @@ namespace shared {
     State::State(): BaseConfig() { }
 
     State::State(std::string mPath, bool eraseData): BaseConfig(mPath) {
+		logger_info("Reading state from: %s", mPath.c_str());
         if (eraseData) {
             logger_info("Erasing state data.");
             std::ofstream ofs;

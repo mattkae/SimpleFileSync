@@ -37,3 +37,5 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
   ${OPENSSL_LIBRARIES}
   stdc++fs
 )
+
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
