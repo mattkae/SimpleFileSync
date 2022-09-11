@@ -1,23 +1,19 @@
 # SimpleFileSync
 
 ## Overview
-The goal of this project is to reacquint myself with modern C++ by solving some of my organization problems. Essentially, I have a bunch of org files scattered throughout my computers and accounts that I would like to sync with a centralized server. Of course, there are many services that would easily do this for me, but I think that it would be more fun to do it by myself and, in the process, discover all of the new things that I've been missing in C++.
+The goal of this project is to reacquint myself with modern C++ by solving some of my organization problems. I have a bunch of `org` files scattered throughout my computers that I would like to sync with a centralized server. Of course, there are many services that would easily do this for me, but I think that it would be more fun to do it by myself and, in the process, discover all of the new things that I've been missing in C++.
 
 ## Table of Contents
-- [Bulding](#building)
+- [Build](#build)
 - [Configuration](#configuration)
 - [Directories](#directories)
-- [Running](#running)
-- [systemd](#systemd)
-- [Architecture](#architecture)
-- [Future](#future)
 
-## Building
+## Build
 
 ### Prerequisites
 You must install the following in order before building the server and client:
 
-#### Cmake
+#### CMake
 **Version 3.1**.
 
 #### pkg-config
@@ -25,34 +21,53 @@ You must install the following in order before building the server and client:
 sudo apt-get install -y pkg-config
 ```
 
-#### openssl dev
+#### OpenSSL dev
 ```sh
 sudo apt-get install libssl-dev
 ```
 
 #### Shared (glue between client and server)
 ```sh
-cd ./shared && mkdir -p build && cd build && cmake .. && make
+cd ./shared
+mkdir -p build
+cd build
+cmake ..
+make
 ```
 
 ### Server
 ```sh
-cd ./server && mkdir build && cd build && cmake .. && make
+cd ./server
+mkdir build
+cd build
+cmake ..
+sudo make install
 ```
+
+The server will be available as `simplefilesync_s`
 
 ### Client
 ```sh
-cd ./client && mkdir build && cd build && cmake .. && make
+cd ./client
+mkdir build
+cd build cmake .. 
+sudo make install
 ```
+
+The client will be available as `simplefilesync_c`
+
 
 ## Configuration
 
 To get setup quickly, you can edit the configurations found in the `sample` directory and then use:
 ```sh
-cd tools && ./make-data-dirs.sh
+cd tools
+./make-data-dirs.sh
 ```
 
 This will propagate your configurations to `~/.config/simplefilesync` if you are NOT super user, otherwise they will be saved in `/etc/simplefilesync`.
+
+❗**It is recommended that you do NOT run as super user, but it will work. The security vulnerabilities of this program are unknown at the moment, so use at your own risk.** Additionally, we provide no security at the moment (i.e. no password protection or such other security), so running as root would be incredibly dangerous.
 
 ### Server
 ```js
@@ -81,40 +96,3 @@ When NOT `sudo` user:
 When `sudo` user:
 - Configuration: `/etc/simplefilesync`
 - Data: `/var/lib/simplefilesync`
-
-## Running
-
-### Server
-```sh
-cd ./server/build && ./simplefilesync_s
-```
-
-### Client
-```sh
-cd ./client/build && ./simplefilesync_c
-```
-
-## systemd
-Once built, you can install either the server or client as a systemd service. Make sure that your configurations are in the right place however!
-
-### Server
-```sh
-cd tools
-sudo ./install-server-service.sh
-```
-
-### Client
-```sh
-cd tools
-sudo ./install-client-service.sh
-```
-
-## Architecture
-The project will feature a single centralized server talking to multiple clients (daemons). The server will know the latest hash of the data. At a set interval, the client will try and post any changes to the server. In this moment, one of three things will happen:
-1. The client is on the same version as the server and nothing happens.
-2. The client has made changes and is now on a new version of the server, so the server upgrades.
-3. The client is on an old version of the data, so the client upgrades.
-
-## Future
-- Handle the client and server diverging (i.e. the server has new changes *and* the client has new changes). This will involve us doing some merge resolution if the client and server modify the same file. We will not handle this for version 1.
-- Add a GUI frontend to the client daemon, so that the GUI speaks to the daemon and the client speaks to the server. This will be good for the future case of "merge issues". This GUI could even be a command-line gui, but we'll see what happens.

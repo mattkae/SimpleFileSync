@@ -17,3 +17,6 @@
 ** TODO Testing suite
 ** TODO Improve command line options
 ** TODO Add the ability to watch multiple directories from the same process
+** TODO Handle the client and server diverging (i.e. the server has new changes *and* the client has new changes). This will involve us doing some merge resolution if the client and server modify the same file. We will not handle this for version 1. 
+** TODO Add a GUI frontend to the client daemon, so that the GUI speaks to the daemon and the client speaks to the server. This will be good for the future case of "merge issues". This GUI could even be a command-line gui, but we'll see what happens.
+
