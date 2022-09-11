@@ -93,7 +93,9 @@ namespace server {
 
                 while (!conn->isClosed()) {
                     SocketBuffer readResult = conn->readData();
-                    mOnRead(readResult);
+                    if (!readResult.connectionClosed) {
+                        mOnRead(readResult);
+                    }
                 }
 
                 delete conn;

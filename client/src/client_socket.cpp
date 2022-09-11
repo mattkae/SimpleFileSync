@@ -98,7 +98,7 @@ namespace client {
         }
         logger_info("Bytes read from server: %d", result.len);
         if (result.len == -1) {
-            logger_error("Failed to read message from client.");
+            logger_error("Failed to read message from server.");
             return result;
         }
         else if (result.len == 0) {

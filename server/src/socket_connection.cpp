@@ -36,6 +36,7 @@ namespace server {
         result.bytesRead = recv(mSockfd, &result.buffer, SocketBuffer::MAX_BUFF_SIZE - 1, 0);
         if (result.bytesRead == -1) {
             result.connectionClosed = true;
+            stop();
             logger_error("Failed to read message from client.");
             return result;
         }
