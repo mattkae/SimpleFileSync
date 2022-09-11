@@ -93,11 +93,14 @@ namespace server {
 
                 while (!conn->isClosed()) {
                     SocketBuffer readResult = conn->readData();
-                    if (!readResult.connectionClosed) {
-                        mOnRead(readResult);
+                    if (readResult.connectionClosed) {
+                        break;
                     }
+
+                    mOnRead(readResult);
                 }
 
+                logger_info("Connection deleted");
                 delete conn;
             } catch (std::exception& e) {
                 logger_error("Exception while talking to client: %s", e.what());
