@@ -1,5 +1,8 @@
 # SimpleFileSync
 
+
+Testing something!
+
 ## Overview
 The goal of this project is to reacquint myself with modern C++ by solving some of my organization problems. I have a bunch of `org` files scattered throughout my computers that I would like to sync with a centralized server. Of course, there are many services that would easily do this for me, but I think that it would be more fun to do it by myself and, in the process, discover all of the new things that I've been missing in C++.
 
