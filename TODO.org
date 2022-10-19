@@ -1,4 +1,6 @@
-* V1.0
+#+TITLE: Gameplan
+
+* v1.0
 ** DONE Recording file changes in zip files on the client 
 ** DONE Recording file changes in zip files on the server
 ** DONE Client scenario #1: Client is behind and server catches up by downloading zip files
@@ -13,10 +15,15 @@
 ** DONE Getting started documentation
 ** DONE Install scripts
 
-* V1.1
-** TODO Testing suite
-** TODO Improve command line options
-** TODO Add the ability to watch multiple directories from the same process
-** TODO Handle the client and server diverging (i.e. the server has new changes *and* the client has new changes). This will involve us doing some merge resolution if the client and server modify the same file. We will not handle this for version 1. 
-** TODO Add a GUI frontend to the client daemon, so that the GUI speaks to the daemon and the client speaks to the server. This will be good for the future case of "merge issues". This GUI could even be a command-line gui, but we'll see what happens.
+* v2.0
+After using the application a bit, I have discovered two things:
+1. The always-running server model is quite nice and good
+2. The always-running client model is really terrible to work with
 
+   As such, I will be revamping the client to look an awful lot like ~git~. This is a bit sad, but I think it is a good change overall. Here is my todo list:
+** TODO The client will now handle a few commands, namely:
+- ~update~: takes all of the changes that were made locally, and pushes them to the server revving the version
+- ~status~: responds to the user with the files that have changed locally
+- ~ping~: makes sure that the server is alive
+** TODO The client will NOT run forever, and will, instead, consume commands as they are called from the commandline (this can use a GUI in the future, but it is not important for now)
+** TODO New usage of the application will be ~simplefilesync_c update/status~.
